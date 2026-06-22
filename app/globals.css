@@ -564,11 +564,11 @@ html[data-theme="dark"] .lofi-panel iframe { filter: none; }
   .mobile-route-surface { position: relative; width: 100%; height: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 2px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow); filter: grayscale(1) saturate(0); transition: filter 380ms ease, transform 160ms ease, box-shadow 160ms ease; }
   .mobile-route > span { position: absolute; left: 50%; top: calc(100% + 6px); transform: translateX(-50%); padding: 4px 6px; border-radius: 4px; background: var(--ink); color: var(--page); font-family: var(--font-geist-mono); font-size: 8px; white-space: nowrap; }
   .mobile-route:focus-visible .mobile-route-surface, .mobile-route:active .mobile-route-surface { filter: grayscale(0) saturate(1); transform: translateY(-4px); box-shadow: 0 18px 27px rgba(25,25,28,.22); }
-  .mobile-route-projects { left: 24px; top: 24px; width: 144px; height: 96px; }
-  .mobile-route-lab { left: calc(50% - 60px); top: 120px; width: 120px; height: 72px; }
-  .mobile-route-timeline { right: 24px; top: 0; width: 120px; height: 96px; }
-  .mobile-route-contact { left: 24px; top: 52%; width: 136px; height: 88px; }
-  .mobile-route-about { right: 24px; top: 49%; width: 128px; height: 88px; }
+  .mobile-route-projects { left: 22px; top: 70px; width: 160px; height: 105px; }
+  .mobile-route-timeline { right: 22px; top: 92px; width: 145px; height: 100px; }
+  .mobile-route-lab { left: 50%; top: 245px; width: 150px; height: 90px; transform: translateX(-50%); }
+  .mobile-route-contact { left: 22px; top: 55%; width: 145px; height: 90px; }
+  .mobile-route-about { right: 22px; top: 57%; width: 145px; height: 90px; }
   .mobile-route .projects-artifact { gap: 2px; padding: 3px; }
   .mobile-route .lab-artifact span { right: 5px; bottom: 4px; padding: 3px 4px; font-size: 5px; }
   .mobile-route .timeline-artifact { inset: 10px; gap: 5px; }
@@ -584,8 +584,8 @@ html[data-theme="dark"] .lofi-panel iframe { filter: none; }
   .mobile-route .contact-artifact span { margin-bottom: 4px; font-size: 8px; }
   .mobile-route .contact-artifact i { margin: 2px 0; }
   .mobile-route .contact-artifact b { margin-top: 4px; font-size: 6px; }
-  .mobile-wordmark { position: absolute; z-index: 2; left: 50%; top: 34%; width: 100%; margin: 0; transform: translate(-50%, -50%) rotate(var(--spatial-angle)); font-family: Arial Black, var(--font-geist), sans-serif; font-size: clamp(72px, 20vw, 105px); font-weight: 900; line-height: .75; letter-spacing: -.105em; color: var(--ink); text-align: center; }
-  .mobile-intro { position: absolute; z-index: 4; left: 22px; right: 22px; top: 68%; padding: 0; }.home-handle { font-size: 12px; }.home-role { font-size: 25px; }.home-tech { font-size: 10px; line-height: 1.6; }.home-tagline { max-width: 330px; font-size: 13px; line-height: 1.5; }
+  .mobile-wordmark { position: absolute; z-index: 2; left: 50%; top: 39%; width: 100%; margin: 0; transform: translate(-50%, -50%) rotate(var(--spatial-angle)); font-family: Arial Black, var(--font-geist), sans-serif; font-size: clamp(72px, 20vw, 105px); font-weight: 900; line-height: .75; letter-spacing: -.105em; color: var(--ink); text-align: center; }
+  .mobile-intro { position: absolute; z-index: 4; left: 22px; right: 22px; top: 70%; padding: 0; }
   .mobile-nav { display: flex; width: calc(100% - 20px); bottom: max(10px, env(safe-area-inset-bottom)); justify-content: space-around; padding: 7px 4px calc(7px + env(safe-area-inset-bottom)); }
   .mobile-nav .nav-action { width: 16.2%; min-width: 48px; height: 53px; border-radius: 14px; gap: 3px; grid-template-rows: 24px 12px; }.mobile-nav .nav-action > span:not(.nav-dot) { font-size: 8px; }.mobile-nav .nav-dot { bottom: -1px; }.mobile-nav .nav-action[data-active] { background: rgba(127,127,127,.12); color: var(--nav-ink); }
   .mobile-more { position: fixed; z-index: 79; left: 16px; right: 16px; bottom: calc(88px + env(safe-area-inset-bottom)); display: grid; gap: 2px; padding: 10px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface-raised); box-shadow: var(--shadow); backdrop-filter: blur(18px); }.mobile-more-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px 8px; font-weight: 550; }.mobile-more-head button { display: grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 50%; background: transparent; }.mobile-more > a, .mobile-more > button { display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 8px; min-height: 45px; padding: 0 10px; border: 0; border-radius: 10px; background: transparent; text-align: left; font-size: 13px; }
