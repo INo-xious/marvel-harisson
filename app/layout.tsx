@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { FloatingNav } from "@/components/floating-nav";
 import { PageTransition } from "@/components/page-transition";
 import { ThemeProvider, themeBootstrapScript } from "@/components/theme-provider";
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <PageTransition>{children}</PageTransition>
           <FloatingNav />
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
