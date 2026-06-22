@@ -25,7 +25,6 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
             priority={index < 3}
             sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 34vw"
           />
-          <span className="concept-label">Concept visualization</span>
           <span className="project-card-action">View case study <ArrowUpRight aria-hidden="true" size={15} /></span>
         </div>
         <div className="project-card-copy">

@@ -1,46 +1,53 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
-import { projects } from "@/data/projects";
+import { HomeArtifactVisual, homeRouteArtifacts } from "@/components/home-artifacts";
+
+const MOBILE_GRID_SIZE = 24;
+const SPATIAL_ANGLE = 7;
 
 export function MobileHome() {
   return (
     <main className="mobile-home">
       <section className="mobile-spatial-hero" aria-labelledby="mobile-home-title">
-        <div className="mobile-object mobile-chess">
-          <Image src="/images/projects/marveious-style-engine.png" alt="" fill sizes="120px" />
-        </div>
-        <div className="mobile-object mobile-doc">
-          <Image src="/images/projects/idx-ownership-data-pipeline.png" alt="" fill sizes="120px" />
-        </div>
-        <div className="mobile-object mobile-robot">
-          <Image src="/images/projects/robotics-soda-task.png" alt="" fill sizes="120px" />
-        </div>
-        <div className="mobile-tiles" aria-hidden="true"><i /><i /><i /><i /><i /></div>
-        <h1 id="mobile-home-title" className="mobile-wordmark">MARVEL</h1>
-      </section>
-      <section className="mobile-intro">
-        <p className="home-handle">Marvel Harisson · INo-xious</p>
-        <p className="home-role">Software Engineering Student</p>
-        <p className="home-tech">Python · C++ · Data Automation · Robotics</p>
-        <p className="home-tagline">Building software foundations through practical projects.</p>
-      </section>
-      <section className="mobile-projects" aria-labelledby="explore-projects">
-        <h2 id="explore-projects">Explore projects</h2>
-        <div className="mobile-project-list">
-          {projects.map((project) => (
-            <Link key={project.slug} href={project.route} className="mobile-project-row">
-              <div className="mobile-project-thumb">
-                <Image src={project.image} alt="" fill sizes="130px" />
+        <svg className="mobile-map-grid" width="100%" height="100%" aria-hidden="true" focusable="false">
+          <defs>
+            <pattern
+              id="mobile-cross-grid"
+              width={MOBILE_GRID_SIZE}
+              height={MOBILE_GRID_SIZE}
+              patternUnits="userSpaceOnUse"
+            >
+              <path d="M9 12H15M12 9V15" />
+            </pattern>
+          </defs>
+          <g transform={`rotate(${SPATIAL_ANGLE} 0 0)`}>
+            <rect x="-25%" y="-25%" width="150%" height="150%" fill="url(#mobile-cross-grid)" />
+          </g>
+        </svg>
+
+        <div className="mobile-artifact-plane">
+          {homeRouteArtifacts.map((node) => (
+            <Link
+              key={node.id}
+              className={`mobile-route mobile-route-${node.id}`}
+              href={node.href}
+              aria-label={`${node.title}, ${node.label}`}
+            >
+              <div className="mobile-route-surface">
+                <HomeArtifactVisual kind={node.kind} />
               </div>
-              <div>
-                <h3>{project.title}</h3>
-                <p>{project.category} · {project.year}</p>
-              </div>
-              <ChevronRight aria-hidden="true" size={20} />
+              <span>{node.label}</span>
             </Link>
           ))}
         </div>
+
+        <h1 id="mobile-home-title" className="mobile-wordmark">MARVEL</h1>
+
+        <section className="mobile-intro" aria-label="Introduction">
+          <p className="home-handle">Marvel Harisson · INo-xious</p>
+          <p className="home-role">Software Engineering Student</p>
+          <p className="home-tech">Python · C++ · Data Automation · Robotics</p>
+          <p className="home-tagline">Building software foundations through practical projects.</p>
+        </section>
       </section>
     </main>
   );

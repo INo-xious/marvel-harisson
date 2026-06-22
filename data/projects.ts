@@ -7,9 +7,9 @@ export type ProjectStatus =
 export type CaseStudy = {
   problem: string;
   solution: string;
-  built: string[];
+  built?: string[];
   technicalDetails: string[];
-  lessons: string[];
+  lessons?: string[];
 };
 
 export type Project = {
@@ -25,6 +25,7 @@ export type Project = {
   image: string;
   imageAlt: string;
   visualType: string;
+  imageFit?: "cover" | "contain";
   caseStudy: CaseStudy;
 };
 
@@ -40,10 +41,11 @@ export const projects: Project[] = [
     tags: ["C++", "Python", "Chess Engine", "Algorithms", "UCI", "Data Pipeline"],
     route: "/projects/marveious-style-engine",
     repositoryUrl: "https://github.com/INo-xious/marvelous-playstyle-engine",
-    image: "/images/projects/marveious-style-engine.png",
+    image: "/images/projects/marveious-style-engine-real.png",
     imageAlt:
-      "Concept visualization of a dark chessboard with amber move-preference highlights and an adjacent evaluation pipeline.",
-    visualType: "Chessboard and evaluation pipeline",
+      "MarveIous chess engine interface showing a playable board, move history, engine settings, and search depth response.",
+    visualType: "Chess engine interface",
+    imageFit: "contain",
     caseStudy: {
       problem:
         "I wanted to build a chess engine from scratch while also exploring how a player's public game history could influence move preferences.",
@@ -82,10 +84,10 @@ export const projects: Project[] = [
     tags: ["Python", "PDF Parsing", "Data Automation", "Excel", "Streamlit", "Playwright"],
     route: "/projects/idx-ownership-data-pipeline",
     repositoryUrl: "https://github.com/INo-xious/idx-ownership-data-pipeline",
-    image: "/images/projects/idx-ownership-data-pipeline.png",
+    image: "/images/projects/idx-ownership-data-pipeline-real.png",
     imageAlt:
-      "Concept visualization of disclosure documents being reconstructed into a cobalt spreadsheet grid.",
-    visualType: "PDF-to-spreadsheet pipeline",
+      "IDX disclosure page filtered for shareholder announcements above five percent, with several PDF results listed.",
+    visualType: "IDX disclosure source",
     caseStudy: {
       problem:
         "Indonesian Stock Exchange disclosure PDFs contain useful ownership information, but the data is difficult to analyze because it is trapped inside semi-structured documents.",
@@ -115,31 +117,20 @@ export const projects: Project[] = [
     category: "Robotics / Hardware Design",
     status: "concept",
     description:
-      "A TurtleBot2/Kobuki-based robotics concept using an arm, camera, and A1 RPLiDAR for a 'grab me a soda' task.",
+      "An early TurtleBot2/Kobuki robotics exploration using an arm, camera, and A1 RPLiDAR for a 'grab me a soda' task.",
     tags: ["Robotics", "TurtleBot2", "Kobuki", "RPLiDAR", "Hardware Design"],
     route: "/projects/robotics-soda-task",
-    image: "/images/projects/robotics-soda-task.png",
+    image: "/images/projects/robotics-soda-task.jpg",
     imageAlt:
-      "Concept visualization of a compact mobile robot with lidar, camera, and an arm reaching toward a blue can.",
-    visualType: "Robot and sensor schematic",
+      "A robotic arm assembly being held above a container of hardware components during an early development session.",
+    visualType: "Early robotics hardware work",
+    imageFit: "contain",
     caseStudy: {
       problem:
         "A robot needs to navigate, detect, and retrieve a soda can using a mobile base, sensor, camera, and arm.",
       solution:
-        "I designed a hardware concept using a Kobuki/TurtleBot2 base for movement, an A1 RPLiDAR for navigation, a camera for object detection, and a robotic arm for grasping.",
-      built: [
-        "Hardware layout concept",
-        "Sensor-placement study",
-        "Arm and camera integration concept",
-        "Physical design direction",
-        "Task flow for object retrieval",
-      ],
+        "The current direction combines a Kobuki/TurtleBot2 base for movement, an A1 RPLiDAR for navigation, a camera for object detection, and a robotic arm for grasping.",
       technicalDetails: ["TurtleBot2 / Kobuki base", "A1 RPLiDAR", "Camera", "Robotic arm", "Object-retrieval flow"],
-      lessons: [
-        "Hardware placement affects both sensing and grasping.",
-        "Robot design needs function, stability, and clearance.",
-        "The camera and arm should be aligned for object interaction.",
-      ],
     },
   },
   {
@@ -171,33 +162,6 @@ export const projects: Project[] = [
     },
   },
   {
-    title: "Python File Automation Exercises",
-    slug: "python-file-automation",
-    year: "2026",
-    category: "Python Fundamentals",
-    status: "experiment",
-    description:
-      "Small Python exercises for reading, writing, transforming, and exporting text files.",
-    tags: ["Python", "File I/O", "Fundamentals"],
-    route: "/projects/python-file-automation",
-    image: "/images/projects/python-file-automation.png",
-    imageAlt:
-      "Concept visualization of dark input files passing through a small transformation pipeline into validated outputs.",
-    visualType: "File transformation flow",
-    caseStudy: {
-      problem: "I wanted to practice Python file input/output and simple data transformation.",
-      solution:
-        "I wrote small scripts that read text files, process each line, and write transformed outputs into new files.",
-      built: ["Read text lines from a file", "Count characters", "Convert text to uppercase", "Reverse strings", "Write results to output files"],
-      technicalDetails: ["Python", "File I/O", "String methods", "Loops"],
-      lessons: [
-        "File paths and file closing matter.",
-        "Small scripts can automate repetitive transformations.",
-        "Simple exercises build useful fundamentals.",
-      ],
-    },
-  },
-  {
     title: "GitHub Profile README",
     slug: "github-profile-readme",
     year: "2026",
@@ -210,8 +174,9 @@ export const projects: Project[] = [
     repositoryUrl: "https://github.com/INo-xious/INo-xious",
     image: "/images/projects/github-profile-readme.png",
     imageAlt:
-      "Concept visualization of a dark structured README document alongside a raw Markdown strip.",
-    visualType: "README and Markdown study",
+      "GitHub profile README showing a large red MARVEL banner and an introduction to Marvel Harisson's student work.",
+    visualType: "GitHub profile README",
+    imageFit: "contain",
     caseStudy: {
       problem:
         "My projects, interests, and learning direction needed one clear public entry point rather than scattered descriptions.",
