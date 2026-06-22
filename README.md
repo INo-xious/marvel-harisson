@@ -2,6 +2,8 @@
 
 Personal portfolio for [Marvel Harisson](https://github.com/INo-xious), a software engineering student building projects in Python, C++, data automation, robotics, and interactive software.
 
+Design inspired by [Rauno.me](https://rauno.me)
+
 ## Features
 
 - Interactive spatial project map with an Osaka clock and grid-aligned cursor trail
