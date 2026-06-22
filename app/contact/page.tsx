@@ -18,8 +18,9 @@ export default function ContactPage() {
         {contactLinks.map((item) => {
           const Icon = iconByKind[item.kind];
           const content = <><Icon aria-hidden="true" size={22} /><div><span>{item.label}</span><strong>{item.value}</strong><p>{item.note}</p></div>{item.href ? <ArrowUpRight aria-hidden="true" size={18} /> : <span className="contact-unavailable">Unpublished</span>}</>;
+          const external = item.href?.startsWith("http");
           return item.href ? (
-            <a key={item.kind} className="contact-row" href={item.href} target="_blank" rel="noopener noreferrer">{content}</a>
+            <a key={item.kind} id={item.kind === "email" ? "email" : undefined} className="contact-row" href={item.href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}>{content}</a>
           ) : (
             <div key={item.kind} id="email" className="contact-row contact-row-static">{content}</div>
           );

@@ -6,6 +6,9 @@ export type ContactLink = {
   note: string;
 };
 
+export const publicEmail = "im.marvel.harisson@gmail.com";
+export const publicEmailHref = `mailto:${publicEmail}`;
+
 export const contactLinks: ContactLink[] = [
   {
     kind: "github",
@@ -24,8 +27,8 @@ export const contactLinks: ContactLink[] = [
   {
     kind: "email",
     label: "Email",
-    value: "Email not published yet",
-    // Add a public mailto: URL here when Marvel chooses to publish an address.
-    note: "Use GitHub or LinkedIn in the meantime",
+    value: publicEmail,
+    href: publicEmailHref,
+    note: "Email me directly",
   },
 ];

@@ -12,7 +12,6 @@ const descriptions: Record<string, string> = {
   "idx-ownership-data-pipeline": "IDX disclosures and PDF table extraction",
   "robotics-soda-task": "Mobile robot design with arm, camera, and RPLiDAR",
   "pacman-processing-game": "Grid-based game and networking logic",
-  "python-file-automation": "File I/O fundamentals and transformations",
   "github-profile-readme": "Developer profile and project documentation",
 };
 

@@ -6,75 +6,23 @@ export type LabItem = {
   description: string;
   image: string;
   alt: string;
-  mediaLabel: "Concept visualization";
+  mediaLabel: "Original photograph";
   tone: "dark" | "light";
+  url: string;
 };
 
 export const labItems: LabItem[] = [
   {
-    id: "robotics-sketch",
-    title: "Robotics sketch",
-    category: "Hardware Concept",
+    id: "rione-home-league",
+    title: "Ri-one @Home League",
+    category: "Robotics Development",
     year: "2026",
-    description: "Early layout study for a mobile robot with an arm, camera, and lidar.",
-    image: "/images/lab/robotics-sketch.png",
-    alt: "Concept visualization of a top-down mobile robot on graph paper with lidar rings and engineering annotations.",
-    mediaLabel: "Concept visualization",
+    description:
+      "A development session with Ri-one's @Home League team, which builds service robots for household environments.",
+    image: "/images/lab/rione-home-league.jpg",
+    alt: "Two Ri-one members working with laptops and prototype hardware in a robotics lab.",
+    mediaLabel: "Original photograph",
     tone: "light",
-  },
-  {
-    id: "chess-engine-visual",
-    title: "Chess engine visual",
-    category: "Software Experiment",
-    year: "2026",
-    description: "Board, search-tree, and evaluation studies for the MarveIous Style Engine.",
-    image: "/images/lab/chess-engine-visual.png",
-    alt: "Concept visualization of a grayscale chessboard, amber candidate move, evaluation curve, and search tree.",
-    mediaLabel: "Concept visualization",
-    tone: "dark",
-  },
-  {
-    id: "processing-game",
-    title: "Processing game screenshot",
-    category: "Game Experiment",
-    year: "2026",
-    description: "An original maze, movement path, and state experiment inspired by the Processing game.",
-    image: "/images/lab/processing-game.png",
-    alt: "Concept visualization of an abstract maze with geometric tokens and a cobalt movement path.",
-    mediaLabel: "Concept visualization",
-    tone: "dark",
-  },
-  {
-    id: "interface-test",
-    title: "UI interaction test",
-    category: "Interface Experiment",
-    year: "2026",
-    description: "Floating navigation spacing, selection, tooltip, and focus-state study.",
-    image: "/images/lab/interface-test.png",
-    alt: "Concept visualization of a compact black floating toolbar and its spacing and selected-state study.",
-    mediaLabel: "Concept visualization",
-    tone: "light",
-  },
-  {
-    id: "system-diagram",
-    title: "System diagram",
-    category: "Software Design",
-    year: "2026",
-    description: "A visual pipeline study for document discovery, extraction, validation, and export.",
-    image: "/images/projects/idx-ownership-data-pipeline.png",
-    alt: "Concept visualization of documents passing through table reconstruction into a structured spreadsheet.",
-    mediaLabel: "Concept visualization",
-    tone: "dark",
-  },
-  {
-    id: "code-study",
-    title: "Code transformation study",
-    category: "Programming",
-    year: "2026",
-    description: "A file-processing study representing small programming exercises and implementation notes.",
-    image: "/images/projects/python-file-automation.png",
-    alt: "Concept visualization of input text files passing through a transformation flow into validated output files.",
-    mediaLabel: "Concept visualization",
-    tone: "dark",
+    url: "https://rione.org/home-league/",
   },
 ];

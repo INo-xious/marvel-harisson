@@ -9,16 +9,19 @@ import {
   Mail,
   Moon,
   MoreHorizontal,
+  Radio,
   Sun,
   UserRound,
+  Volume2,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@/components/theme-provider";
 import { GitHubMark, LinkedInMark } from "@/components/brand-icons";
+import { publicEmailHref } from "@/data/contact";
 
 const routeItems = [
   { label: "Home", href: "/", icon: House },
@@ -37,6 +40,9 @@ const socialItems = [
   },
 ] as const;
 
+const LOFI_CAFE_URL = "https://loficafe.net/use/sleep-radio";
+const LOFI_EMBED_URL = "https://loficafe.net/embed/sleeping";
+
 function routeIsActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -46,6 +52,30 @@ export function FloatingNav() {
   const pathname = usePathname();
   const { toggleTheme } = useTheme();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [lofiLoaded, setLofiLoaded] = useState(false);
+  const [lofiOpen, setLofiOpen] = useState(false);
+  const closeLofiTimerRef = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (closeLofiTimerRef.current !== null) window.clearTimeout(closeLofiTimerRef.current);
+  }, []);
+
+  const cancelLofiClose = () => {
+    if (closeLofiTimerRef.current === null) return;
+    window.clearTimeout(closeLofiTimerRef.current);
+    closeLofiTimerRef.current = null;
+  };
+
+  const openLofi = () => {
+    cancelLofiClose();
+    setLofiLoaded(true);
+    setLofiOpen(true);
+  };
+
+  const scheduleLofiClose = () => {
+    cancelLofiClose();
+    closeLofiTimerRef.current = window.setTimeout(() => setLofiOpen(false), 220);
+  };
 
   const themeIcons = (
     <span className="theme-icons" aria-hidden="true">
@@ -92,20 +122,36 @@ export function FloatingNav() {
             </a>
           );
         })}
-        <Link
+        <a
           className="nav-action"
-          href="/contact#email"
-          aria-label="Contact"
-          aria-current={pathname === "/contact" ? "page" : undefined}
-          data-active={pathname === "/contact" || undefined}
+          href={publicEmailHref}
+          aria-label="Email Marvel Harisson"
         >
           <Mail aria-hidden="true" size={18} strokeWidth={1.8} />
-          <span className="nav-tooltip" role="tooltip">Contact</span>
-        </Link>
+          <span className="nav-tooltip" role="tooltip">Email</span>
+        </a>
         <button className="nav-action" type="button" onClick={toggleTheme} aria-label="Toggle light or dark theme">
           {themeIcons}
           <span className="nav-tooltip" role="tooltip">Theme</span>
         </button>
+        <div
+          className="lofi-trigger"
+          onPointerEnter={openLofi}
+          onPointerLeave={scheduleLofiClose}
+          onFocus={openLofi}
+          onBlur={scheduleLofiClose}
+        >
+          <a
+            className="nav-action"
+            href={LOFI_CAFE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open Sleep Radio preset on Lofi Cafe in a new tab"
+          >
+            <Volume2 aria-hidden="true" size={18} strokeWidth={1.8} />
+            <span className="nav-tooltip" role="tooltip">Sleep Radio</span>
+          </a>
+        </div>
       </nav>
 
       <AnimatePresence>
@@ -133,17 +179,51 @@ export function FloatingNav() {
                 </a>
               );
             })}
-            <Link href="/contact#email" onClick={() => setMoreOpen(false)}>
+            <a href={publicEmailHref} onClick={() => setMoreOpen(false)}>
               <Mail aria-hidden="true" size={18} />
-              <span>Contact</span>
-            </Link>
+              <span>Email</span>
+            </a>
             <button type="button" onClick={toggleTheme}>
               {themeIcons}
               <span>Switch theme</span>
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (lofiOpen) {
+                  setLofiOpen(false);
+                } else {
+                  openLofi();
+                }
+                setMoreOpen(false);
+              }}
+              aria-expanded={lofiOpen}
+            >
+              <Radio aria-hidden="true" size={18} />
+              <span>Sleep Radio controls</span>
+            </button>
           </motion.div>
         ) : null}
       </AnimatePresence>
+
+      {lofiLoaded ? (
+        <div
+          className="lofi-panel"
+          data-open={lofiOpen || undefined}
+          onPointerEnter={cancelLofiClose}
+          onPointerLeave={scheduleLofiClose}
+          onFocus={cancelLofiClose}
+          onBlur={scheduleLofiClose}
+          aria-hidden={!lofiOpen}
+        >
+          <iframe
+            src={LOFI_EMBED_URL}
+            title="Lofi Cafe Sleeping station player"
+            loading="lazy"
+            allow="autoplay"
+          />
+        </div>
+      ) : null}
 
       <nav className="floating-nav mobile-nav" aria-label="Mobile navigation">
         {routeItems.map((item) => {
