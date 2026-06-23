@@ -3,8 +3,8 @@ import { projects } from "@/data/projects";
 export type TimelineEntry = {
   title: string;
   description: string;
-  year: "2026";
-  href: `/projects/${string}`;
+  year: "2025" | "2026";
+  href?: `/projects/${string}`;
 };
 
 const descriptions: Record<string, string> = {
@@ -15,9 +15,28 @@ const descriptions: Record<string, string> = {
   "github-profile-readme": "Developer profile and project documentation",
 };
 
-export const timeline: TimelineEntry[] = projects.map((project) => ({
+const projectTimeline: TimelineEntry[] = projects.map((project) => ({
   title: project.title,
   description: descriptions[project.slug],
   year: project.year,
   href: project.route,
 }));
+
+export const timeline: TimelineEntry[] = [
+  ...projectTimeline,
+  {
+    title: "Enrolled in Ritsumeikan University",
+    description: "Started university studies in Japan",
+    year: "2026",
+  },
+  {
+    title: "Enrolled in ARC Academy Shinjuku",
+    description: "Started and Graduated from Japanese language studies in Tokyo",
+    year: "2025",
+  },
+  {
+    title: "Graduated from Sekolah Dian Harapan Daan Mogot",
+    description: "Completed high school education",
+    year: "2025",
+  },
+];
