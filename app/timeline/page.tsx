@@ -10,7 +10,7 @@ export default function TimelinePage() {
       <section className="timeline-shell">
         <header className="timeline-header">
           <h1>Timeline</h1>
-          <p>A chronological index of projects and experiments.</p>
+          <p>A chronological index of projects and experiences.</p>
         </header>
         <TimelineList entries={timeline} />
       </section>
