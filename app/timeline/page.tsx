@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { TimelineList } from "@/components/timeline-list";
 import { timeline } from "@/data/timeline";
 
-export const metadata: Metadata = { title: "Timeline", description: "A chronological index of projects and experiments." };
+export const metadata: Metadata = { title: "Timeline", description: "A chronological index of projects and experiences." };
 
 export default function TimelinePage() {
   return (
