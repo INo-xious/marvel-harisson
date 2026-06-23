@@ -13,6 +13,7 @@ const descriptions: Record<string, string> = {
   "robotics-soda-task": "Mobile robot design with arm, camera, and RPLiDAR",
   "pacman-processing-game": "Grid-based game and networking logic",
   "github-profile-readme": "Developer profile and project documentation",
+  "marvel-harisson": "Portfolio website with Next.js and Tailwind CSS",
 };
 
 const projectTimeline: TimelineEntry[] = projects.map((project) => ({
