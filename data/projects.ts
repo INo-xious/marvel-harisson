@@ -191,6 +191,36 @@ export const projects: Project[] = [
       ],
     },
   },
+  {
+    title: "Personal Website",
+    slug: "marvel-harisson",
+    year: "2026",
+    category: "Next.js / TypeScript / Tailwind CSS",
+    status: "documentation",
+    description:
+      "A personal website built with Next.js, TypeScript, and Tailwind CSS to showcase projects, timeline, and contact information.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "React", "Web Development"],
+    route: "/projects/marvel-harisson",
+    repositoryUrl: "https://github.com/INo-xious/marvel-harisson",
+    image: "/images/projects/marvel-harisson.png",
+    imageAlt:
+      "Personal website homepage showing a dark-themed interface with project highlights and navigation links.",
+    visualType: "Personal website homepage",
+    imageFit: "contain",
+    caseStudy: {
+      problem:
+        "I needed a personal website to present my projects, timeline, and contact information in a professional manner.",
+      solution:
+        "I built a personal website using Next.js for server-side rendering, TypeScript for type safety, and Tailwind CSS for styling.",
+      built: ["Next.js framework", "TypeScript integration", "Tailwind CSS styling", "Responsive design", "Project showcase and timeline"],
+      technicalDetails: ["Next.js", "TypeScript", "Tailwind CSS", "React components", "Responsive web design"],
+      lessons: [
+        "A personal website should be clear and easy to navigate.",
+        "Using modern frameworks can speed up development.",
+        "Regular updates are important to keep content relevant.",
+      ],
+    },
+  },
 ];
 
 export const projectBySlug = new Map(projects.map((project) => [project.slug, project]));
