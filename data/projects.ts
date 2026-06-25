@@ -135,7 +135,7 @@ export const projects: Project[] = [
   },
   {
     title: "Pac-Man Processing Game",
-    slug: "pacman-processing-game",
+    slug: "packman-game-ai-agent",
     year: "2026",
     category: "Java / Processing / Networking",
     status: "experiment",
