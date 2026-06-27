@@ -1,6 +1,7 @@
 import { fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { homeRouteArtifacts } from "@/components/home-artifacts";
+import { LanguageProvider } from "@/components/language-provider";
 import {
   formatOsakaTime,
   GRID_SIZE,
@@ -12,6 +13,14 @@ import {
   SPATIAL_ANGLE,
   TILE_POOL_SIZE,
 } from "@/components/project-map";
+
+function renderProjectMap() {
+  return render(
+    <LanguageProvider initialLocale="en">
+      <ProjectMap />
+    </LanguageProvider>,
+  );
+}
 
 function stubMotionPreferences(reduced = false) {
   vi.stubGlobal("matchMedia", vi.fn((query: string) => ({
@@ -45,7 +54,7 @@ describe("ProjectMap spatial system", () => {
       "/contact",
       "/about",
     ]);
-    const { container } = render(<ProjectMap />);
+    const { container } = renderProjectMap();
     expect(container.querySelectorAll(".artifact-plane > a")).toHaveLength(5);
     expect(container.querySelector('.artifact-plane a[href="/lab"] .lab-artifact img')).toBeInTheDocument();
     expect(container.querySelector('.artifact-plane a[href^="/projects/"]')).not.toBeInTheDocument();
@@ -57,7 +66,7 @@ describe("ProjectMap spatial system", () => {
 
   it("uses a dense plus-marker grid and a capped trail pool", () => {
     stubMotionPreferences();
-    const { container } = render(<ProjectMap />);
+    const { container } = renderProjectMap();
     const pattern = container.querySelector("#home-cross-grid") as SVGPatternElement;
     expect(pattern.getAttribute("width")).toBe(String(GRID_SIZE));
     expect(pattern.getAttribute("height")).toBe(String(GRID_SIZE));
@@ -102,7 +111,7 @@ describe("ProjectMap spatial system", () => {
     vi.spyOn(window, "cancelAnimationFrame").mockImplementation(() => undefined);
     stubMotionPreferences();
 
-    const { container } = render(<ProjectMap />);
+    const { container } = renderProjectMap();
     const map = container.querySelector(".project-map") as HTMLElement;
     const mapWorld = container.querySelector(".map-world") as HTMLElement;
 
@@ -126,7 +135,7 @@ describe("ProjectMap spatial system", () => {
       return frames.length;
     });
     stubMotionPreferences(true);
-    const { container } = render(<ProjectMap />);
+    const { container } = renderProjectMap();
     const map = container.querySelector(".project-map") as HTMLElement;
     fireEvent.pointerMove(map, { clientX: 100, clientY: 100, pointerType: "mouse" });
     expect(frames).toHaveLength(0);

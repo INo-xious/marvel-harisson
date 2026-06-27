@@ -19,16 +19,18 @@ import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/components/language-provider";
+import { ScrambleText } from "@/components/scramble-text";
 import { useTheme } from "@/components/theme-provider";
 import { GitHubMark, LinkedInMark } from "@/components/brand-icons";
 import { publicEmailHref } from "@/data/contact";
 
 const routeItems = [
-  { label: "Home", href: "/", icon: House },
-  { label: "Projects", href: "/projects", icon: Folder },
-  { label: "Lab", href: "/lab", icon: FlaskConical },
-  { label: "Timeline", href: "/timeline", icon: Clock3 },
-  { label: "About", href: "/about", icon: UserRound },
+  { key: "home", href: "/", icon: House },
+  { key: "projects", href: "/projects", icon: Folder },
+  { key: "lab", href: "/lab", icon: FlaskConical },
+  { key: "timeline", href: "/timeline", icon: Clock3 },
+  { key: "about", href: "/about", icon: UserRound },
 ] as const;
 
 const socialItems = [
@@ -50,6 +52,7 @@ function routeIsActive(pathname: string, href: string) {
 
 export function FloatingNav() {
   const pathname = usePathname();
+  const { copy } = useLanguage();
   const { toggleTheme } = useTheme();
   const [moreOpen, setMoreOpen] = useState(false);
   const [lofiLoaded, setLofiLoaded] = useState(false);
@@ -86,21 +89,22 @@ export function FloatingNav() {
 
   return (
     <>
-      <nav className="floating-nav desktop-nav" aria-label="Primary navigation">
+      <nav className="floating-nav desktop-nav" aria-label={copy.nav.ariaLabel}>
         {routeItems.map((item) => {
           const Icon = item.icon;
+          const label = copy.nav[item.key];
           const active = routeIsActive(pathname, item.href);
           return (
             <Link
               key={item.href}
               className="nav-action"
               href={item.href}
-              aria-label={item.label}
+              aria-label={label}
               aria-current={active ? "page" : undefined}
               data-active={active || undefined}
             >
               <Icon aria-hidden="true" size={18} strokeWidth={1.8} />
-              <span className="nav-tooltip" role="tooltip">{item.label}</span>
+              <span className="nav-tooltip" role="tooltip"><ScrambleText text={label} /></span>
               {active ? <motion.span layoutId="nav-dot" className="nav-dot" /> : null}
             </Link>
           );
@@ -115,7 +119,7 @@ export function FloatingNav() {
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`${item.label} (opens in a new tab)`}
+              aria-label={`${item.label} (${copy.nav.opensNewTab})`}
             >
               <Icon aria-hidden="true" size={18} strokeWidth={1.8} />
               <span className="nav-tooltip" role="tooltip">{item.label}</span>
@@ -125,14 +129,14 @@ export function FloatingNav() {
         <a
           className="nav-action"
           href={publicEmailHref}
-          aria-label="Email Marvel Harisson"
+          aria-label={copy.nav.emailMarvel}
         >
           <Mail aria-hidden="true" size={18} strokeWidth={1.8} />
-          <span className="nav-tooltip" role="tooltip">Email</span>
+          <span className="nav-tooltip" role="tooltip"><ScrambleText text={copy.nav.email} /></span>
         </a>
-        <button className="nav-action" type="button" onClick={toggleTheme} aria-label="Toggle light or dark theme">
+        <button className="nav-action" type="button" onClick={toggleTheme} aria-label={copy.nav.toggleTheme}>
           {themeIcons}
-          <span className="nav-tooltip" role="tooltip">Theme</span>
+          <span className="nav-tooltip" role="tooltip"><ScrambleText text={copy.nav.theme} /></span>
         </button>
         <div
           className="lofi-trigger"
@@ -146,10 +150,10 @@ export function FloatingNav() {
             href={LOFI_CAFE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Open Sleep Radio preset on Lofi Cafe in a new tab"
+            aria-label={copy.nav.openSleepRadio}
           >
             <Volume2 aria-hidden="true" size={18} strokeWidth={1.8} />
-            <span className="nav-tooltip" role="tooltip">Sleep Radio</span>
+            <span className="nav-tooltip" role="tooltip"><ScrambleText text={copy.nav.sleepRadio} /></span>
           </a>
         </div>
       </nav>
@@ -164,8 +168,8 @@ export function FloatingNav() {
             transition={{ duration: 0.16 }}
           >
             <div className="mobile-more-head">
-              <span>More</span>
-              <button type="button" onClick={() => setMoreOpen(false)} aria-label="Close more menu">
+              <span><ScrambleText text={copy.nav.more} /></span>
+              <button type="button" onClick={() => setMoreOpen(false)} aria-label={copy.nav.closeMore}>
                 <X aria-hidden="true" size={18} />
               </button>
             </div>
@@ -181,11 +185,11 @@ export function FloatingNav() {
             })}
             <a href={publicEmailHref} onClick={() => setMoreOpen(false)}>
               <Mail aria-hidden="true" size={18} />
-              <span>Email</span>
+              <span><ScrambleText text={copy.nav.email} /></span>
             </a>
             <button type="button" onClick={toggleTheme}>
               {themeIcons}
-              <span>Switch theme</span>
+              <span><ScrambleText text={copy.nav.switchTheme} /></span>
             </button>
             <button
               type="button"
@@ -200,7 +204,7 @@ export function FloatingNav() {
               aria-expanded={lofiOpen}
             >
               <Radio aria-hidden="true" size={18} />
-              <span>Sleep Radio controls</span>
+              <span><ScrambleText text={copy.nav.sleepRadioControls} /></span>
             </button>
           </motion.div>
         ) : null}
@@ -218,35 +222,36 @@ export function FloatingNav() {
         >
           <iframe
             src={LOFI_EMBED_URL}
-            title="Lofi Cafe Sleeping station player"
+            title={copy.nav.lofiTitle}
             loading="lazy"
             allow="autoplay"
           />
         </div>
       ) : null}
 
-      <nav className="floating-nav mobile-nav" aria-label="Mobile navigation">
+      <nav className="floating-nav mobile-nav" aria-label={copy.nav.mobileAriaLabel}>
         {routeItems.map((item) => {
           const Icon = item.icon;
+          const label = copy.nav[item.key];
           const active = routeIsActive(pathname, item.href);
           return (
             <Link
               key={item.href}
               className="nav-action"
               href={item.href}
-              aria-label={item.label}
+              aria-label={label}
               aria-current={active ? "page" : undefined}
               data-active={active || undefined}
             >
               <Icon aria-hidden="true" size={20} strokeWidth={1.8} />
-              <span>{item.label}</span>
+              <span><ScrambleText text={label} /></span>
               {active ? <motion.span layoutId="mobile-nav-dot" className="nav-dot" /> : null}
             </Link>
           );
         })}
-        <button className="nav-action" type="button" onClick={() => setMoreOpen((open) => !open)} aria-label="More navigation options" aria-expanded={moreOpen}>
+        <button className="nav-action" type="button" onClick={() => setMoreOpen((open) => !open)} aria-label={copy.nav.moreOptions} aria-expanded={moreOpen}>
           <MoreHorizontal aria-hidden="true" size={21} />
-          <span>More</span>
+          <span><ScrambleText text={copy.nav.more} /></span>
         </button>
       </nav>
     </>

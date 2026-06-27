@@ -1,19 +1,23 @@
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
-import type { RitsumeikanLab } from "@/data/ritsumeikan-labs";
+import { ScrambleText } from "@/components/scramble-text";
+import type { LocalizedRitsumeikanLab } from "@/data/localized-data";
 
-export function RitsumeikanLabs({ labs }: { labs: RitsumeikanLab[] }) {
+type RitsumeikanLabsCopy = {
+  ritsumeikanKicker: string;
+  ritsumeikanTitle: string;
+  ritsumeikanDescription: string;
+};
+
+export function RitsumeikanLabs({ labs, copy }: { labs: LocalizedRitsumeikanLab[]; copy: RitsumeikanLabsCopy }) {
   return (
     <section className="rits-labs" aria-labelledby="rits-labs-title">
       <header className="rits-labs-header">
         <div>
-          <p>Ritsumeikan University · ISSE</p>
-          <h2 id="rits-labs-title">Ritsumeikan Labs</h2>
+          <p><ScrambleText text={copy.ritsumeikanKicker} /></p>
+          <h2 id="rits-labs-title"><ScrambleText text={copy.ritsumeikanTitle} /></h2>
         </div>
-        <p>
-          Through the Information Systems Science and Engineering course, I take part in
-          project-based learning across five laboratories.
-        </p>
+        <p><ScrambleText text={copy.ritsumeikanDescription} /></p>
       </header>
 
       <div className="rits-labs-grid">
@@ -24,7 +28,7 @@ export function RitsumeikanLabs({ labs }: { labs: RitsumeikanLab[] }) {
             href={lab.url}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Visit ${lab.name} in a new tab`}
+            aria-label={lab.linkAriaLabel}
           >
             <div className="rits-lab-media" data-fit={lab.imageFit ?? "cover"}>
               <Image
@@ -37,11 +41,11 @@ export function RitsumeikanLabs({ labs }: { labs: RitsumeikanLab[] }) {
             </div>
             <div className="rits-lab-copy">
               <div>
-                <p>{lab.shortName}</p>
-                <h3>{lab.name}</h3>
+                <p><ScrambleText text={lab.shortName} /></p>
+                <h3><ScrambleText text={lab.name} /></h3>
               </div>
               <ArrowUpRight aria-hidden="true" size={18} />
-              <p>{lab.description}</p>
+              <p><ScrambleText text={lab.description} /></p>
             </div>
           </a>
         ))}
