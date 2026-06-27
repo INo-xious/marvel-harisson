@@ -42,7 +42,7 @@ const socialItems = [
   },
 ] as const;
 
-const MY_SPOTIFY_URL = "https://open.spotify.com/playlist/5aqq7omeuq3zQ3OamsBdGg";
+const MY_SPOTIFY_URL = "https://open.spotify.com/user/2emgyd9qtsz3ou4doaxkg428u";
 const LOFI_EMBED_URL = "https://loficafe.net/embed/sleeping";
 
 function routeIsActive(pathname: string, href: string) {
