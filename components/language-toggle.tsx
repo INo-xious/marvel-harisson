@@ -24,7 +24,7 @@ export function LanguageToggle() {
             aria-pressed={locale === option.locale}
             data-active={locale === option.locale || undefined}
           >
-            <ScrambleText text={copy.language[option.labelKey]} />
+            <ScrambleText text={copy.language[option.labelKey]} intensity="full" />
           </button>
         </span>
       ))}

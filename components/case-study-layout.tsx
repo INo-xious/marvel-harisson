@@ -19,7 +19,13 @@ export function CaseStudyLayout({ project, locale }: { project: Project; locale:
         <p className="case-study-tags">{project.tags.join(" · ")}</p>
       </header>
       <figure className="case-study-hero" data-fit={project.imageFit ?? "cover"}>
-        <Image src={project.image} alt={project.imageAlt} fill priority sizes="(max-width: 1280px) 100vw, 1180px" />
+        <Image
+          src={project.heroImage}
+          alt={project.imageAlt}
+          fill
+          priority
+          sizes="(max-width: 799px) calc(100vw - 40px), (max-width: 1280px) calc(100vw - 76px), 1180px"
+        />
       </figure>
       <div className="case-study-body">
         <aside className="case-study-index" aria-label={copy.onThisPage}>

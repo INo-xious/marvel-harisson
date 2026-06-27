@@ -26,7 +26,7 @@ function ProjectsMosaic() {
     <div className="projects-artifact" aria-hidden="true">
       {projects.slice(0, 6).map((project) => (
         <span key={project.slug}>
-          <Image src={project.image} alt="" fill sizes="96px" />
+          <Image src={project.thumbnailImage} alt="" fill sizes="96px" loading="lazy" />
         </span>
       ))}
     </div>
@@ -37,7 +37,7 @@ function LabArtifact() {
   const lab = labItems[0];
   return (
     <div className="lab-artifact" aria-hidden="true">
-      <Image src={lab.image} alt="" fill sizes="224px" />
+      <Image src={lab.thumbnailImage} alt="" fill sizes="224px" loading="lazy" />
       <span>LAB / OIC</span>
     </div>
   );

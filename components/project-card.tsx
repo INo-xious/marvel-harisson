@@ -26,9 +26,9 @@ export function ProjectCard({
   return (
     <motion.article
       className={`project-card project-card-${index + 1}`}
-      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: reduceMotion ? 0 : index * 0.055, duration: 0.28 }}
+      transition={{ delay: reduceMotion ? 0 : index * 0.025, duration: 0.18 }}
     >
       <Link
         href={project.route}
@@ -39,18 +39,21 @@ export function ProjectCard({
           lastPointerTypeRef.current = event.pointerType;
         }}
         onClick={(event) => {
-          if (!onReveal || !lastPointerTypeRef.current || lastPointerTypeRef.current === "mouse" || isRevealed) return;
+          const isTouchLike =
+            lastPointerTypeRef.current !== "mouse" ||
+            window.matchMedia("(hover: none), (pointer: coarse)").matches;
+          if (!onReveal || !isTouchLike || isRevealed) return;
           event.preventDefault();
           onReveal(project.slug);
         }}
       >
         <div className="project-card-media">
           <Image
-            src={project.image}
+            src={project.thumbnailImage}
             alt={project.imageAlt}
             fill
-            priority={index < 3}
-            sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 34vw"
+            priority={index === 0}
+            sizes="(max-width: 799px) calc(100vw - 24px), (max-width: 1100px) calc((100vw - 74px) / 2), calc((100vw - 80px) / 3)"
           />
         </div>
         <div className="project-card-overlay">

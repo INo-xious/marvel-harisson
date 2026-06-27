@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext } from "react";
+import { createContext, useCallback, useContext, useEffect } from "react";
 
 export type Theme = "light" | "dark";
 
@@ -18,6 +18,16 @@ function readTheme(): Theme {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!root.dataset.theme) {
+      const theme = readTheme();
+      root.dataset.theme = theme;
+      root.style.colorScheme = theme;
+    }
+    root.dataset.hydrated = "true";
+  }, []);
+
   const toggleTheme = useCallback(() => {
     const next: Theme = readTheme() === "dark" ? "light" : "dark";
     const root = document.documentElement;

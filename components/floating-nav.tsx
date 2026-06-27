@@ -42,7 +42,7 @@ const socialItems = [
   },
 ] as const;
 
-const LOFI_CAFE_URL = "https://loficafe.net/use/sleep-radio";
+const MY_SPOTIFY_URL = "https://open.spotify.com/playlist/5aqq7omeuq3zQ3OamsBdGg";
 const LOFI_EMBED_URL = "https://loficafe.net/embed/sleeping";
 
 function routeIsActive(pathname: string, href: string) {
@@ -147,7 +147,7 @@ export function FloatingNav() {
         >
           <a
             className="nav-action"
-            href={LOFI_CAFE_URL}
+            href={MY_SPOTIFY_URL}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={copy.nav.openSleepRadio}

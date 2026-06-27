@@ -20,16 +20,16 @@ export function LabGallery({ items }: { items: LabGalleryItem[] }) {
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
-          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: reduceMotion ? 0 : index * 0.045, duration: 0.25 }}
+          transition={{ delay: reduceMotion ? 0 : index * 0.02, duration: 0.16 }}
           aria-label={item.linkAriaLabel ?? `Open ${item.title} on the Ri-one website in a new tab`}
         >
           <Image
-            src={item.image}
+            src={item.thumbnailImage}
             alt={item.alt}
             fill
-            sizes="(max-width: 799px) 100vw, 920px"
+            sizes="(max-width: 799px) calc(100vw - 24px), (max-width: 1100px) calc((100vw - 74px) / 2), 920px"
             loading={index === 0 ? "eager" : "lazy"}
           />
           <span className="lab-tile-caption">

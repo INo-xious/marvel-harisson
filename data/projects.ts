@@ -23,6 +23,8 @@ export type Project = {
   route: `/projects/${string}`;
   repositoryUrl?: string;
   image: string;
+  thumbnailImage: string;
+  heroImage: string;
   imageAlt: string;
   visualType: string;
   imageFit?: "cover" | "contain";
@@ -42,6 +44,8 @@ export const projects: Project[] = [
     route: "/projects/marveious-style-engine",
     repositoryUrl: "https://github.com/INo-xious/marvelous-playstyle-engine",
     image: "/images/projects/marveious-style-engine-real.png",
+    thumbnailImage: "/images/projects/optimized/marveious-style-engine-card.webp",
+    heroImage: "/images/projects/optimized/marveious-style-engine-hero.webp",
     imageAlt:
       "MarveIous chess engine interface showing a playable board, move history, engine settings, and search depth response.",
     visualType: "Chess engine interface",
@@ -85,6 +89,8 @@ export const projects: Project[] = [
     route: "/projects/idx-ownership-data-pipeline",
     repositoryUrl: "https://github.com/INo-xious/idx-ownership-data-pipeline",
     image: "/images/projects/idx-ownership-data-pipeline-real.png",
+    thumbnailImage: "/images/projects/optimized/idx-ownership-data-pipeline-card.webp",
+    heroImage: "/images/projects/optimized/idx-ownership-data-pipeline-hero.webp",
     imageAlt:
       "IDX disclosure page filtered for shareholder announcements above five percent, with several PDF results listed.",
     visualType: "IDX disclosure source",
@@ -122,6 +128,8 @@ export const projects: Project[] = [
     route: "/projects/robotics-soda-task",
     repositoryUrl: "https://github.com/Gil-gil-glitch/ros2_crane_plus_ws/tree/main",
     image: "/images/projects/robotics-soda-task.jpg",
+    thumbnailImage: "/images/projects/optimized/robotics-soda-task-card.webp",
+    heroImage: "/images/projects/optimized/robotics-soda-task-hero.webp",
     imageAlt:
       "A robotic arm assembly being held above a container of hardware components during an early development session.",
     visualType: "Early robotics hardware work",
@@ -146,6 +154,8 @@ export const projects: Project[] = [
     route: "/projects/pacman-processing-game",
     repositoryUrl: "https://github.com/INo-xious/packman-game-ai-agent",
     image: "/images/projects/pacman-processing-game.png",
+    thumbnailImage: "/images/projects/optimized/pacman-processing-game-card.webp",
+    heroImage: "/images/projects/optimized/pacman-processing-game-hero.webp",
     imageAlt:
       "Concept visualization of an original cobalt maze, geometric player and opponent tokens, and a network-state diagram.",
     visualType: "Maze and network-state study",
@@ -175,6 +185,8 @@ export const projects: Project[] = [
     route: "/projects/github-profile-readme",
     repositoryUrl: "https://github.com/INo-xious/INo-xious",
     image: "/images/projects/github-profile-readme.png",
+    thumbnailImage: "/images/projects/optimized/github-profile-readme-card.webp",
+    heroImage: "/images/projects/optimized/github-profile-readme-hero.webp",
     imageAlt:
       "GitHub profile README showing a large red MARVEL banner and an introduction to Marvel Harisson's student work.",
     visualType: "GitHub profile README",
@@ -205,6 +217,8 @@ export const projects: Project[] = [
     route: "/projects/marvel-harisson",
     repositoryUrl: "https://github.com/INo-xious/marvel-harisson",
     image: "/images/projects/marvel-harisson.png",
+    thumbnailImage: "/images/projects/optimized/marvel-harisson-card.webp",
+    heroImage: "/images/projects/optimized/marvel-harisson-hero.webp",
     imageAlt:
       "Personal website homepage showing a dark-themed interface with project highlights and navigation links.",
     visualType: "Personal website homepage",
