@@ -12,3 +12,8 @@ vi.mock("next/image", () => ({
       Object.fromEntries(Object.entries(props).filter(([key]) => key !== "fill" && key !== "priority")),
     ),
 }));
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+  useRouter: () => ({ refresh: () => undefined }),
+}));

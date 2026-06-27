@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { HomeArtifactVisual, homeRouteArtifacts } from "@/components/home-artifacts";
+import { useLanguage } from "@/components/language-provider";
 
 export const TILE_POOL_SIZE = 48;
 export const HOME_ZOOM_MIN = 0.92;
@@ -68,6 +69,7 @@ export function snapToGrid(value: number) {
 }
 
 export function ProjectMap() {
+  const { copy } = useLanguage();
   const mapRef = useRef<HTMLDivElement>(null);
   const clockRef = useRef<HTMLTimeElement>(null);
   const hoverLabelRef = useRef<HTMLDivElement>(null);
@@ -293,10 +295,9 @@ export function ProjectMap() {
       onWheel={handleWheel}
       aria-labelledby="home-title"
     >
-      <time ref={clockRef} className="map-meta map-time" aria-label="Current time in Osaka">--:--:--</time>
-      <div className="map-meta map-mode">interactive project map <span aria-hidden="true">▲</span></div>
-      <div className="map-meta map-location">Osaka, Japan · 2026</div>
-      <div className="map-meta map-updated">last updated · 2026</div>
+      <time ref={clockRef} className="map-meta map-time" aria-label={copy.home.osakaTimeLabel}>--:--:--</time>
+      <div className="map-meta map-location">{copy.home.location}</div>
+      <div className="map-meta map-updated">{copy.home.updated}</div>
 
       <div ref={mapRef} className="map-world">
         <svg className="map-grid" width="100%" height="100%" aria-hidden="true" focusable="false">
@@ -374,10 +375,10 @@ export function ProjectMap() {
       </div>
 
       <div className="home-copy">
-        <p className="home-handle">Marvel Harisson · INo-xious</p>
-        <p className="home-role">Software Engineering Student</p>
-        <p className="home-tech">Python · C++ · Data Automation · Robotics</p>
-        <p className="home-tagline">Building software foundations through practical projects.</p>
+        <p className="home-handle">{copy.home.handle}</p>
+        <p className="home-role">{copy.home.role}</p>
+        <p className="home-tech">{copy.home.tech}</p>
+        <p className="home-tagline">{copy.home.tagline}</p>
       </div>
 
       <div ref={hoverLabelRef} className="map-hover-label" aria-hidden="true">

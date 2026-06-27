@@ -5,7 +5,9 @@ import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import type { LabItem } from "@/data/lab-items";
 
-export function LabGallery({ items }: { items: LabItem[] }) {
+type LabGalleryItem = LabItem & { linkAriaLabel?: string };
+
+export function LabGallery({ items }: { items: LabGalleryItem[] }) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -20,7 +22,7 @@ export function LabGallery({ items }: { items: LabItem[] }) {
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: reduceMotion ? 0 : index * 0.045, duration: 0.25 }}
-          aria-label={`Open ${item.title} on the Ri-one website in a new tab`}
+          aria-label={item.linkAriaLabel ?? `Open ${item.title} on the Ri-one website in a new tab`}
         >
           <Image
             src={item.image}

@@ -120,6 +120,7 @@ export const projects: Project[] = [
       "An early TurtleBot2/Kobuki robotics exploration using an arm, camera, and A1 RPLiDAR for a 'grab me a soda' task.",
     tags: ["Robotics", "TurtleBot2", "Kobuki", "RPLiDAR", "Hardware Design"],
     route: "/projects/robotics-soda-task",
+    repositoryUrl: "https://github.com/Gil-gil-glitch/ros2_crane_plus_ws/tree/main",
     image: "/images/projects/robotics-soda-task.jpg",
     imageAlt:
       "A robotic arm assembly being held above a container of hardware components during an early development session.",
@@ -143,6 +144,7 @@ export const projects: Project[] = [
       "A Pac-Man style game built in Processing with grid-based movement and AI/server-oriented logic.",
     tags: ["Processing", "Java", "Game Logic", "Networking"],
     route: "/projects/pacman-processing-game",
+    repositoryUrl: "https://github.com/INo-xious/packman-game-ai-agent",
     image: "/images/projects/pacman-processing-game.png",
     imageAlt:
       "Concept visualization of an original cobalt maze, geometric player and opponent tokens, and a network-state diagram.",

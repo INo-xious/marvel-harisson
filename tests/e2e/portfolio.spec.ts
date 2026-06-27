@@ -3,6 +3,8 @@ import { expect, test } from "@playwright/test";
 test("navigates from the spatial home into projects and toggles theme", async ({ page }, testInfo) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Marvel" })).toBeVisible();
+  await expect(page.getByRole("group", { name: "Language" })).toBeVisible();
+  await expect(page.getByText("interactive project map")).toHaveCount(0);
   const artifactPlane = testInfo.project.name === "mobile" ? page.locator(".mobile-artifact-plane") : page.locator(".artifact-plane");
   await expect(artifactPlane.locator(":scope > a")).toHaveCount(5);
   await expect(artifactPlane.locator('a[href^="/projects/"]')).toHaveCount(0);
@@ -17,6 +19,25 @@ test("navigates from the spatial home into projects and toggles theme", async ({
     await page.getByLabel(/toggle light or dark theme/i).click();
   }
   await expect(page.locator("html")).toHaveAttribute("data-theme", initialTheme === "dark" ? "light" : "dark");
+});
+
+test("switches visible portfolio copy between English and Japanese", async ({ page }, testInfo) => {
+  await page.goto("/");
+  const languageToggle = page.locator(".language-toggle");
+  await languageToggle.getByRole("button", { name: "日本語" }).click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "ja");
+  await expect(languageToggle).not.toHaveAttribute("aria-busy", "true");
+  const roleText = testInfo.project.name === "mobile" ? page.locator(".mobile-intro .home-role") : page.locator(".home-copy .home-role");
+  await expect(roleText).toHaveText("ソフトウェア工学を学ぶ学生");
+
+  await page.goto("/projects");
+  await expect(page.getByRole("heading", { name: "制作" })).toBeVisible();
+  await expect(page.getByText("実践的なシステム、実験、学習の記録。")).toBeVisible();
+
+  await languageToggle.getByRole("button", { name: "EN", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(languageToggle).not.toHaveAttribute("aria-busy", "true");
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
 });
 
 test("moves artifacts and the marker grid as one spatial plane", async ({ page }, testInfo) => {
@@ -148,7 +169,7 @@ test("publishes Marvel's email as a direct mailto link", async ({ page }) => {
 
 test("keeps the project gallery honest while robotics is in progress", async ({ page }) => {
   await page.goto("/projects");
-  await expect(page.locator(".project-card")).toHaveCount(5);
+  await expect(page.locator(".project-card")).toHaveCount(6);
   await expect(page.getByText("Python File Automation Exercises")).toHaveCount(0);
   await expect(page.getByText("Project screenshot")).toHaveCount(0);
   await expect(page.getByText("Original photograph")).toHaveCount(0);
@@ -156,13 +177,46 @@ test("keeps the project gallery honest while robotics is in progress", async ({ 
 
   await page.goto("/projects/robotics-soda-task");
   await expect(page.getByRole("heading", { name: "Robotics Soda Task Concept" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /view repository/i })).toHaveAttribute(
+    "href",
+    "https://github.com/Gil-gil-glitch/ros2_crane_plus_ws/tree/main",
+  );
   await expect(page.getByRole("heading", { name: "What I Built" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "What I Learned" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Technical Details" })).toBeVisible();
   await expect(page.getByText("Original photograph")).toHaveCount(0);
 
+  await page.goto("/projects/pacman-processing-game");
+  await expect(page.getByRole("heading", { name: "Pac-Man Processing Game" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /view repository/i })).toHaveAttribute(
+    "href",
+    "https://github.com/INo-xious/packman-game-ai-agent",
+  );
+
   const removedProject = await page.goto("/projects/python-file-automation");
   expect(removedProject?.status()).toBe(404);
+});
+
+test("reveals project copy on hover or first mobile tap", async ({ page }, testInfo) => {
+  await page.goto("/projects");
+  const card = page.locator(".project-card").first();
+  const link = card.locator(".project-card-link");
+  const overlay = card.locator(".project-card-overlay");
+  await expect(overlay).toHaveCSS("opacity", "0");
+
+  if (testInfo.project.name === "mobile") {
+    await link.tap();
+    await expect(page).toHaveURL(/\/projects$/);
+    await expect(link).toHaveAttribute("data-revealed", "true");
+    await expect(overlay).toHaveCSS("opacity", "1");
+    await link.tap();
+    await expect(page).toHaveURL(/\/projects\/marveious-style-engine$/);
+    return;
+  }
+
+  await card.hover();
+  await expect(overlay).toHaveCSS("opacity", "1");
+  await expect(overlay.getByRole("heading", { name: "MarveIous Style Engine" })).toBeVisible();
 });
 
 test("mobile home uses the same five route artifacts", async ({ page }, testInfo) => {
