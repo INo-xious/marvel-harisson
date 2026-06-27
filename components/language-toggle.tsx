@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/components/language-provider";
+import { ScrambleText } from "@/components/scramble-text";
 import type { Locale } from "@/data/locale";
 
 const options: Array<{ locale: Locale; labelKey: "english" | "japanese" }> = [
@@ -19,10 +20,11 @@ export function LanguageToggle() {
           <button
             type="button"
             onClick={() => setLocale(option.locale)}
+            aria-label={copy.language[option.labelKey]}
             aria-pressed={locale === option.locale}
             data-active={locale === option.locale || undefined}
           >
-            {copy.language[option.labelKey]}
+            <ScrambleText text={copy.language[option.labelKey]} />
           </button>
         </span>
       ))}

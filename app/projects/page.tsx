@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ProjectGallery } from "@/components/project-gallery";
+import { ScrambleText } from "@/components/scramble-text";
 import { getProjects } from "@/data/localized-data";
 import { siteCopy } from "@/data/locale";
 import { getRequestLocale } from "@/data/request-locale";
@@ -17,8 +18,8 @@ export default async function ProjectsPage() {
   return (
     <main className="dark-page projects-page">
       <header className="page-header">
-        <h1>{copy.title}</h1>
-        <p>{copy.description}</p>
+        <h1><ScrambleText text={copy.title} /></h1>
+        <p><ScrambleText text={copy.description} /></p>
       </header>
       <ProjectGallery projects={projects} ariaLabel={copy.galleryLabel} cardAriaLabel={copy.viewCaseStudy} />
     </main>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ScrambleText } from "@/components/scramble-text";
 import { TimelineList } from "@/components/timeline-list";
 import { siteCopy } from "@/data/locale";
 import { getRequestLocale } from "@/data/request-locale";
@@ -15,8 +16,8 @@ export default async function TimelinePage() {
     <main className="dark-page timeline-page">
       <section className="timeline-shell">
         <header className="timeline-header">
-          <h1>{copy.title}</h1>
-          <p>{copy.description}</p>
+          <h1><ScrambleText text={copy.title} /></h1>
+          <p><ScrambleText text={copy.description} /></p>
         </header>
         <TimelineList entries={timeline} />
       </section>

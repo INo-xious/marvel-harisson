@@ -40,6 +40,28 @@ test("switches visible portfolio copy between English and Japanese", async ({ pa
   await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
 });
 
+test("scrambles language changes without resetting scroll position", async ({ page }) => {
+  await page.goto("/projects");
+  const targetScroll = await page.evaluate(() => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const nextScroll = Math.min(520, Math.max(0, maxScroll - 8));
+    window.scrollTo(0, nextScroll);
+    return nextScroll;
+  });
+  test.skip(targetScroll < 120, "projects page is not tall enough to verify scroll restoration");
+
+  const beforeScroll = await page.evaluate(() => window.scrollY);
+  await page.locator(".language-toggle").getByRole("button", { name: "日本語" }).click();
+
+  await expect(page.locator("html")).toHaveAttribute("data-language-transition", "scramble");
+  await expect(page.locator(".scramble-text[data-scrambling]").first()).toBeAttached();
+  await expect(page.getByRole("heading", { name: "制作" })).toBeVisible();
+  await page.waitForFunction((scrollY) => window.scrollY >= scrollY - 24, beforeScroll);
+
+  const afterScroll = await page.evaluate(() => window.scrollY);
+  expect(afterScroll).toBeGreaterThan(beforeScroll - 24);
+});
+
 test("moves artifacts and the marker grid as one spatial plane", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "desktop-only interaction");
   await page.goto("/");

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { HomeArtifactVisual, homeRouteArtifacts } from "@/components/home-artifacts";
 import { useLanguage } from "@/components/language-provider";
+import { ScrambleText } from "@/components/scramble-text";
 
 const MOBILE_GRID_SIZE = 24;
 const SPATIAL_ANGLE = 7;
@@ -48,10 +49,10 @@ export function MobileHome() {
         <h1 id="mobile-home-title" className="mobile-wordmark">MARVEL</h1>
 
         <section className="mobile-intro" aria-label="Introduction">
-          <p className="home-handle">{copy.home.handle}</p>
-          <p className="home-role">{copy.home.role}</p>
-          <p className="home-tech">{copy.home.tech}</p>
-          <p className="home-tagline">{copy.home.tagline}</p>
+          <p className="home-handle"><ScrambleText text={copy.home.handle} /></p>
+          <p className="home-role"><ScrambleText text={copy.home.role} /></p>
+          <p className="home-tech"><ScrambleText text={copy.home.tech} /></p>
+          <p className="home-tagline"><ScrambleText text={copy.home.tagline} /></p>
         </section>
       </section>
     </main>

@@ -96,6 +96,15 @@ img { user-select: none; }
   border: 0;
 }
 
+.scramble-text {
+  display: inline;
+  white-space: inherit;
+}
+
+.scramble-text[data-scrambling] {
+  text-decoration: none;
+}
+
 .mono-label, .map-meta, .home-handle, .home-tech, .case-study-meta,
 .case-study-tags, .language-toggle, .timeline-row time,
 .case-study-index, .identity-card dt, .identity-card dd, .about-lists li span {

@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
+import { ScrambleText } from "@/components/scramble-text";
 import type { Project } from "@/data/projects";
 
 export function ProjectCard({
@@ -53,8 +54,8 @@ export function ProjectCard({
           />
         </div>
         <div className="project-card-overlay">
-          <h2>{project.title}</h2>
-          <p>{project.description}</p>
+          <h2><ScrambleText text={project.title} /></h2>
+          <p><ScrambleText text={project.description} /></p>
         </div>
       </Link>
     </motion.article>

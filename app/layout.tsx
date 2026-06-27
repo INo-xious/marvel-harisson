@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       </head>
       <body>
         <ThemeProvider>
-          <LanguageProvider key={locale} initialLocale={locale}>
+          <LanguageProvider initialLocale={locale}>
             <PageTransition>{children}</PageTransition>
             <LanguageToggle />
             <FloatingNav />

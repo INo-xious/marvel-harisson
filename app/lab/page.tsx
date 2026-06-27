@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LabGallery } from "@/components/lab-gallery";
 import { RitsumeikanLabs } from "@/components/ritsumeikan-labs";
+import { ScrambleText } from "@/components/scramble-text";
 import { getLabItems, getRitsumeikanLabs } from "@/data/localized-data";
 import { siteCopy } from "@/data/locale";
 import { getRequestLocale } from "@/data/request-locale";
@@ -16,8 +17,8 @@ export default async function LabPage() {
   return (
     <main className="dark-page lab-page">
       <header className="page-header">
-        <h1>{copy.title}</h1>
-        <p>{copy.description}</p>
+        <h1><ScrambleText text={copy.title} /></h1>
+        <p><ScrambleText text={copy.description} /></p>
       </header>
       <LabGallery items={labItems} />
       <RitsumeikanLabs labs={ritsumeikanLabs} copy={copy} />

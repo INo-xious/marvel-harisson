@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import { ScrambleText } from "@/components/scramble-text";
 import type { LocalizedRitsumeikanLab } from "@/data/localized-data";
 
 type RitsumeikanLabsCopy = {
@@ -13,10 +14,10 @@ export function RitsumeikanLabs({ labs, copy }: { labs: LocalizedRitsumeikanLab[
     <section className="rits-labs" aria-labelledby="rits-labs-title">
       <header className="rits-labs-header">
         <div>
-          <p>{copy.ritsumeikanKicker}</p>
-          <h2 id="rits-labs-title">{copy.ritsumeikanTitle}</h2>
+          <p><ScrambleText text={copy.ritsumeikanKicker} /></p>
+          <h2 id="rits-labs-title"><ScrambleText text={copy.ritsumeikanTitle} /></h2>
         </div>
-        <p>{copy.ritsumeikanDescription}</p>
+        <p><ScrambleText text={copy.ritsumeikanDescription} /></p>
       </header>
 
       <div className="rits-labs-grid">
@@ -40,11 +41,11 @@ export function RitsumeikanLabs({ labs, copy }: { labs: LocalizedRitsumeikanLab[
             </div>
             <div className="rits-lab-copy">
               <div>
-                <p>{lab.shortName}</p>
-                <h3>{lab.name}</h3>
+                <p><ScrambleText text={lab.shortName} /></p>
+                <h3><ScrambleText text={lab.name} /></h3>
               </div>
               <ArrowUpRight aria-hidden="true" size={18} />
-              <p>{lab.description}</p>
+              <p><ScrambleText text={lab.description} /></p>
             </div>
           </a>
         ))}

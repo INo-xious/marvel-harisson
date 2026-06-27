@@ -3,6 +3,7 @@
 import { ExternalLink } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
+import { ScrambleText } from "@/components/scramble-text";
 import type { LabItem } from "@/data/lab-items";
 
 type LabGalleryItem = LabItem & { linkAriaLabel?: string };
@@ -32,9 +33,9 @@ export function LabGallery({ items }: { items: LabGalleryItem[] }) {
             loading={index === 0 ? "eager" : "lazy"}
           />
           <span className="lab-tile-caption">
-            <b>{item.title}</b>
+            <b><ScrambleText text={item.title} /></b>
             <i>·</i>
-            <span>{item.category}</span>
+            <span><ScrambleText text={item.category} /></span>
             <ExternalLink aria-hidden="true" size={13} />
           </span>
         </motion.a>

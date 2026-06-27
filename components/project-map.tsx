@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { HomeArtifactVisual, homeRouteArtifacts } from "@/components/home-artifacts";
 import { useLanguage } from "@/components/language-provider";
+import { ScrambleText } from "@/components/scramble-text";
 
 export const TILE_POOL_SIZE = 48;
 export const HOME_ZOOM_MIN = 0.92;
@@ -296,8 +297,8 @@ export function ProjectMap() {
       aria-labelledby="home-title"
     >
       <time ref={clockRef} className="map-meta map-time" aria-label={copy.home.osakaTimeLabel}>--:--:--</time>
-      <div className="map-meta map-location">{copy.home.location}</div>
-      <div className="map-meta map-updated">{copy.home.updated}</div>
+      <div className="map-meta map-location"><ScrambleText text={copy.home.location} /></div>
+      <div className="map-meta map-updated"><ScrambleText text={copy.home.updated} /></div>
 
       <div ref={mapRef} className="map-world">
         <svg className="map-grid" width="100%" height="100%" aria-hidden="true" focusable="false">
@@ -375,10 +376,10 @@ export function ProjectMap() {
       </div>
 
       <div className="home-copy">
-        <p className="home-handle">{copy.home.handle}</p>
-        <p className="home-role">{copy.home.role}</p>
-        <p className="home-tech">{copy.home.tech}</p>
-        <p className="home-tagline">{copy.home.tagline}</p>
+        <p className="home-handle"><ScrambleText text={copy.home.handle} /></p>
+        <p className="home-role"><ScrambleText text={copy.home.role} /></p>
+        <p className="home-tech"><ScrambleText text={copy.home.tech} /></p>
+        <p className="home-tagline"><ScrambleText text={copy.home.tagline} /></p>
       </div>
 
       <div ref={hoverLabelRef} className="map-hover-label" aria-hidden="true">

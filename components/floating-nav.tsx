@@ -20,6 +20,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/components/language-provider";
+import { ScrambleText } from "@/components/scramble-text";
 import { useTheme } from "@/components/theme-provider";
 import { GitHubMark, LinkedInMark } from "@/components/brand-icons";
 import { publicEmailHref } from "@/data/contact";
@@ -103,7 +104,7 @@ export function FloatingNav() {
               data-active={active || undefined}
             >
               <Icon aria-hidden="true" size={18} strokeWidth={1.8} />
-              <span className="nav-tooltip" role="tooltip">{label}</span>
+              <span className="nav-tooltip" role="tooltip"><ScrambleText text={label} /></span>
               {active ? <motion.span layoutId="nav-dot" className="nav-dot" /> : null}
             </Link>
           );
@@ -131,11 +132,11 @@ export function FloatingNav() {
           aria-label={copy.nav.emailMarvel}
         >
           <Mail aria-hidden="true" size={18} strokeWidth={1.8} />
-          <span className="nav-tooltip" role="tooltip">{copy.nav.email}</span>
+          <span className="nav-tooltip" role="tooltip"><ScrambleText text={copy.nav.email} /></span>
         </a>
         <button className="nav-action" type="button" onClick={toggleTheme} aria-label={copy.nav.toggleTheme}>
           {themeIcons}
-          <span className="nav-tooltip" role="tooltip">{copy.nav.theme}</span>
+          <span className="nav-tooltip" role="tooltip"><ScrambleText text={copy.nav.theme} /></span>
         </button>
         <div
           className="lofi-trigger"
@@ -152,7 +153,7 @@ export function FloatingNav() {
             aria-label={copy.nav.openSleepRadio}
           >
             <Volume2 aria-hidden="true" size={18} strokeWidth={1.8} />
-            <span className="nav-tooltip" role="tooltip">{copy.nav.sleepRadio}</span>
+            <span className="nav-tooltip" role="tooltip"><ScrambleText text={copy.nav.sleepRadio} /></span>
           </a>
         </div>
       </nav>
@@ -167,7 +168,7 @@ export function FloatingNav() {
             transition={{ duration: 0.16 }}
           >
             <div className="mobile-more-head">
-              <span>{copy.nav.more}</span>
+              <span><ScrambleText text={copy.nav.more} /></span>
               <button type="button" onClick={() => setMoreOpen(false)} aria-label={copy.nav.closeMore}>
                 <X aria-hidden="true" size={18} />
               </button>
@@ -184,11 +185,11 @@ export function FloatingNav() {
             })}
             <a href={publicEmailHref} onClick={() => setMoreOpen(false)}>
               <Mail aria-hidden="true" size={18} />
-              <span>{copy.nav.email}</span>
+              <span><ScrambleText text={copy.nav.email} /></span>
             </a>
             <button type="button" onClick={toggleTheme}>
               {themeIcons}
-              <span>{copy.nav.switchTheme}</span>
+              <span><ScrambleText text={copy.nav.switchTheme} /></span>
             </button>
             <button
               type="button"
@@ -203,7 +204,7 @@ export function FloatingNav() {
               aria-expanded={lofiOpen}
             >
               <Radio aria-hidden="true" size={18} />
-              <span>{copy.nav.sleepRadioControls}</span>
+              <span><ScrambleText text={copy.nav.sleepRadioControls} /></span>
             </button>
           </motion.div>
         ) : null}
@@ -243,14 +244,14 @@ export function FloatingNav() {
               data-active={active || undefined}
             >
               <Icon aria-hidden="true" size={20} strokeWidth={1.8} />
-              <span>{label}</span>
+              <span><ScrambleText text={label} /></span>
               {active ? <motion.span layoutId="mobile-nav-dot" className="nav-dot" /> : null}
             </Link>
           );
         })}
         <button className="nav-action" type="button" onClick={() => setMoreOpen((open) => !open)} aria-label={copy.nav.moreOptions} aria-expanded={moreOpen}>
           <MoreHorizontal aria-hidden="true" size={21} />
-          <span>{copy.nav.more}</span>
+          <span><ScrambleText text={copy.nav.more} /></span>
         </button>
       </nav>
     </>
