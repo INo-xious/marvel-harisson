@@ -43,4 +43,4 @@ pnpm build
 
 ## Deployment
 
-The project is ready for deployment on Vercel using the default Next.js settings.
+The project is ready for deployment on the default Next.js settings.
