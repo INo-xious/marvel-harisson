@@ -8,8 +8,10 @@ const ALPHABET_SCRAMBLE_CHARS =
 const KATAKANA_SCRAMBLE_CHARS =
   "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
 
-const DEFAULT_DURATION_MS = 1600;
-const SCRAMBLE_TICK_MS = 70;
+const FULL_DURATION_MS = 900;
+const LIGHT_DURATION_MS = 360;
+const LIGHT_CHARACTER_LIMIT = 36;
+const SCRAMBLE_TICK_MS = 80;
 
 function hasJapanese(text: string) {
   return /[\u3040-\u30ff\u3400-\u9fff]/.test(text);
@@ -18,11 +20,13 @@ function hasJapanese(text: string) {
 export function ScrambleText({
   text,
   className,
-  duration = DEFAULT_DURATION_MS,
+  duration,
+  intensity = "light",
 }: {
   text: string;
   className?: string;
   duration?: number;
+  intensity?: "full" | "light";
 }) {
   const textRef = useRef<HTMLSpanElement>(null);
   const previousTextRef = useRef(text);
@@ -60,6 +64,8 @@ export function ScrambleText({
 
     const startedAt = performance.now();
     const maxLength = Math.max(previousText.length, text.length);
+    const animationDuration = duration ?? (intensity === "full" ? FULL_DURATION_MS : LIGHT_DURATION_MS);
+    const animatedLength = intensity === "full" ? maxLength : Math.min(maxLength, LIGHT_CHARACTER_LIMIT);
 
     let frameId = 0;
 
@@ -72,26 +78,21 @@ export function ScrambleText({
 
     const animate = (now: number) => {
       const elapsed = now - startedAt;
-      const progress = Math.min(elapsed / duration, 1);
+      const progress = Math.min(elapsed / animationDuration, 1);
       const tick = Math.floor(elapsed / SCRAMBLE_TICK_MS);
 
       let nextText = "";
 
-      /**
-       * Phase 1:
-       * Old text scrambles out.
-       *
-       * Phase 2:
-       * New text scrambles in.
-       */
-      if (progress < 0.5) {
+      if (intensity === "full" && progress < 0.5) {
         const outProgress = progress / 0.5;
         const scrambledCharacters = Math.floor(outProgress * maxLength);
 
         for (let index = 0; index < maxLength; index += 1) {
           const source = previousText[index] ?? "";
 
-          if (source === " ") {
+          if (index >= animatedLength) {
+            nextText += text[index] ?? "";
+          } else if (source === " ") {
             nextText += " ";
           } else if (index < scrambledCharacters) {
             nextText += getScrambleChar(index, tick);
@@ -100,13 +101,13 @@ export function ScrambleText({
           }
         }
       } else {
-        const inProgress = (progress - 0.5) / 0.5;
-        const settledCharacters = Math.floor(inProgress * maxLength);
+        const inProgress = intensity === "full" ? (progress - 0.5) / 0.5 : progress;
+        const settledCharacters = Math.floor(inProgress * animatedLength);
 
         for (let index = 0; index < maxLength; index += 1) {
           const target = text[index] ?? "";
 
-          if (index < settledCharacters || progress === 1) {
+          if (index >= animatedLength || index < settledCharacters || progress === 1) {
             nextText += target;
           } else if (target === " ") {
             nextText += " ";
@@ -132,7 +133,7 @@ export function ScrambleText({
       node.textContent = text;
       node.removeAttribute("data-scrambling");
     };
-  }, [duration, text]);
+  }, [duration, intensity, text]);
 
   return (
     <span

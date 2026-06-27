@@ -291,6 +291,7 @@ html[data-theme="dark"] .lofi-panel iframe { filter: none; }
   transform: translate3d(0, 0, 0) scale(1);
   transform-origin: center center;
   transition: transform 100ms linear;
+  will-change: transform;
 }
 .spatial-stage {
   position: absolute;
@@ -510,7 +511,8 @@ html[data-theme="dark"] .lofi-panel iframe { filter: none; }
 }
 .project-card-media img {
   object-fit: cover;
-  transition: transform 360ms cubic-bezier(.2,.8,.2,1), filter 220ms ease;
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1), filter 160ms ease;
+  will-change: transform;
 }
 .project-card-overlay {
   position: absolute;
@@ -525,6 +527,7 @@ html[data-theme="dark"] .lofi-panel iframe { filter: none; }
   opacity: 0;
   transform: translateY(12px);
   transition: opacity var(--motion) ease, transform var(--motion) ease;
+  will-change: opacity;
   pointer-events: none;
 }
 .project-card-overlay h2 {
@@ -563,7 +566,7 @@ html[data-theme="dark"] .lofi-panel iframe { filter: none; }
 /* Lab */
 .lab-grid { display: grid; grid-template-columns: 1.05fr 1.05fr .95fr; grid-auto-rows: minmax(230px, 37vh); gap: 6px; }
 .lab-tile { position: relative; min-height: 230px; padding: 0; overflow: hidden; border: 0; background: #141416; cursor: pointer; text-align: left; }
-.lab-tile img { object-fit: cover; transition: transform 260ms cubic-bezier(.2,.8,.2,1), filter 200ms ease; }
+.lab-tile img { object-fit: cover; transition: transform 180ms cubic-bezier(.2,.8,.2,1), filter 140ms ease; will-change: transform; }
 .lab-tile-caption { position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 7px; align-items: center; padding: 30px 14px 13px; background: linear-gradient(transparent, rgba(0,0,0,.78)); color: white; font-size: 11px; opacity: 0; transform: translateY(4px); transition: opacity var(--motion) ease, transform var(--motion) ease; }
 .lab-tile-caption b { font-weight: 560; }.lab-tile-caption i { font-style: normal; color: #777; }.lab-tile-caption span { color: #b7b7bb; }.lab-tile-caption svg { margin-left: auto; }
 @media (hover: hover) { .lab-tile:hover img { transform: scale(1.015); filter: brightness(1.05); }.lab-tile:hover .lab-tile-caption { opacity: 1; transform: translateY(0); } }
@@ -575,7 +578,7 @@ html[data-theme="dark"] .lofi-panel iframe { filter: none; }
 .rits-labs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .rits-lab-card { min-width: 0; overflow: hidden; border: 1px solid var(--dark-line); background: color-mix(in srgb, var(--dark-page) 92%, var(--dark-ink)); color: var(--dark-ink); }
 .rits-lab-media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #101012; }
-.rits-lab-media img { object-fit: cover; transition: transform 200ms ease, filter 200ms ease; }
+.rits-lab-media img { object-fit: cover; transition: transform 170ms ease, filter 140ms ease; will-change: transform; }
 .rits-lab-media[data-fit="contain"] img { object-fit: contain; }
 .rits-lab-media > span { position: absolute; top: 10px; left: 10px; padding: 5px 7px; border-radius: 999px; background: rgba(10,10,12,.72); color: white; font-family: var(--font-geist-mono); font-size: 8px; backdrop-filter: blur(8px); }
 .rits-lab-copy { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 9px 18px; min-height: 170px; padding: 17px; }

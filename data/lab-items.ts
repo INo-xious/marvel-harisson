@@ -5,6 +5,7 @@ export type LabItem = {
   year: "2026";
   description: string;
   image: string;
+  thumbnailImage: string;
   alt: string;
   mediaLabel: "Original photograph";
   tone: "dark" | "light";
@@ -20,6 +21,7 @@ export const labItems: LabItem[] = [
     description:
       "A development session with Ri-one's @Home League team, which builds service robots for household environments.",
     image: "/images/lab/rione-home-league.jpg",
+    thumbnailImage: "/images/lab/optimized/rione-home-league-card.webp",
     alt: "Two Ri-one members working with laptops and prototype hardware in a robotics lab.",
     mediaLabel: "Original photograph",
     tone: "light",

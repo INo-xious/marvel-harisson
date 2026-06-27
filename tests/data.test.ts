@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { existsSync } from "node:fs";
 import { labItems } from "@/data/lab-items";
 import { contactLinks, publicEmail, publicEmailHref } from "@/data/contact";
 import { getContactLinks, getProjects } from "@/data/localized-data";
@@ -40,6 +41,23 @@ describe("portfolio data", () => {
     expect(projects.find((project) => project.slug === "pacman-processing-game")?.repositoryUrl).toBe(
       "https://github.com/INo-xious/packman-game-ai-agent",
     );
+  });
+
+  it("uses optimized media derivatives for performance-sensitive image surfaces", () => {
+    for (const project of projects) {
+      expect(project.thumbnailImage).toMatch(/^\/images\/projects\/optimized\/.+-card\.webp$/);
+      expect(project.heroImage).toMatch(/^\/images\/projects\/optimized\/.+-hero\.webp$/);
+      expect(existsSync(`public${project.thumbnailImage}`)).toBe(true);
+      expect(existsSync(`public${project.heroImage}`)).toBe(true);
+    }
+
+    expect(labItems[0].thumbnailImage).toBe("/images/lab/optimized/rione-home-league-card.webp");
+    expect(existsSync(`public${labItems[0].thumbnailImage}`)).toBe(true);
+
+    for (const lab of ritsumeikanLabs) {
+      expect(lab.thumbnailImage).toMatch(/^\/images\/lab\/optimized\/.+-card\.webp$/);
+      expect(existsSync(`public${lab.thumbnailImage}`)).toBe(true);
+    }
   });
 
   it("provides Japanese localized copy without changing routes or repository URLs", () => {

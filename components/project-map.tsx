@@ -15,6 +15,7 @@ export const SPATIAL_ANGLE = 7;
 export const GRID_TILE_SIZE = GRID_SIZE;
 export const DRAG_THRESHOLD = 6;
 const GRID_PARALLAX = 12;
+const MAX_TRAIL_STEPS = 3;
 const angleRadians = (SPATIAL_ANGLE * Math.PI) / 180;
 const angleCos = Math.cos(angleRadians);
 const angleSin = Math.sin(angleRadians);
@@ -181,7 +182,7 @@ export function ProjectMap() {
       lastGridCellRef.current = currentCell;
       const deltaColumn = currentCell.column - previous.column;
       const deltaRow = currentCell.row - previous.row;
-      const steps = Math.min(6, Math.max(1, Math.abs(deltaColumn), Math.abs(deltaRow)));
+      const steps = Math.min(MAX_TRAIL_STEPS, Math.max(1, Math.abs(deltaColumn), Math.abs(deltaRow)));
 
       for (let step = 1; step <= steps; step += 1) {
         const gridCell = {

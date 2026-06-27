@@ -32,10 +32,11 @@ export function RitsumeikanLabs({ labs, copy }: { labs: LocalizedRitsumeikanLab[
           >
             <div className="rits-lab-media" data-fit={lab.imageFit ?? "cover"}>
               <Image
-                src={lab.image}
+                src={lab.thumbnailImage}
                 alt={lab.alt}
                 fill
-                sizes="(max-width: 799px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                sizes="(max-width: 799px) calc(100vw - 24px), (max-width: 1100px) calc((100vw - 74px) / 2), calc((100vw - 80px) / 3)"
+                loading="lazy"
               />
               <span>{String(index + 1).padStart(2, "0")}</span>
             </div>

@@ -72,7 +72,7 @@ export function LanguageProvider({
       transitionTimerRef.current = window.setTimeout(() => {
         document.documentElement.removeAttribute("data-language-transition");
         transitionTimerRef.current = null;
-      }, 700);
+      }, 920);
       document.cookie = `${localeCookieName}=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
       document.documentElement.lang = nextLocale;
       setLocaleState(nextLocale);

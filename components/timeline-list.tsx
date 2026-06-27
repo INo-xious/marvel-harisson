@@ -27,11 +27,11 @@ export function TimelineList({ entries }: { entries: TimelineEntry[] }) {
         return (
           <motion.div
             key={`${entry.year}-${index}`}
-            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
-              delay: reduceMotion ? 0 : index * 0.045,
-              duration: 0.22,
+              delay: reduceMotion ? 0 : index * 0.018,
+              duration: 0.14,
             }}
           >
             {entry.href ? (
