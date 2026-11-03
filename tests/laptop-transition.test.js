@@ -1,7 +1,7 @@
 import {describe,expect,it} from 'vitest';
 import {LAPTOP_TIMING,sampleLaptopTransition} from '../public/laptop-transition.js';
 describe('screen-registered laptop motion',()=>{
- it('wakes before travel, rectifies only after the screen covers the viewport, and fades off on return',()=>{
+ it('wakes before travel and reaches the exact desktop and sleeping endpoints',()=>{
   expect(sampleLaptopTransition('enter',0)).toMatchObject({camera:0,power:0,rectify:0});
   expect(sampleLaptopTransition('enter',100).power).toBeGreaterThan(0);
   expect(sampleLaptopTransition('enter',LAPTOP_TIMING.enter)).toEqual({camera:1,power:1,rectify:1,chrome:1,done:true});
@@ -13,15 +13,26 @@ describe('screen-registered laptop motion',()=>{
     const pose=sampleLaptopTransition(mode,elapsed);
     expect(pose.camera).toBeGreaterThanOrEqual(previous);previous=pose.camera;
     expect([pose.camera,pose.power,pose.rectify].every(x=>Number.isFinite(x)&&x>=0&&x<=1)).toBe(true);
-    if(mode==='enter'&&pose.rectify>0)expect(pose.camera).toBe(1);
-    if(mode==='enter'&&pose.chrome>0)expect(pose.rectify).toBe(1);
-    if(mode==='leave'&&pose.rectify<1)expect(pose.chrome).toBe(0);
-    if(mode==='leave'&&pose.camera>0)expect(pose.rectify).toBe(0);
+
+   }
+  }
+ });
+
+ it('blends screen alignment during travel instead of a separate correction at the end',()=>{
+  const middle=sampleLaptopTransition('enter',1600);
+  expect(middle.camera).toBeGreaterThan(0);expect(middle.camera).toBeLessThan(1);
+  expect(middle.rectify).toBeGreaterThan(0);expect(middle.rectify).toBeLessThan(1);
+  for(const mode of ['enter','leave']){
+   for(let time=16;time<=LAPTOP_TIMING[mode];time+=16){
+    const before=sampleLaptopTransition(mode,time-16),after=sampleLaptopTransition(mode,time);
+    // No 60 Hz frame should contain a large screen-alignment or UI jump.
+    expect(Math.abs(after.rectify-before.rectify)).toBeLessThan(.02);
+    expect(Math.abs(after.chrome-before.chrome)).toBeLessThan(.07);
    }
   }
  });
  it('eases camera velocity to zero at both endpoints',()=>{
-  for(const [mode,start,end] of [['enter',250,1750],['leave',400,1950]]){
+  for(const [mode,start,end] of [['enter',250,2400],['leave',350,2500]]){
    expect(sampleLaptopTransition(mode,start+16).camera).toBeLessThan(.00002);
    expect(1-sampleLaptopTransition(mode,end-16).camera).toBeLessThan(.00002);
   }
