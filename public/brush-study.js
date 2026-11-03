@@ -1,20 +1,20 @@
-import {createRoomInteractions} from './room-interactions.js?v=objects-20261103a';
+import {createRoomInteractions} from './room-interactions.js?v=previews-clock-20261103b';
 import * as THREE from 'three';
 import {WatercolorPost} from './watercolor-post.js';
 import {sunState,minutesInOsaka,startTimePreview,runningRoomDate} from './time.js';
 import {createDaylightPalette} from './daylight-palette.js';
-import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=objects-20261103a';
-import {createStudyDesk} from './brush-study-desk.js?v=objects-20261103a';
-import {createStudyExterior} from './brush-study-exterior.js?v=objects-20261103a';
-import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=objects-20261103a';
-import {studyWindowGLSL} from './brush-study-window.js?v=objects-20261103a';
+import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=previews-clock-20261103b';
+import {createStudyDesk} from './brush-study-desk.js?v=previews-clock-20261103b';
+import {createStudyExterior} from './brush-study-exterior.js?v=previews-clock-20261103b';
+import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=previews-clock-20261103b';
+import {studyWindowGLSL} from './brush-study-window.js?v=previews-clock-20261103b';
 import {portfolio,tracks} from './content.js?v=portfolio-20261103a';
-import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=objects-20261103a';
-import {createPaintedDesktop} from './brush-study-desktop.js?v=objects-20261103a';
-import {watercolorReveal} from './brush-study-wash.js?v=objects-20261103a';
-import {createPaintedPortal} from './brush-study-portal.js?v=objects-20261103a';
-import {createLaptopProjection} from './brush-study-laptop-view.js?v=objects-20261103a';
-import {createLaptopLandscapeSurface,portalLaptopScreenView} from './brush-study-laptop-landscape.js?v=objects-20261103a';
+import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=previews-clock-20261103b';
+import {createPaintedDesktop} from './brush-study-desktop.js?v=previews-clock-20261103b';
+import {watercolorReveal} from './brush-study-wash.js?v=previews-clock-20261103b';
+import {createPaintedPortal} from './brush-study-portal.js?v=previews-clock-20261103b';
+import {createLaptopProjection} from './brush-study-laptop-view.js?v=previews-clock-20261103b';
+import {createLaptopLandscapeSurface,portalLaptopScreenView} from './brush-study-laptop-landscape.js?v=previews-clock-20261103b';
 import {sampleShoreline,SHORELINE_TIMING} from './brush-study-shoreline-timing.js';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canvas=document.querySelector('#painting'),renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power'});
@@ -317,7 +317,7 @@ function pointerInPainting(e){
 }
 function pointerOnPaper(e){raycaster.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,1-e.clientY/innerHeight*2),camera);const point=raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1),0),new THREE.Vector3());return point?new THREE.Vector2(point.x+836,470.5-point.y):null;}
 const socialItems=STUDY_SILL_ICONS.map(icon=>[icon.id,icon.label,...icon.center]);
-const roomUI=createRoomInteractions({contacts:portfolio.contacts,tracks,reduced,onOpen:()=>post.stop(),onLamp:value=>{lamp=value;},lampOn:lamp});
+const roomUI=createRoomInteractions({contacts:portfolio.contacts,tracks,reduced,onOpen:()=>{post.stop();parallaxTarget.copy(viewTilt);},onLamp:value=>{lamp=value;},lampOn:lamp,getTime:()=>({minutes:minutesInOsaka(runningRoomDate(preview)),live:preview===null}),onTime:minutes=>{preview=minutes===null?null:startTimePreview(minutes);syncTime();}});
 const socialButtons=socialItems.map(([id,label,x,y],index)=>{
  const button=document.createElement('button');button.className='social-hit';button.setAttribute('aria-label',label);button.setAttribute('aria-haspopup','dialog');button.title=label;
  button.onpointerenter=()=>post.stop();
@@ -408,9 +408,10 @@ function projectRoomObjects(){
  if(lampMesh){lampMesh.updateWorldMatrix(true,false);const points=Array.from({length:4},(_,i)=>new THREE.Vector3().fromBufferAttribute(lampMesh.geometry.attributes.position,i).applyMatrix4(lampMesh.matrixWorld).project(camera));
  projectHit(roomUI.lamp,points,'polygon(58% 2%,72% 2%,100% 28%,100% 38%,60% 48%,54% 40%,56% 20%,48% 20%,14% 42%,27% 83%,45% 88%,47% 100%,0% 100%,0% 92%,18% 84%,2% 38%,45% 12%,55% 12%)');}
  projectHit(roomUI.radio,[[1028,374],[1166,374],[1166,445],[1028,445]].map(([x,y])=>{const z=objectDepth(10,{x,y}),k=(cameraDistance-z)/cameraDistance;return new THREE.Vector3((x-836)*k,(470.5-y)*k,z).project(camera);}));
+ projectHit(roomUI.clock,[[1425,85],[1565,85],[1565,235],[1425,235]].map(([x,y])=>{const z=objectDepth(0,{x,y}),k=(cameraDistance-z)/cameraDistance;return new THREE.Vector3((x-836)*k,(470.5-y)*k,z).project(camera);}), 'ellipse(49% 49% at 50% 50%)');
 }
 let viewportWidth=0,viewportHeight=0;
-function resize(){const w=innerWidth,h=innerHeight,a=w/h;if(viewportWidth===w&&viewportHeight===h)return;viewportWidth=w;viewportHeight=h;span.set(Math.max(1672,941*a)*1.22,Math.max(941,1672/a)*1.22);camera.aspect=a;cameraDistance=span.y/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))+100;if(laptopRoomPose)laptopRoomPose.position.set(laptopRoomPose.tilt.x*85,-laptopRoomPose.tilt.y*48,cameraDistance);if(!paintedDesktop.isOpen)camera.position.z=cameraDistance;camera.setViewOffset(w,h,0,paintedDesktop.isOpen?0:(w<600?18:35),w,h);camera.updateProjectionMatrix();alignLayers();deskScene?.resize();exteriorScene?.resize();laptopView=null;projectLaptop();if(paintedDesktop.isOpen&&!laptopFlight&&laptopView){camera.position.copy(laptopView.position);camera.up.copy(laptopView.up);camera.lookAt(laptopView.center);}paintedDesktop.resize();if(latestSun)updateStudyLight({THREE,uniforms,distance:cameraDistance,wallDepth:windowPaneDepth(cameraDistance),sillDepth:windowPaintDepth(10,{x:1274,y:442},cameraDistance),sunAltitude:latestSun.altitude,sunAzimuth:latestSun.azimuth});renderer.setPixelRatio(Math.min(devicePixelRatio,w<700?1:1.25));renderer.setSize(w,h,false);const size=renderer.getDrawingBufferSize(new THREE.Vector2());post.resize(size.x,size.y,w<700);}
+function resize(){const w=innerWidth,h=innerHeight,a=w/h;if(viewportWidth===w&&viewportHeight===h)return;viewportWidth=w;viewportHeight=h;span.set(Math.max(1672,941*a),Math.max(941,1672/a));camera.aspect=a;cameraDistance=span.y/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))+100;if(laptopRoomPose)laptopRoomPose.position.set(laptopRoomPose.tilt.x*85,-laptopRoomPose.tilt.y*48,cameraDistance);if(!paintedDesktop.isOpen)camera.position.z=cameraDistance;camera.setViewOffset(w,h,0,paintedDesktop.isOpen?0:(w<600?18:35),w,h);camera.updateProjectionMatrix();alignLayers();deskScene?.resize();exteriorScene?.resize();laptopView=null;projectLaptop();if(paintedDesktop.isOpen&&!laptopFlight&&laptopView){camera.position.copy(laptopView.position);camera.up.copy(laptopView.up);camera.lookAt(laptopView.center);}paintedDesktop.resize();if(latestSun)updateStudyLight({THREE,uniforms,distance:cameraDistance,wallDepth:windowPaneDepth(cameraDistance),sillDepth:windowPaintDepth(10,{x:1274,y:442},cameraDistance),sunAltitude:latestSun.altitude,sunAzimuth:latestSun.azimuth});renderer.setPixelRatio(Math.min(devicePixelRatio,w<700?1:1.25));renderer.setSize(w,h,false);const size=renderer.getDrawingBufferSize(new THREE.Vector2());post.resize(size.x,size.y,w<700);}
 addEventListener('resize',resize);resize();
 function syncTime(){const date=runningRoomDate(preview),s=sunState(date),palette=createDaylightPalette(THREE,s.altitude);latestSun=s;
  clockMinute=minutesInOsaka(date)+date.getUTCSeconds()/60+date.getUTCMilliseconds()/60000;clockAt=performance.now();uniforms.clockMinutes.value=clockMinute;
@@ -423,7 +424,7 @@ function syncTime(){const date=runningRoomDate(preview),s=sunState(date),palette
  uniforms.strength.value=THREE.MathUtils.smoothstep(s.altitude,0,8)*(.32+.68*Math.max(0,Math.sin(solarAltitude)))*Math.max(0,Math.cos(solarFacing));
  updateStudyLight({THREE,uniforms,distance:cameraDistance,wallDepth:windowPaneDepth(cameraDistance),sillDepth:windowPaintDepth(10,{x:1274,y:442},cameraDistance),sunAltitude:s.altitude,sunAzimuth:s.azimuth});
  uniforms.sunElevation.value=s.altitude;uniforms.moonElevation.value=s.moon.altitude;
- scene.background=new THREE.Color('#ffffff');
+ roomUI.updateClock();scene.background=new THREE.Color('#ffffff');
 }
 const keyboardBrush=new THREE.Vector2(836,540);
 canvas.addEventListener('keydown',e=>{

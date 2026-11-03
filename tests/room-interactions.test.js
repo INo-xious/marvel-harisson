@@ -38,4 +38,20 @@ describe('room object controls',()=>{
   ui.lamp.click();expect(ui.lamp.getAttribute('aria-pressed')).toBe('false');expect(ui.isOpen).toBe(false);
   ui.lamp.click();expect(ui.lamp.getAttribute('aria-pressed')).toBe('true');expect(ui.lamp.hasAttribute('aria-expanded')).toBe(false);
  });
+ it('adjusts the painted hands with arrow keys and restores live time with a double click',()=>{
+  let state={minutes:720,live:true};
+  const changed=vi.fn(minutes=>{state={minutes:minutes??720,live:minutes===null};clockUI.updateClock();});
+  const clockUI=createRoomInteractions({contacts,tracks,onLamp:vi.fn(),getTime:()=>state,onTime:changed});
+  clockUI.clock.getBoundingClientRect=()=>({left:0,top:0,width:200,height:200});
+  clockUI.clock.dispatchEvent(new MouseEvent('pointerdown',{button:0,clientX:100,clientY:14}));
+  clockUI.clock.dispatchEvent(new MouseEvent('pointermove',{clientX:186,clientY:100}));
+  clockUI.clock.dispatchEvent(new MouseEvent('pointerup',{clientX:186,clientY:100}));
+  expect(changed).toHaveBeenLastCalledWith(735);
+  clockUI.clock.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true}));
+  expect(changed).toHaveBeenCalledWith(795);expect(clockUI.clock.getAttribute('aria-valuenow')).toBe('795');expect(clockUI.isOpen).toBe(false);
+  clockUI.clock.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));expect(changed).toHaveBeenLastCalledWith(800);
+  clockUI.clock.dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));expect(changed).toHaveBeenLastCalledWith(null);expect(state.live).toBe(true);
+  expect(document.querySelector('.room-clock')).toBeNull();clockUI.close();
+ });
+
 });
