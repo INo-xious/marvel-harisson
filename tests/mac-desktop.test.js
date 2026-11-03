@@ -26,7 +26,7 @@ describe('Mac portfolio desktop',()=>{
   button('Open Résumé from dock').click();expect(document.querySelector('.mac-window-body').textContent).toContain('Ritsumeikan University');
   expect([...document.querySelectorAll('.mac-window-body a')].some(link=>link.href.includes('Marvel-Harisson-resume.pdf'))).toBe(true);
  });
- it('keeps the real desktop mounted on the screen throughout entry and retreat',async()=>{
+ it('keeps wallpaper registered to the screen and desktop controls level throughout travel',async()=>{
   let finishEntry,finishLeave;
   const enter=vi.fn(()=>new Promise(resolve=>{finishEntry=resolve;}));
   const leave=vi.fn(()=>new Promise(resolve=>{finishLeave=resolve;}));
@@ -35,10 +35,10 @@ describe('Mac portfolio desktop',()=>{
   const corners=[[120,90],[370,75],[390,255],[135,270]];
   desktop.project({corners},enter.mock.calls[0][0].start+600);
   const surface=document.querySelector('.mac-surface'),dialog=document.querySelector('.mac-desktop');
-  expect(dialog.open).toBe(true);expect(desktop.isSettled).toBe(false);expect(surface.style.transform).toMatch(/^matrix3d/);expect(surface.dataset.registration).toBe('0.000');
+  expect(dialog.open).toBe(true);expect(desktop.isSettled).toBe(false);expect(surface.style.transform).toBe('none');expect(surface.style.opacity).toBe('0');expect(document.querySelector('.mac-display-backing').style.transform).toMatch(/^matrix3d/);expect(surface.dataset.registration).toBe('0.000');
   finishEntry();await opening;expect(desktop.isSettled).toBe(true);expect(surface.style.transform).toBe('none');
   const closing=desktop.close();expect(dialog.open).toBe(true);
-  desktop.project({corners},leave.mock.calls[0][0].start+700);expect(surface.style.transform).toMatch(/^matrix3d/);expect(desktop.isSettled).toBe(false);
+  desktop.project({corners},leave.mock.calls[0][0].start+700);expect(surface.style.transform).toBe('none');expect(surface.style.opacity).toBe('0');expect(document.querySelector('.mac-display-backing').style.transform).toMatch(/^matrix3d/);expect(desktop.isSettled).toBe(false);
   finishLeave();await closing;expect(dialog.open).toBe(false);
  });
 

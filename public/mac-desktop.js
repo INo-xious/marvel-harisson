@@ -207,14 +207,12 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
    const quad=screenCorners.map(([x,y],i)=>[x+(target[i][0]-x)*rectify,y+(target[i][1]-y)*rectify]);
    const matrix=mapPaintedScreen({source:{left:0,top:0,width:innerWidth,height:innerHeight},corners:quad});
    if(matrix)displayBacking.style.transform=matrix;
-   // Keep the responsive desktop inside the visible display area. This
-   // prevents a brief magnification before the camera starts pulling back.
-   const visible=screenCorners.map(([x,y])=>[Math.max(0,Math.min(innerWidth,x)),Math.max(0,Math.min(innerHeight,y))]);
-   const desktopMatrix=mapPaintedScreen({source:{left:0,top:0,width:innerWidth,height:innerHeight},corners:visible});
-   if(desktopMatrix)surface.style.transform=desktopMatrix;
+   // Only the wallpaper belongs to the moving display plane. Desktop chrome
+   // appears at the end of entry and fades before retreat, always level.
+   surface.style.transform='none';
    dialog.style.clipPath=`polygon(${screenCorners.map(([x,y])=>`${x}px ${y}px`).join(',')})`;
   }
-  surface.style.opacity=String(power);displayBacking.style.opacity=String(power);surface.dataset.screenPower=power.toFixed(3);surface.dataset.registration=rectify.toFixed(3);
+  surface.style.opacity=String(pose.chrome*(motion.mode==='leave'?motion.fromChrome:1));displayBacking.style.opacity=String(power);surface.dataset.screenPower=power.toFixed(3);surface.dataset.registration=rectify.toFixed(3);
  }
  async function open({from}={}){
   if(state!=='closed')return;const visit=++session;state='opening';opener=document.activeElement;
@@ -226,9 +224,9 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  }
  async function close(){
   if(state!=='open'&&state!=='opening')return;
-  const current=motion?sampleLaptopTransition(motion.mode,performance.now()-motion.start):{rectify:1,power:1};
+  const current=motion?sampleLaptopTransition(motion.mode,performance.now()-motion.start):{rectify:1,power:1,chrome:1};
   state='closing';++session;dismissMenu();surface.inert=true;
-  motion={mode:'leave',start:performance.now(),fromRectify:current.rectify,fromPower:current.power};project();
+  motion={mode:'leave',start:performance.now(),fromRectify:current.rectify,fromPower:current.power,fromChrome:current.chrome};project();
   await onLeave({start:motion.start});
   dialog.close();document.body.classList.remove('mac-desktop-open');motion=null;state='closed';windowPanel.hidden=true;activeFolder=null;surface.inert=false;onExit();opener?.focus({preventScroll:true});
  }

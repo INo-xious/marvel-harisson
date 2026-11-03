@@ -11,6 +11,6 @@
 
 .mac-desktop .painted-content-link::before,.mac-desktop .painted-content-link::after{display:none!important}
 
-.mac-surface{position:absolute;inset:0;width:100vw;height:100dvh;overflow:hidden;transform-origin:0 0;background:transparent;backface-visibility:hidden}.mac-surface[inert]{pointer-events:none;will-change:transform,opacity}.mac-surface[inert] .mac-menubar,.mac-surface[inert] .mac-dock{backdrop-filter:none;background-color:#e1e6e4d9}.mac-surface[inert] .mac-menu-popup{backdrop-filter:none}
+.mac-surface{position:absolute;inset:0;width:100vw;height:100dvh;overflow:hidden;transform-origin:0 0;background:transparent;backface-visibility:hidden}.mac-surface[inert]{pointer-events:none;will-change:opacity}
 
 .mac-display-backing{position:absolute;inset:0;width:100vw;height:100dvh;transform-origin:0 0;background:#3a7144 url('/assets/macos/sonoma.webp') center/cover;backface-visibility:hidden;pointer-events:none;will-change:transform,opacity}
