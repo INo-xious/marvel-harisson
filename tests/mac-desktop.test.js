@@ -17,6 +17,18 @@ describe('Mac portfolio desktop',()=>{
   expect(document.querySelectorAll('.mac-file-bitmap')).not.toHaveLength(0);
   await desktop.close();expect(desktop.isOpen).toBe(false);expect(leave).toHaveBeenCalledOnce();expect(exit).toHaveBeenCalledOnce();
  });
+ it('opens verified contributions directly from the desktop and Finder',async()=>{
+  desktop=createMacDesktop({portfolio});await desktop.open();
+  button('Open Contributions from dock').click();
+  expect(document.querySelectorAll('[role="option"]')).toHaveLength(31);
+  expect(document.querySelector('.mac-contribution-summary').textContent).toContain('22 merged');
+  expect(document.querySelector('.mac-contribution-summary a').href).toBe('https://github.com/INo-xious?tab=overview');
+  const search=button('Search this folder');search.value='CLIUtils';search.dispatchEvent(new Event('input'));
+  expect([...document.querySelectorAll('[role="option"]')].filter(el=>!el.hidden)).toHaveLength(1);
+  expect(document.querySelector('.project-browser-visit').href).toBe('https://github.com/CLIUtils/CLI11/pull/1479');
+  button('Open Projects in Finder').click();expect(document.querySelectorAll('[role="option"]')).toHaveLength(9);
+  button('Open Contributions in Finder').click();expect(document.querySelectorAll('[role="option"]')).toHaveLength(31);
+ });
  it('opens Finder from the Dock, searches, expands, and minimizes its window',async()=>{
   desktop=createMacDesktop({portfolio});await desktop.open();button('Open Finder').click();
   const search=button('Search this folder');search.value='Stockbit';search.dispatchEvent(new Event('input'));

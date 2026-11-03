@@ -13,4 +13,9 @@
 
 .mac-surface{position:absolute;inset:0;width:100vw;height:100dvh;overflow:hidden;transform-origin:0 0;background:transparent;backface-visibility:hidden}.mac-surface[inert]{pointer-events:none;will-change:opacity}
 
-.mac-display-backing{position:absolute;inset:0;width:100vw;height:100dvh;transform-origin:0 0;background:#3a7144 url('/assets/macos/sonoma.webp') center/cover;backface-visibility:hidden;pointer-events:none;will-change:transform,opacity}
+.mac-display-backing{position:absolute;inset:0;width:100vw;height:100dvh;transform-origin:0 0;background:transparent;backface-visibility:hidden;pointer-events:none;will-change:transform,opacity}
+
+.mac-desktop .mac-contribution-summary{line-height:1.8;margin:0 0 8px}.mac-desktop .mac-contribution-summary .painted-content-link{font:inherit;margin:0 0 0 12px;white-space:nowrap}
+@media(max-width:700px){.mac-dock{gap:3px;padding-left:7px;padding-right:7px}.mac-dock-app{width:40px;height:40px}.mac-desktop-files{gap:7px}}
+
+.mac-wallpaper{position:absolute;inset:0;background:#3a7144 url('/assets/macos/sonoma.webp') center/cover;pointer-events:none}

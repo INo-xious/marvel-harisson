@@ -1,8 +1,8 @@
 import {mapPaintedScreen} from './brush-study-passage.js';
-import {sampleLaptopTransition} from './laptop-transition.js?v=laptop-flight-20261103d';
+import {sampleLaptopTransition} from './laptop-transition.js?v=painted-wake-20261103a';
 import {createPaintedProjectBrowser} from './brush-study-project-browser.js?v=mac-desktop-20261103c';
 const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
-const folders=[{id:'projects',label:'Projects',icon:'folder'},{id:'timeline',label:'Timeline',icon:'calendar'},{id:'resume',label:'Résumé',icon:'folder'},{id:'notes',label:'Notes',icon:'notes'}];
+const folders=[{id:'projects',label:'Projects',icon:'folder'},{id:'contributions',label:'Contributions',icon:'folder'},{id:'timeline',label:'Timeline',icon:'calendar'},{id:'resume',label:'Résumé',icon:'folder'},{id:'notes',label:'Notes',icon:'notes'}];
 const icon=name=>{const image=make('img','mac-icon');image.src=`/assets/macos/${name}.webp`;image.alt='';image.draggable=false;return image;};
 function folderArt(){return icon('folder');}
 function paragraphs(parent,value,className='painted-copy'){String(value||'').split(/\n\s*\n/).filter(Boolean).forEach(text=>parent.append(make('p',className,text)));}
@@ -37,6 +37,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  const landscape=createMacScreen();
  const dialog=make('dialog','mac-desktop');dialog.setAttribute('aria-label','Mac desktop');
  const displayBacking=make('div','mac-display-backing');displayBacking.setAttribute('aria-hidden','true');
+ const wallpaper=make('div','mac-wallpaper');displayBacking.append(wallpaper);
  const surface=make('div','mac-surface');
  const menubar=make('div','mac-menubar');const left=make('div','mac-menu-left');const apple=make('button','mac-apple','');apple.setAttribute('aria-label','Apple menu');const finder=make('strong','','Finder');left.append(apple,finder);
  const menuButton=(label,items)=>{const button=make('button','mac-menu-button',label);button.type='button';button.setAttribute('aria-haspopup','menu');button.onclick=()=>showMenu(button,items);left.append(button);return button;};
@@ -72,7 +73,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
     else { link.target = '_blank'; link.rel = 'noopener noreferrer'; }
     parent.append(link);
   };
-  const renderProjects = () => {
+  const renderProjects = (initial = 0) => {
     const controls = make('div', 'painted-work-collections');
     controls.setAttribute('role', 'group');
     controls.setAttribute('aria-label', 'Choose work collection');
@@ -84,7 +85,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
     const buttons = collections.map(({label,items}, index) => {
       const button = make('button', '', `${label} · ${items.length}`);
       button.type = 'button';
-      button.setAttribute('aria-pressed', String(index === 0));
+      button.setAttribute('aria-pressed', String(index === initial));
       button.addEventListener('click', () => {
         buttons.forEach((item, i) => item.setAttribute('aria-pressed', String(i === index)));
         showCollection(index);
@@ -96,12 +97,19 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
       const {label,items} = collections[index];search.value='';windowFoot.textContent=`${items.length} ${label.toLowerCase()}`;
       const browser = createPaintedProjectBrowser({items,native:true,animate:false,announce:copy=>{announcement.textContent=copy;}});
       browser.element.setAttribute('aria-label', `${label} browser`);
-      const checked = index === 1 ? make('p', 'painted-content-meta', 'Pull request status checked 3 November 2026. Open a pull request for its latest status.') : null;
+      const checked = index === 1 ? make('p', 'painted-content-meta mac-contribution-summary') : null;
+      if(checked){
+        const repositories=new Set(items.map(item=>new URL(item.url).pathname.split('/').slice(1,3).join('/')));
+        const merged=items.filter(item=>item.tags?.includes('Merged')).length;
+        checked.append(document.createTextNode(`${items.length} pull requests · ${repositories.size} repositories · ${merged} merged · checked 3 Nov 2026.`));
+        addLink(checked,'https://github.com/INo-xious?tab=overview','GitHub activity ↗');
+        addLink(checked,'https://github.com/pulls?q=is%3Apr+author%3AINo-xious+-user%3AINo-xious','All pull requests ↗');
+      }
       content.replaceChildren(...(checked ? [checked, browser.element] : [browser.element]));
     };
     windowBody.append(controls, content);
-    showCollection(0);
-    return collections[0].items.length;
+    showCollection(initial);
+    return collections[initial].items.length;
   };
   const renderNotes = () => {
     const items = collection(portfolio.notes);
@@ -175,11 +183,11 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
     windowBody.append(content);
     return sections.length || 1;
   };
-  const renderers = { timeline: renderTimeline, resume: renderResume, projects: renderProjects, notes: renderNotes };
+  const renderers = { timeline: renderTimeline, resume: renderResume, projects: renderProjects, contributions: ()=>renderProjects(1), notes: renderNotes };
 
  function hideWindow(){windowPanel.hidden=true;activeFolder=null;folderButtons.get(lastFolder)?.focus({preventScroll:true});}
  function openFolder(id){if(state==='closed'||state==='closing')return;const folder=folders.find(folder=>folder.id===id);if(!folder)return;activeFolder=lastFolder=id;search.value='';folderTitle.textContent=folder.label;windowBody.replaceChildren();const count=renderers[id]();windowFoot.textContent=`${count} ${count===1?'item':'items'}`;windowPanel.hidden=false;windowBody.scrollTop=0;sidebarButtons.forEach((button,key)=>{if(key===id)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});windowBody.focus({preventScroll:true});announcement.textContent=`${folder.label} opened`;}
- search.oninput=()=>{const value=search.value.toLowerCase();const entries=windowBody.querySelectorAll('.project-browser-file,.painted-timeline-entry,.painted-resume-section,.painted-note');let count=0;entries.forEach(entry=>{entry.hidden=!entry.textContent.toLowerCase().includes(value);if(!entry.hidden)count++;});if(activeFolder==='projects'){const files=[...windowBody.querySelectorAll('.project-browser-file')],first=files.find(item=>!item.hidden),preview=windowBody.querySelector('.project-browser-preview');if(preview)preview.hidden=!first;if(first)first.click();}windowFoot.textContent=value?`${count} results`:activeFolder==='projects'?`${portfolio.projects?.length||0} projects`:'All items';};
+ search.oninput=()=>{const value=search.value.toLowerCase();const entries=windowBody.querySelectorAll('.project-browser-file,.painted-timeline-entry,.painted-resume-section,.painted-note');let count=0;entries.forEach(entry=>{entry.hidden=!entry.textContent.toLowerCase().includes(value);if(!entry.hidden)count++;});if(activeFolder==='projects'||activeFolder==='contributions'){const files=[...windowBody.querySelectorAll('.project-browser-file')],first=files.find(item=>!item.hidden),preview=windowBody.querySelector('.project-browser-preview');if(preview)preview.hidden=!first;if(first)first.click();}windowFoot.textContent=value?`${count} results`:(activeFolder==='projects'||activeFolder==='contributions')?`${entries.length} items`:'All items';};
  function dismissMenu(){menu?.remove();menu=null;}
  function showMenu(button,items){if(menu?.dataset.trigger===button.textContent){dismissMenu();return;}dismissMenu();menu=make('div','mac-menu-popup');menu.dataset.trigger=button.textContent;menu.setAttribute('role','menu');for(const [label,action] of items){const item=make('button','',label);item.setAttribute('role','menuitem');item.onclick=()=>{dismissMenu();action();};menu.append(item);}dialog.append(menu);const box=button.getBoundingClientRect();menu.style.left=box.left+'px';menu.style.top=box.bottom+3+'px';}
  const folderMenu=folders.map(folder=>[folder.label,()=>openFolder(folder.id)]);
@@ -198,7 +206,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  function project({corners}={},now=performance.now()){
   if(Array.isArray(corners)&&corners.length===4)screenCorners=corners;
   if(state==='closed')return;
-  if(!motion||reduced){surface.style.transform='none';surface.style.opacity='1';displayBacking.style.transform='none';displayBacking.style.opacity='1';dialog.style.clipPath='none';return;}
+  if(!motion||reduced){wallpaper.style.opacity='1';surface.style.transform='none';surface.style.opacity='1';displayBacking.style.transform='none';displayBacking.style.opacity='1';dialog.style.clipPath='none';return;}
   const pose=sampleLaptopTransition(motion.mode,now-motion.start);
   const rectify=motion.mode==='leave'?pose.rectify*motion.fromRectify:pose.rectify;
   const power=motion.mode==='leave'?pose.power*motion.fromPower:pose.power;
@@ -212,6 +220,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
    surface.style.transform='none';
    dialog.style.clipPath=`polygon(${screenCorners.map(([x,y])=>`${x}px ${y}px`).join(',')})`;
   }
+  wallpaper.style.opacity=String(pose.wallpaper*(motion.mode==='leave'?motion.fromWallpaper:1));
   surface.style.opacity=String(pose.chrome*(motion.mode==='leave'?motion.fromChrome:1));displayBacking.style.opacity=String(power);surface.dataset.screenPower=power.toFixed(3);surface.dataset.registration=rectify.toFixed(3);
  }
  async function open({from}={}){
@@ -224,9 +233,9 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  }
  async function close(){
   if(state!=='open'&&state!=='opening')return;
-  const current=motion?sampleLaptopTransition(motion.mode,performance.now()-motion.start):{rectify:1,power:1,chrome:1};
+  const current=motion?sampleLaptopTransition(motion.mode,performance.now()-motion.start):{rectify:1,power:1,chrome:1,wallpaper:1};
   state='closing';++session;dismissMenu();surface.inert=true;
-  motion={mode:'leave',start:performance.now(),fromRectify:current.rectify,fromPower:current.power,fromChrome:current.chrome};project();
+  motion={mode:'leave',start:performance.now(),fromRectify:current.rectify,fromPower:current.power,fromChrome:current.chrome,fromWallpaper:current.wallpaper};project();
   await onLeave({start:motion.start});
   dialog.close();document.body.classList.remove('mac-desktop-open');motion=null;state='closed';windowPanel.hidden=true;activeFolder=null;surface.inert=false;onExit();opener?.focus({preventScroll:true});
  }
