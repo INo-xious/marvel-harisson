@@ -1,0 +1,253 @@
+{
+  "verified": "2026-11-03",
+  "contributions": [
+    {
+      "url": "https://github.com/CLIUtils/CLI11/pull/1479",
+      "title": "fix: parse complex numbers with an exponent in the imaginary part",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "CLIUtils/CLI11",
+      "merged_at": "2026-10-22T23:51:46Z"
+    },
+    {
+      "url": "https://github.com/fmtlib/fmt/pull/4991",
+      "title": "Fix wide formatting of variant, monostate and expected",
+      "state": "Open",
+      "author": "INo-xious",
+      "repository": "fmtlib/fmt",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/fmtlib/fmt/pull/4992",
+      "title": "Use the locale decimal point in localized hexfloat formatting",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "fmtlib/fmt",
+      "merged_at": "2026-10-24T18:15:31Z"
+    },
+    {
+      "url": "https://github.com/fmtlib/fmt/pull/4993",
+      "title": "Fix formatting of nullptr with FMT_COMPILE and to_string",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "fmtlib/fmt",
+      "merged_at": "2026-10-25T16:30:46Z"
+    },
+    {
+      "url": "https://github.com/foxglove/mcap/pull/1855",
+      "title": "python: validate lengths inside chunk records",
+      "state": "Open",
+      "author": "INo-xious",
+      "repository": "foxglove/mcap",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/foxglove/mcap/pull/1856",
+      "title": "python: preserve options during sequential reader fallback",
+      "state": "Open",
+      "author": "INo-xious",
+      "repository": "foxglove/mcap",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/foxglove/mcap/pull/1857",
+      "title": "python: read metadata when summary indexes are absent",
+      "state": "Closed",
+      "author": "INo-xious",
+      "repository": "foxglove/mcap",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/foxglove/mcap/pull/1858",
+      "title": "cli: preserve unverified attachments during recovery",
+      "state": "Open",
+      "author": "INo-xious",
+      "repository": "foxglove/mcap",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/Gil-gil-glitch/ros2_crane_plus_ws/pull/3",
+      "title": "Define initial pose and modify approach pose",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "Gil-gil-glitch/ros2_crane_plus_ws",
+      "merged_at": "2026-06-25T13:28:20Z"
+    },
+    {
+      "url": "https://github.com/Gil-gil-glitch/ros2_crane_plus_ws/pull/6",
+      "title": "Add buttons for placing can left/right and catapulting",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "Gil-gil-glitch/ros2_crane_plus_ws",
+      "merged_at": "2026-06-26T16:07:08Z"
+    },
+    {
+      "url": "https://github.com/hgrecco/pint/pull/2499",
+      "title": "Raise UndefinedUnitError from Quantity properties with undefined references",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "hgrecco/pint",
+      "merged_at": "2026-10-21T10:12:47Z"
+    },
+    {
+      "url": "https://github.com/hgrecco/pint/pull/2500",
+      "title": "Fix context relations using [] when no unit is defined as = []",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "hgrecco/pint",
+      "merged_at": "2026-10-22T22:10:50Z"
+    },
+    {
+      "url": "https://github.com/kornia/kornia/pull/5092",
+      "title": "fix(geometry): accept path-like filenames in PLY point-cloud I/O",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "kornia/kornia",
+      "merged_at": "2026-09-29T15:28:07Z"
+    },
+    {
+      "url": "https://github.com/mikedh/trimesh/pull/2630",
+      "title": "Export uncolored point clouds to XYZ",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "mikedh/trimesh",
+      "merged_at": "2026-10-20T17:36:28Z"
+    },
+    {
+      "url": "https://github.com/optuna/optuna/pull/6880",
+      "title": "Avoid phantom metadata in `upload_artifact` for missing sources",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "optuna/optuna",
+      "merged_at": "2026-10-20T06:30:59Z"
+    },
+    {
+      "url": "https://github.com/optuna/optuna/pull/6881",
+      "title": "Avoid all-NaN warnings in `PatientPruner`",
+      "state": "Closed",
+      "author": "INo-xious",
+      "repository": "optuna/optuna",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/python-poetry/tomlkit/pull/659",
+      "title": "Keep a space after the comma when inserting at the front of an array",
+      "state": "Open",
+      "author": "INo-xious",
+      "repository": "python-poetry/tomlkit",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/python-poetry/tomlkit/pull/660",
+      "title": "Compare Bool items by value",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "python-poetry/tomlkit",
+      "merged_at": "2026-10-16T02:37:35Z"
+    },
+    {
+      "url": "https://github.com/Rione-at-Home/ros2_crane_and_turtle_ws/pull/2",
+      "title": "Fixed Kobuki Base Movement",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "Rione-at-Home/ros2_crane_and_turtle_ws",
+      "merged_at": "2026-07-02T12:24:25Z"
+    },
+    {
+      "url": "https://github.com/roboflow/rf-detr/pull/1569",
+      "title": "fix(keypoints): preserve identities across repeated horizontal flips",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "roboflow/rf-detr",
+      "merged_at": "2026-09-30T18:59:01Z"
+    },
+    {
+      "url": "https://github.com/roboflow/rf-detr/pull/1570",
+      "title": "fix(datasets): recognize existing YAML-resolved YOLO layouts",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "roboflow/rf-detr",
+      "merged_at": "2026-09-30T22:01:47Z"
+    },
+    {
+      "url": "https://github.com/roboflow/rf-detr/pull/1571",
+      "title": "fix(datasets): normalize YOLO class IDs across class-name entry points",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "roboflow/rf-detr",
+      "merged_at": "2026-09-30T22:57:20Z"
+    },
+    {
+      "url": "https://github.com/roboflow/supervision/pull/2639",
+      "title": "fix(key_points): preserve empty-joint skeletons during NMS",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "roboflow/supervision",
+      "merged_at": "2026-09-30T17:39:05Z"
+    },
+    {
+      "url": "https://github.com/roboflow/supervision/pull/2640",
+      "title": "fix(dataset): preserve `LabelMe` instance grouping",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "roboflow/supervision",
+      "merged_at": "2026-09-30T18:45:31Z"
+    },
+    {
+      "url": "https://github.com/roboflow/supervision/pull/2641",
+      "title": "fix(dataset): export annotations for in-memory grayscale images",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "roboflow/supervision",
+      "merged_at": "2026-09-30T20:12:40Z"
+    },
+    {
+      "url": "https://github.com/RobotecAI/rai/pull/876",
+      "title": "fix(whoami): convert retrieval scores to float",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "RobotecAI/rai",
+      "merged_at": "2026-10-12T13:18:10Z"
+    },
+    {
+      "url": "https://github.com/stack-of-tasks/pinocchio/pull/2959",
+      "title": "Preserve frame types when resolving frames in buildReducedModel",
+      "state": "Open",
+      "author": "INo-xious",
+      "repository": "stack-of-tasks/pinocchio",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/stack-of-tasks/pinocchio/pull/2960",
+      "title": "Guard model reduction when a locked joint frame cannot be found",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "stack-of-tasks/pinocchio",
+      "merged_at": "2026-10-21T09:29:51Z"
+    },
+    {
+      "url": "https://github.com/stack-of-tasks/pinocchio/pull/2961",
+      "title": "Fix MJCF body-based connect anchor coordinates",
+      "state": "Open",
+      "author": "INo-xious",
+      "repository": "stack-of-tasks/pinocchio",
+      "merged_at": null
+    },
+    {
+      "url": "https://github.com/urfave/cli/pull/2480",
+      "title": "fix: don't suggest hidden flags or commands",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "urfave/cli",
+      "merged_at": "2026-10-20T16:49:21Z"
+    },
+    {
+      "url": "https://github.com/urfave/cli/pull/2481",
+      "title": "fix: suggest flags the parser accepts for the command",
+      "state": "Merged",
+      "author": "INo-xious",
+      "repository": "urfave/cli",
+      "merged_at": "2026-10-21T16:47:29Z"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+/* Finder-like organization, painted on the same quiet paper as the room. */
+.painted-project-browser { display: flex; flex-direction: column; min-height: 260px; height: min(340px, 40dvh); container-type: inline-size; color: #576366; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 12px; line-height: 1.45; }
+.painted-project-browser * { box-sizing: border-box; }
+.painted-project-browser [hidden] { display: none !important; }
+.project-browser-toolbar { position: relative; display: flex; flex: none; align-items: center; justify-content: space-between; gap: 16px; padding: 3px 0 12px; margin-bottom: 17px; }
+.project-browser-toolbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: linear-gradient(90deg, #86999b12, #86999b34 21%, #86999b16 47%, #86999b2a 76%, transparent); clip-path: polygon(0 34%, 14% 14%, 29% 35%, 43% 11%, 61% 28%, 74% 7%, 91% 24%, 100% 43%, 97% 82%, 81% 69%, 62% 91%, 45% 73%, 26% 100%, 9% 76%, 0 92%); }
+.project-browser-count { font-size: 11px; color: #859092; letter-spacing: .015em; }
+.project-browser-view-options { display: flex; align-items: center; gap: 3px; }
+.painted-project-browser button.project-browser-view-button { position: relative; min-width: 35px; min-height: 31px; padding: 6px 8px; border: 0; border-radius: 0; color: #768b91; background: none; font: inherit; cursor: pointer; }
+.project-browser-view-button::after { content: ''; position: absolute; inset: 2px; background: #8cabb124; clip-path: polygon(4% 11%, 33% 4%, 65% 8%, 94% 3%, 100% 35%, 95% 62%, 98% 95%, 59% 91%, 24% 100%, 2% 88%, 5% 57%, 0 26%); pointer-events: none; opacity: 0; }
+.project-browser-view-button[aria-pressed='true']::after { opacity: 1; }
+.project-browser-view-button:hover { color: #446b79 !important; }
+.project-browser-view-button:hover::after { opacity: .8; }
+.project-browser-view-symbol { position: relative; z-index: 1; display: block; width: 17px; height: 17px; }
+.project-browser-view-symbol svg { display: block; width: 100%; height: 100%; }
+.project-browser-body { display: grid; flex: 1; min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(205px, 31%); gap: 24px; }
+.project-browser-collection { min-width: 0; min-height: 0; position: relative; display: flex; flex-direction: column; }
+.project-browser-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 18px 12px; align-content: start; min-height: 0; overflow: auto; padding: 7px 6px 13px; scrollbar-width: thin; scrollbar-color: #a8b5b03d transparent; overscroll-behavior: contain; }
+.painted-project-browser button.project-browser-file { position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: center; align-self: start; justify-content: flex-start; min-width: 0; min-height: 132px; padding: 6px 8px 12px; border: 0; border-radius: 0; color: #59686b; background: none; font: inherit; cursor: pointer; text-align: center; }
+.project-browser-file::after { content: ''; position: absolute; inset: 1px; z-index: -1; pointer-events: none; background: #d7e4e580 url('/assets/painted/paper-wash.png') center / 512px 512px; background-blend-mode: multiply; opacity: 0; clip-path: polygon(1% 5%, 26% 1%, 53% 4%, 82% 0, 98% 5%, 99% 27%, 96% 50%, 100% 78%, 96% 96%, 71% 99%, 44% 96%, 18% 100%, 2% 94%, 0 70%, 3% 43%); }
+.project-browser-file[aria-selected='true']::after { opacity: .62; }
+.project-browser-file[aria-selected='true'] .project-browser-file-name { color: #365c69; }
+.project-browser-file:hover .project-browser-mark, .project-browser-file:focus-visible .project-browser-mark { filter: saturate(1.1) contrast(1.035); }
+.project-browser-mark { position: relative; isolation: isolate; display: block; width: 104px; flex: none; filter: saturate(.89); transition: filter 500ms ease-out; pointer-events: none; }
+.project-browser-mark svg { display: block; width: 100%; height: auto; }
+.project-browser-mark:not(.is-document)::after { content: ''; position: absolute; inset: 26% 9% 16%; background: url('/assets/painted/pigment-wash.png') 23% 54% / 230px 230px; mix-blend-mode: luminosity; opacity: .28; clip-path: polygon(5% 10%, 31% 4%, 40% 11%, 93% 9%, 99% 19%, 95% 87%, 87% 97%, 9% 92%, 1% 83%, 0 38%); }
+.project-browser-mark.is-document { width: 84px; }
+.project-browser-file-name { position: relative; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; width: 100%; margin-top: 2px; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+.project-browser-file-meta { display: none; font-size: 11px; color: #8a9597; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-browser-list-heading { display: none; }
+.project-browser-preview { position: relative; min-width: 0; min-height: 0; overflow: auto; padding: 1px 0 20px 22px; scrollbar-width: thin; scrollbar-color: #a8b5b03d transparent; overscroll-behavior: contain; }
+.project-browser-preview::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(transparent, #8b9d9d2c 12%, #8b9d9d19 45%, #8b9d9d2c 83%, transparent); clip-path: polygon(30% 0, 91% 9%, 60% 24%, 100% 42%, 68% 62%, 93% 78%, 61% 100%, 8% 100%, 35% 78%, 0 61%, 37% 45%, 5% 28%, 36% 12%); pointer-events: none; }
+.project-browser-preview-art { display: flex; justify-content: center; margin: 2px 0 17px; }
+.project-browser-preview-art .project-browser-mark { width: 128px; }
+.project-browser-preview-art .project-browser-mark.is-document { width: 107px; }
+.painted-project-browser .project-browser-preview-kind { margin: 0 0 6px; font-size: 10px; color: #91a0a0; letter-spacing: .055em; text-transform: uppercase; }
+.painted-project-browser h4.project-browser-preview-title { margin: 0 0 12px; color: #4c666c; font-family: Georgia, 'Times New Roman', serif; font-size: 23px; font-weight: 400; line-height: 1.24; overflow-wrap: anywhere; }
+.project-browser-description { margin: 0 0 16px; white-space: pre-line; font-size: 12px; line-height: 1.7; color: #708084; }
+.project-browser-tags { display: flex; flex-wrap: wrap; gap: 5px 10px; padding: 0; list-style: none; margin: 0 0 17px; }
+.project-browser-tags li { color: #84918c; font-size: 10px; line-height: 1.4; }
+.project-browser-tags li + li::before { content: '·'; display: inline-block; margin-right: 9px; color: #aab1a5; }
+.project-browser-visit { position: relative; display: inline-block; padding: 1px 0 4px; font-size: 11px; color: #608a94; text-decoration: none; }
+.project-browser-visit::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: currentColor; opacity: .25; clip-path: polygon(0 25%, 20% 9%, 39% 29%, 62% 4%, 83% 25%, 100% 13%, 97% 73%, 72% 92%, 45% 76%, 22% 100%, 0 74%); }
+.project-browser-visit:hover { color: #426f79; }
+.project-browser-link-empty { font-size: 10px; color: #9daba9; line-height: 1.6; margin: 0; }
+.painted-project-browser[data-view='list'] .project-browser-items { display: flex; flex-direction: column; gap: 0; padding: 3px 4px 10px; }
+.painted-project-browser[data-view='list'] .project-browser-file { flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; min-height: 45px; width: 100%; padding: 4px 8px !important; text-align: left; }
+.painted-project-browser[data-view='list'] .project-browser-mark { width: 36px; }
+.painted-project-browser[data-view='list'] .project-browser-mark.is-document { width: 28px; margin-inline: 4px; }
+.painted-project-browser[data-view='list'] .project-browser-file-name { display: block; flex: 1; margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.painted-project-browser[data-view='list'] .project-browser-file-meta { display: block; flex: 0 1 29%; }
+.painted-project-browser[data-view='list'] .project-browser-list-heading { display: flex; justify-content: space-between; align-items: center; padding: 0 10px 9px 53px; color: #96a0a0; font-size: 10px; }
+.project-browser-list-heading span:last-child { width: 29%; }
+.painted-project-browser.is-empty .project-browser-body { grid-template-columns: 1fr; }
+.painted-project-browser.is-empty .project-browser-list-heading { display: none; }
+.project-browser-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 15px 25px 35px; text-align: center; }
+.project-browser-empty .project-browser-mark { width: 117px; opacity: .55; margin-bottom: 14px; }
+.painted-project-browser .project-browser-empty h4 { margin: 0 0 10px; font-size: 23px; font-family: Georgia, 'Times New Roman', serif; font-weight: 400; color: #748586; }
+.project-browser-empty p { max-width: 320px; font-size: 12px; line-height: 1.65; color: #98a2a0; margin: 0; }
+.project-browser-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.painted-project-browser button:focus-visible, .painted-project-browser a:focus-visible { outline: 2px dashed #6c8994; outline-offset: -3px; }
+@media (max-width: 850px) { .project-browser-body { gap: 18px; grid-template-columns: minmax(0, 1fr) minmax(185px, 35%); } .project-browser-items { grid-template-columns: repeat(auto-fill, minmax(106px, 1fr)); gap: 14px 8px; } .project-browser-mark { width: 94px; } .project-browser-preview { padding-left: 18px; } .painted-project-browser h4.project-browser-preview-title { font-size: 21px; } }
+@media (max-width: 650px) { .painted-project-browser { height: auto; min-height: 310px; } .project-browser-body { display: flex; flex-direction: column; gap: 24px; min-height: 0; } .project-browser-items { min-height: 150px; max-height: 330px; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 17px 10px; } .project-browser-preview { overflow: visible; padding: 21px 5px 8px; min-height: 0; } .project-browser-preview::before { top: 0; left: 0; right: 0; bottom: auto; width: auto; height: 2px; clip-path: polygon(0 24%, 18% 5%, 33% 30%, 48% 2%, 66% 22%, 83% 7%, 100% 36%, 97% 78%, 77% 94%, 59% 76%, 38% 100%, 18% 79%, 0 97%); background: linear-gradient(90deg, transparent, #8b9d9d2c 12%, #8b9d9d19 45%, #8b9d9d2c 83%, transparent); } .project-browser-preview-art { float: right; margin: 0 0 10px 17px; } .project-browser-preview-art .project-browser-mark { width: 85px; } .project-browser-preview-art .project-browser-mark.is-document { width: 68px; } .painted-project-browser h4.project-browser-preview-title { font-size: 23px; padding-right: 10px; } .project-browser-description { font-size: 13px; } .project-browser-visit { font-size: 12px; } .project-browser-tags li { font-size: 11px; } .project-browser-file-name { font-size: 12px; } .painted-project-browser[data-view='list'] .project-browser-items { max-height: 270px; } .project-browser-empty { min-height: 265px; padding: 15px 15px 30px; } }
+@media (prefers-reduced-motion: reduce) { .project-browser-mark { transition: none; } }
+@media (forced-colors: active) { .painted-project-browser button:focus-visible, .painted-project-browser a:focus-visible { outline: 2px solid Highlight; } .project-browser-file[aria-selected='true'] { border: 1px solid Highlight !important; } }
+/* A phone has one continuous content scroller, so swiping files can reach
+   the preview without getting trapped in a nested collection. */
+@media (max-width: 650px) {
+ .is-paper-desktop .painted-project-browser .project-browser-items { max-height: none !important; overflow: visible; flex: none; }
+}
+
+/* The shared Finder sidebar can make this content narrow on a wide screen. */
+@container (max-width: 460px) {
+ .project-browser-body { display: flex; flex-direction: column; gap: 22px; overflow: auto; scrollbar-width: thin; scrollbar-color: #a8b5b03d transparent; }
+ .project-browser-collection { flex: none; }
+ .project-browser-items { min-height: 138px; max-height: 248px; grid-template-columns: repeat(auto-fill,minmax(106px,1fr)); }
+ .project-browser-preview { flex: none; overflow: visible; padding: 19px 3px 9px; }
+ .project-browser-preview::before { top: 0; left: 0; right: 0; bottom: auto; width: auto; height: 2px; background: linear-gradient(90deg,transparent,#8b9d9d2c 15%,#8b9d9d19 49%,#8b9d9d2c 81%,transparent); clip-path: polygon(0 24%,18% 5%,33% 30%,48% 2%,66% 22%,83% 7%,100% 36%,97% 78%,77% 94%,59% 76%,38% 100%,18% 79%,0 97%); }
+ .project-browser-preview-art { float: right; margin: 0 0 10px 16px; }
+ .project-browser-preview-art .project-browser-mark { width: 86px; }
+ .project-browser-preview-art .project-browser-mark.is-document { width: 70px; }
+ .painted-project-browser h4.project-browser-preview-title { font-size: 22px; }
+}
+@media (max-width: 650px) { .project-browser-body { overflow: visible; } }
+
+/* Fit the shared Finder content slot; files and preview scroll independently. */
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .painted-folder-body { display: flex; flex-direction: column; overflow: hidden; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .painted-folder-subheading { display: none; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .painted-project-browser { flex: 1; min-height: 0; height: auto; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-toolbar { margin-bottom: 12px; padding-bottom: 8px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-items { min-height: 0; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px 8px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-file { min-height: 110px; padding: 4px 6px 8px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-mark { width: 91px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-mark.is-document { width: 73px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview { padding-left: 17px; padding-bottom: 14px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview-art { margin: 0 0 9px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview-art .project-browser-mark { width: 95px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview-art .project-browser-mark.is-document { width: 79px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] h4.project-browser-preview-title { font-size: 20px; margin-bottom: 9px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-description { margin-bottom: 12px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-tags { margin-bottom: 12px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] [data-view='list'] .project-browser-file { min-height: 42px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] [data-view='list'] .project-browser-file .project-browser-mark { width: 34px; }
+.is-paper-desktop .painted-folder-window[data-folder='projects'] [data-view='list'] .project-browser-file .project-browser-mark.is-document { width: 27px; }
+@media (max-width: 650px) {
+ .is-paper-desktop .painted-folder-window[data-folder='projects'] .painted-folder-body { display: block; overflow: auto; }
+ .is-paper-desktop .painted-folder-window[data-folder='projects'] .painted-project-browser { height: auto; min-height: 0; }
+ .is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-items { min-height: 135px; max-height: 270px; }
+ .is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview { padding: 19px 3px 9px; overflow: visible; }
+ .is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview-art { margin: 0 0 10px 15px; }
+ .is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview-art .project-browser-mark { width: 80px; }
+ .is-paper-desktop .painted-folder-window[data-folder='projects'] .project-browser-preview-art .project-browser-mark.is-document { width: 64px; }
+}
+
+.project-browser-preview:focus-visible { outline: 2px dashed #6c8994; outline-offset: -3px; }
+
+@media (prefers-reduced-motion: reduce) { .project-browser-file:hover .project-browser-mark, .project-browser-file:focus-visible .project-browser-mark { transform: none; } }

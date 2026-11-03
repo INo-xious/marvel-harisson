@@ -42,7 +42,7 @@ export const projects: Project[] = [
       "A from-scratch C++ chess engine paired with a Python data pipeline that learns move preferences from public Chess.com game history.",
     tags: ["C++", "Python", "Chess Engine", "Algorithms", "UCI", "Data Pipeline"],
     route: "/projects/marveious-style-engine",
-    repositoryUrl: "https://github.com/INo-xious/marvelous-playstyle-engine",
+    repositoryUrl: "https://github.com/INo-xious/marvelous-engine",
     image: "/images/projects/marveious-style-engine-real.png",
     thumbnailImage: "/images/projects/optimized/marveious-style-engine-card.webp",
     heroImage: "/images/projects/optimized/marveious-style-engine-hero.webp",

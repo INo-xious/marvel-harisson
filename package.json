@@ -1,5 +1,5 @@
 {
-  "name": "marvel-portfolio-scaffold",
+  "name": "marvel-harisson-portfolio",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "check:room": "node scripts/check-room.mjs"
   },
   "dependencies": {
     "@vercel/speed-insights": "^2.0.0",

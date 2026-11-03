@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" preserveAspectRatio="none">
+ <defs><filter id="brush" x="-8%" y="-8%" width="116%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".09 .14" numOctaves="3" seed="22" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale="7" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".35"/></filter></defs>
+ <path filter="url(#brush)" fill="white" d="M8 11 80 7 162 10 238 6 313 9 391 5 460 8 540 4 626 9 701 5 786 10 865 6 942 9 991 7 993 76 989 145 994 218 990 290 995 361 991 434 995 510 990 591 920 594 847 590 772 595 693 591 620 595 539 592 462 596 390 591 311 595 238 591 163 596 84 591 8 594 5 518 9 445 4 364 8 293 4 218 9 143 5 72Z"/>
+</svg>

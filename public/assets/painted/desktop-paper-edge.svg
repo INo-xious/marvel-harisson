@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" preserveAspectRatio="none">
+  <defs>
+    <filter id="bristle" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".045 .08" numOctaves="3" seed="14" result="paper"/>
+      <feDisplacementMap in="SourceGraphic" in2="paper" scale="21" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation=".55"/>
+    </filter>
+  </defs>
+  <g fill="white" filter="url(#bristle)">
+    <path d="M51 55 103 42 160 57 217 32 285 46 348 25 411 40 478 23 541 39 598 20 653 37 720 27 793 41 855 23 918 45 986 28 1048 47 1127 40 1144 75 1157 133 1147 190 1169 244 1146 300 1164 351 1147 405 1175 458 1153 518 1165 572 1143 624 1154 687 1103 704 1048 690 982 720 928 701 860 728 794 707 730 731 668 710 603 740 535 716 470 731 410 709 347 727 280 702 218 726 160 702 101 712 52 687 60 633 35 582 51 529 27 472 51 412 33 359 53 307 30 253 47 198 34 138Z"/>
+    <path d="m18 136 61-52 44 15-76 78zm-6 143 70-55 27 9-70 76zm-5 191 76-39 29 18-72 45zm11 141 58-37 20 11-62 43zm41 78 92-14 6 18-99 11zm1068-581 55 2-39 30-38-7zm1 185 58-32-17 29-37 29zm7 181 57-16-14 31-45 20zm-22 170 57-18-7 25-57 22z" opacity=".65"/>
+    <path d="m129 36 117 2-59 10-58-2zm266-17 103 9-66 7-41-4zm364 2 84 0-54 13-37-2zm-466 710 131 0-69 14-60-2zm320-5 112 8-62 12-55-9zm302-6 103-13-58 28-44-1z" opacity=".48"/>
+  </g>
+</svg>

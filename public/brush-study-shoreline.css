@@ -1,0 +1,18 @@
+/* Paper is deposited with the painting, never as a viewport-sized cover. */
+.painted-desktop.is-paper-desktop .painted-desktop-paper,
+.painted-desktop.is-paper-desktop:not(.is-arriving):not(.is-leaving) .painted-desktop-paper{background:transparent!important}
+.painted-desktop.is-paper-desktop .painted-desktop-paper::before{display:none!important}
+/* The passage mask supplies this paper's wet perimeter. Keep its interior
+   opaque so the laptop's old blue screen cannot bleed through dry reserves. */
+.painted-desktop.is-paper-desktop .painted-computer::before{content:'';position:absolute;inset:-1px;z-index:-1;pointer-events:none;background:#fff;mask:none}
+.is-paper-desktop .painted-desktop-heading,
+.is-paper-desktop .painted-desktop-toolbar,
+.is-paper-desktop .painted-computer-screen,
+.is-paper-desktop .painted-desktop-dock,
+.is-paper-desktop .painted-folder-window{opacity:var(--passage-ui,1)}
+.is-shoreline-passage .painted-computer{will-change:transform,mask-image}
+.is-shoreline-passage .painted-desktop-home{transition:none}
+.is-shoreline-passage .painted-desktop-heading-copy{visibility:visible}
+.is-shoreline-passage .painted-desktop-caption{visibility:hidden}
+.painted-desktop-landscape::after{content:'';position:absolute;inset:0;z-index:6;pointer-events:none;opacity:var(--portal-recess,0);box-shadow:inset 3px 4px 12px #34495050,inset -1px -2px 4px #ece4d443;mix-blend-mode:multiply}
+@media(prefers-reduced-motion:reduce){.is-shoreline-passage .painted-computer{will-change:auto}}

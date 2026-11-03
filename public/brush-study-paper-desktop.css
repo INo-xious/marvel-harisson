@@ -1,0 +1,99 @@
+/* The desktop is a loose painting on the same white paper as the room. */
+.painted-transition-stage { position: fixed; left: 50%; top: 50%; width: min(1180px,88vw); height: min(720px,78dvh); transform: translate(-50%,-50%); z-index: 60; pointer-events: none; isolation: isolate; overflow: hidden; mask: url('/assets/painted/desktop-paper-edge.svg') center / 100% 100% no-repeat; }
+.painted-transition-stage[hidden] { display: none; }
+.is-screen-desktop.is-paper-desktop .painted-desktop-paper { display: flex; align-items: center; justify-content: center; padding: 6vh 0; background: transparent; overflow: hidden; }
+.is-screen-desktop.is-paper-desktop .painted-desktop-paper::before { content: ''; display: block; position: fixed; inset: 0; background: #fff; opacity: var(--paper-opacity,1); z-index: -1; }
+.is-screen-desktop.is-paper-desktop .painted-computer { position: relative; inset: auto; width: min(1180px,88vw); height: min(720px,78dvh); margin: 0; overflow: visible; transform-origin: 50% 50%; isolation: isolate; }
+.is-screen-desktop.is-paper-desktop .painted-computer.watercolor-revealing,.is-screen-desktop.is-paper-desktop .painted-computer.watercolor-lifting { animation: none; }
+.is-paper-desktop .painted-desktop-wallpaper { inset: 0; clip-path: none; mask: url('/assets/painted/desktop-paper-edge.svg') center / 100% 100% no-repeat; background-color: transparent; background-size: cover; background-position: center; transform: translate(calc(var(--depth-x,0) * -1.1px),calc(var(--depth-y,0) * -.8px)); }
+.is-paper-desktop .painted-desktop-layer-wash:nth-child(n) { inset: 0; opacity: .32; border-radius: 0; background-image: url('/assets/painted/desktop-lake-wallpaper-v1.png'); background-color: transparent; background-position: center; background-size: cover; mix-blend-mode: normal; transform: translate(calc(var(--depth-x,0) * var(--strata-x,2px)),calc(var(--depth-y,0) * var(--strata-y,1px))); }
+.is-paper-desktop .painted-desktop-layer-wash::before { display: none; }
+.is-paper-desktop .painted-desktop-layer-wash:nth-child(1) { --strata-x: -.5px; --strata-y: -.3px; mask-image: linear-gradient(#000 0 27%,transparent 48%); }
+.is-paper-desktop .painted-desktop-layer-wash:nth-child(2) { --strata-x: .7px; --strata-y: .5px; mask-image: linear-gradient(transparent 25%,#000 39% 49%,transparent 62%); }
+.is-paper-desktop .painted-desktop-layer-wash:nth-child(3) { --strata-x: 1.5px; --strata-y: 1px; mask-image: linear-gradient(transparent 43%,#000 56% 67%,transparent 78%); }
+.is-paper-desktop .painted-desktop-layer-wash:nth-child(4) { --strata-x: 2.5px; --strata-y: 1.5px; mask-image: linear-gradient(transparent 61%,#000 78%); }
+.is-paper-desktop .painted-desktop-layer-wash:nth-child(5) { --strata-x: 3.5px; --strata-y: 2px; mask-image: linear-gradient(transparent 75%,#000 92%); }
+.is-paper-desktop .painted-desktop-layer-wash:nth-child(6) { opacity: .05; background: #c5b19a; mask-image: radial-gradient(ellipse at 20% 87%,#000,transparent 50%); }
+.is-paper-desktop .painted-desktop-heading { top: 8%; left: 7.4%; right: 7.5%; min-height: 35px; padding: 0 10px; color: #505656; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; transform: translate(calc(var(--depth-x,0) * 1.5px),calc(var(--depth-y,0) * 1px)); }
+.is-paper-desktop .painted-desktop-heading::before { inset: -8px -8px; opacity: .8; background-color: #f2f0e8; }
+.is-paper-desktop .painted-desktop-heading-copy { display: flex; align-items: baseline; gap: 11px; }
+.is-paper-desktop .painted-desktop-heading h2 { font-size: 14px; font-weight: 600; color: #465453; }
+.is-paper-desktop .painted-desktop-heading p { margin: 0; font-size: 10px; color: #727b75; }
+.is-paper-desktop .painted-room-back { font: 11px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif !important; color: #64766a !important; min-height: 35px; }
+.is-paper-desktop .painted-desktop-toolbar { top: calc(8% + 9px); left: 24%; right: auto; gap: 16px; z-index: 5; font: 11px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color: #62746d; }
+.is-paper-desktop .painted-desktop-toolbar span:last-child { margin: 0; color: inherit; }
+.is-paper-desktop .painted-desktop-heading p { display: none; }
+.is-paper-desktop .painted-computer-screen { inset: 21% 8% 20%; transform: translate(calc(var(--depth-x,0) * 3px),calc(var(--depth-y,0) * 2px)); }
+.is-paper-desktop .painted-desktop-home { align-items: flex-end; justify-content: center; transition: opacity .6s,filter .6s; }
+.is-paper-desktop .has-open-folder .painted-desktop-home { opacity: .42; filter: saturate(.8); }
+.is-paper-desktop .painted-desktop-welcome { width: 46%; margin: 0 0 18px; text-align: center; font: italic clamp(19px,2.1vw,29px) Georgia,serif; color: #63756f; }
+.is-paper-desktop .painted-desktop-folders { width: 46%; gap: 12px 26px; }
+.is-paper-desktop .painted-folder { width: 130px; padding: 0 5px 7px !important; }
+.is-paper-desktop .painted-folder-art { width: clamp(74px,8.1vw,110px); transition: transform .6s cubic-bezier(.16,1,.3,1),filter .6s; }
+.is-paper-desktop .painted-folder-label { margin-top: -5px; padding: 3px 5px; font: 12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color: #4f6660; }
+.is-paper-desktop .painted-folder:hover .painted-folder-art,.is-paper-desktop .painted-folder:focus-visible .painted-folder-art { transform: translateY(-5px) scale(1.035); }
+.is-paper-desktop .painted-desktop-note { width: 46%; margin-top: 13px; font-size: 10px; }
+.is-paper-desktop .painted-desktop-dock { bottom: 8%; width: min(390px,64%); min-height: 66px; gap: 14px; padding: 4px 17px; transform: translateX(-50%) translate(calc(var(--depth-x,0) * 5px),calc(var(--depth-y,0) * 3px)); }
+.is-paper-desktop .painted-dock-item { min-height: 52px; min-width: 54px; padding: 1px 6px 4px !important; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+.is-paper-desktop .painted-dock-item .painted-folder-art { width: 43px; }
+.is-paper-desktop .painted-dock-item > span:last-child:not(.painted-folder-art) { font: 9px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+.is-paper-desktop .painted-dock-item:hover .painted-folder-art,.is-paper-desktop .painted-dock-item:focus-visible .painted-folder-art { transform: translateY(-7px) scale(1.13); }
+.is-paper-desktop .painted-desktop-caption { position: absolute; inset: auto 0 4vh; width: 100%; max-width: none; color: #aaa398; text-align: center; font: italic 11px Georgia,serif; }
+.is-paper-desktop .painted-folder-window { inset: 18% 9% 20%; width: auto; height: auto; max-width: none; margin: 0; clip-path: polygon(.3% 1%,19% .5%,39% 1%,62% .2%,84% .7%,99.6% .4%,99.8% 26%,99.5% 51%,99.9% 74%,99.5% 99.3%,77% 99.7%,54% 99.4%,31% 99.8%,.4% 99.3%,.1% 73%,.5% 48%,.1% 26%); background: #f5f3ebf7 url('/assets/painted/paper-wash.png') center / 560px; filter: drop-shadow(0 8px 14px #4d5b5522); transform: translate(calc(var(--depth-x,0) * 6px),calc(var(--depth-y,0) * 4px)); transition: inset .55s cubic-bezier(.16,1,.3,1); }
+.is-paper-desktop .painted-folder-window { inset: 17% 9% 17%; }
+.is-paper-desktop .painted-folder-window.is-expanded { inset: 14% 7% 15%; }
+.is-paper-desktop .painted-folder-bar { min-height: 45px; padding: 9px 17px; justify-content: flex-start; gap: 15px; border-bottom: 1px solid #bcb9ad3a; background: #d9ddd81c; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+.is-paper-desktop .painted-folder-bar h3 { font: 600 13px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color: #5a625d; }
+.is-paper-desktop .painted-folder-back { font: 24px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif !important; min-width: 30px; min-height: 27px; padding: 0 !important; }
+.painted-traffic-lights { display: flex; align-items: center; gap: 7px; }
+.is-paper-desktop .painted-traffic-lights button { width: 14px; height: 14px; padding: 0 !important; min-height: 0; border-radius: 45% 56% 43% 54%; font: 11px/14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif !important; color: transparent !important; opacity: .75; transition: opacity .35s,color .35s,transform .35s; }
+.is-paper-desktop .painted-traffic-lights:hover button,.is-paper-desktop .painted-traffic-lights button:focus-visible { color: #53564db3 !important; opacity: 1; }
+.is-paper-desktop .painted-traffic-close { background: #bd877f !important; }
+.is-paper-desktop .painted-traffic-minimize { background: #c6b280 !important; }
+.is-paper-desktop .painted-traffic-expand { background: #98aa8b !important; }
+.painted-finder-layout { display: grid; grid-template-columns: 145px minmax(0,1fr); min-height: 0; flex: 1; }
+.painted-finder-sidebar { padding: 17px 9px; background: #d8ded234; border-right: 1px solid #bcb9ad30; font: 11px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+.painted-finder-sidebar-label { margin: 0 11px 12px; font-size: 10px; font-weight: 600; color: #92978b; }
+.painted-finder-location { width: 100%; display: flex; align-items: center; gap: 7px; min-height: 33px; padding: 3px 10px !important; text-align: left; transition: background .3s; }
+.painted-finder-location .painted-folder-art { width: 22px; flex: none; }
+.is-paper-desktop .painted-finder-location[aria-current] { background: #a5b5b327; border-radius: 6px 4px 7px 3px; color: #58716a; }
+.is-paper-desktop .painted-finder-location:hover { background: #a5b5b315; }
+.painted-finder-owner { margin: 25px 10px 0; color: #969b90; font-size: 10px; line-height: 1.5; }
+.is-paper-desktop .painted-folder-body { padding: 19px 25px 22px; min-width: 0; }
+.is-paper-desktop .painted-folder-subheading { font: italic 11px Georgia,serif; margin: 0 0 19px; }
+.is-paper-desktop .painted-folder-body h4 { font-size: 20px; }
+.is-paper-desktop .painted-copy,.is-paper-desktop .painted-resume-item { font-size: 13px; line-height: 1.65; }
+.is-paper-desktop .painted-folder-foot { padding: 7px 18px 8px; border-top: 1px solid #bcb9ad2a; font: 10px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color: #91978c; }
+@media (max-width: 900px) { .is-paper-desktop .painted-desktop-toolbar { display: none; } .is-paper-desktop .painted-desktop-heading p { display: block; } .is-paper-desktop .painted-desktop-welcome,.is-paper-desktop .painted-desktop-folders,.is-paper-desktop .painted-desktop-note { width: 55%; } .painted-finder-layout { grid-template-columns: 120px minmax(0,1fr); } }
+@media (max-width: 600px) {
+ .painted-transition-stage { width: 95vw; height: min(680px,78dvh); }
+ .is-screen-desktop.is-paper-desktop .painted-computer { width: 95vw; height: min(680px,78dvh); }
+ .is-paper-desktop .painted-desktop-heading { top: 8%; left: 7%; right: 7%; padding: 0 3px; }
+ .is-paper-desktop .painted-desktop-heading p { display: none; }
+ .is-paper-desktop .painted-desktop-heading h2 { font-size: 12px; }
+ .is-paper-desktop .painted-computer-screen { inset: 24% 12% 22%; }
+ .is-paper-desktop .painted-desktop-home { align-items: center; }
+ .is-paper-desktop .painted-desktop-welcome,.is-paper-desktop .painted-desktop-folders,.is-paper-desktop .painted-desktop-note { width: 100%; }
+ .is-paper-desktop .painted-desktop-welcome { font-size: 22px; margin-bottom: 13px; }
+ .is-paper-desktop .painted-desktop-folders { gap: 18px 13px; }
+ .is-paper-desktop .painted-folder { width: 102px; }
+ .is-paper-desktop .painted-folder-art { width: 81px; }
+ .is-paper-desktop .painted-folder-label { font-size: 11px; }
+ .is-paper-desktop .painted-desktop-note { margin-top: 14px; }
+ .is-paper-desktop .painted-desktop-dock { bottom: 9%; width: 76%; gap: 5px; min-height: 60px; padding: 4px 8px; }
+ .is-paper-desktop .painted-dock-item { min-width: 44px; min-height: 46px; padding: 0 4px 3px !important; }
+ .is-paper-desktop .painted-dock-item .painted-folder-art { width: 37px; }
+ .is-paper-desktop .painted-desktop-caption { display: block; bottom: 5vh; font-size: 10px; }
+ .is-paper-desktop .painted-folder-window { inset: 17% 5% 21%; }
+ .is-paper-desktop .painted-folder-window.is-expanded { inset: 16% 4% 18%; }
+ .is-paper-desktop .painted-folder-bar { padding: 9px 13px; gap: 12px; }
+ .painted-finder-layout { display: flex; flex-direction: column; }
+ .painted-finder-sidebar { display: flex; gap: 0; padding: 3px 8px; border: 0; border-bottom: 1px solid #bcb9ad30; flex: none; }
+ .painted-finder-sidebar-label,.painted-finder-owner { display: none; }
+ .painted-finder-location { justify-content: center; padding: 4px 5px !important; font-size: 9px !important; gap: 3px; min-height: 31px; }
+ .painted-finder-location .painted-folder-art { width: 16px; }
+ .is-paper-desktop .painted-folder-body { padding: 13px 17px 18px; }
+ .is-paper-desktop .painted-folder-subheading { display: none; }
+}
+@media (max-height: 600px) { .is-screen-desktop.is-paper-desktop .painted-computer { height: 87dvh; } .is-paper-desktop .painted-desktop-welcome,.is-paper-desktop .painted-desktop-note { display: none; } .is-paper-desktop .painted-desktop-folders { grid-template-columns: repeat(4,minmax(0,1fr)); width: 90%; } .is-paper-desktop .painted-desktop-home { align-items: center; } .is-paper-desktop .painted-folder-art { width: 72px; } .is-paper-desktop .painted-folder-window { inset: 17% 7% 21%; } }
+@media (prefers-reduced-motion: reduce) { .is-paper-desktop *, .is-paper-desktop *::before { transition: none !important; animation: none !important; } .is-paper-desktop .painted-folder-art,.is-paper-desktop .painted-dock-item .painted-folder-art { transform: none !important; } }
