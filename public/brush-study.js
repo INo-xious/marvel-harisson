@@ -5,7 +5,7 @@ import {WatercolorPost} from './watercolor-post.js';
 import {sunState,minutesInOsaka,startTimePreview,runningRoomDate} from './time.js';
 import {createDaylightPalette} from './daylight-palette.js';
 import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=room-layers-20261103a';
-import {createStudyDesk} from './brush-study-desk.js?v=room-layers-20261103a';
+import {createStudyDesk} from './brush-study-desk.js?v=lamp-paint-20261103a';
 import {createStudyExterior} from './brush-study-exterior.js?v=room-layers-20261103a';
 import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=room-layers-20261103a';
 import {studyWindowGLSL} from './brush-study-window.js?v=room-layers-20261103a';

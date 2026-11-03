@@ -25,6 +25,8 @@ function polygon(name,points){return `float ${name}(vec2 p){float d=10000.,insid
 const propMasks=polygon('bookLeft',[[107,559],[243,552],[298,565],[300,594],[317,606],[210,646],[83,625],[87,603]])+
  polygon('lampFoot',[[145,559],[151,540],[176,530],[194,520],[225,516],[270,529],[282,558],[240,563],[175,562]])+
  polygon('lampShade',[[330,248],[337,233],[349,232],[360,244],[372,269],[406,287],[429,310],[445,324],[445,331],[425,343],[383,359],[336,374],[328,371],[321,356],[320,334],[327,306],[333,282]])+
+ // Follow the sloping painted mouth, including the irregular cream rim.
+ polygon('lampOpening',[[330,367],[346,350],[378,333],[410,319],[431,315],[443,317],[445,324],[429,339],[403,350],[375,362],[350,372],[336,374]])+
  polygon('deskPot',[[393,469],[411,464],[440,465],[461,473],[465,481],[461,488],[463,516],[468,546],[464,554],[455,560],[439,563],[421,562],[406,558],[400,551],[396,533],[390,484],[387,476]])+
  polygon('stationery',[[263,446],[355,443],[359,484],[353,574],[346,585],[309,589],[277,578],[269,529]])+
  // Follow the actual cream rim, including its broken upper contour. The old
@@ -176,8 +178,15 @@ void main(){
   settled+=exp(-dot(tinContact/vec2(20.,6.),tinContact/vec2(20.,6.)))*.12;
   col*=1.-settled*(.88+.12*sin(q.x*.071+q.y*.117));
  }
- float bulb=oval(q,vec2(388.,350.),vec2(37.,14.));
- if(deskRole==12.)col+=vec3(.35,.22,.09)*bulb*lamp*(.28+.72*night);
+ if(deskRole==12.){
+  // Relight the original reflector pigment rather than adding a flat oval.
+  // The slanted mouth and its broken brush highlights retain their texture.
+  float reflector=lampOpening(q)*smoothstep(.24,.65,value);
+  vec3 sleeping=col*mix(vec3(.50,.53,.58),vec3(.86,.88,.91),day);
+  vec3 glowing=pigment*vec3(1.03,.93,.73)+vec3(.035,.021,.008);
+  col=mix(col,mix(sleeping,glowing,lamp),reflector);
+ }
+
  // Translucent dry pigment at the outline; never expand a rectangular crop.
  float edge=smoothstep(.08,.86,ink.a);
  ink.a*=mix(.82,1.,edge);
