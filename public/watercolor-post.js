@@ -254,8 +254,8 @@ void main(){
 const blurFragment=`varying vec2 vUv;uniform sampler2D sceneColor;uniform vec2 pixel;void main(){vec2 d=pixel,e=vec2(d.x,-d.y);gl_FragColor=vec4((texture2D(sceneColor,vUv).rgb+texture2D(sceneColor,vUv+d).rgb+texture2D(sceneColor,vUv-d).rgb+texture2D(sceneColor,vUv+e).rgb+texture2D(sceneColor,vUv-e).rgb)*.2,1.);}`;
 
 export class WatercolorPost{
- constructor(renderer,{reduced=false}={}){
-  this.renderer=renderer;this.reduced=reduced;this.liveUntil=0;this.pending=0;this.fadeLevel=1;
+ constructor(renderer,{reduced=false,maxPixels=null,samples=null}={}){
+  this.renderer=renderer;this.reduced=reduced;this.maxPixels=maxPixels;this.samples=samples;this.liveUntil=0;this.pending=0;this.fadeLevel=1;
   const type=renderer.extensions.has('EXT_color_buffer_float')?THREE.HalfFloatType:THREE.UnsignedByteType;
   this.target=new THREE.WebGLRenderTarget(1,1,{type,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:true,stencilBuffer:false});
   this.target.texture.colorSpace=THREE.LinearSRGBColorSpace;
@@ -290,8 +290,8 @@ export class WatercolorPost{
  }
  setPigment(texture){this.uniforms.pigment.value=texture;this.flowUniforms.pigment.value=texture;}
  resize(width,height,mobile=false){
-  const factor=Math.min(1,Math.sqrt((mobile?2000000:4000000)/(width*height)));
-  this.target.samples=Math.min(mobile?2:4,this.renderer.capabilities?.maxSamples??0);
+  const factor=Math.min(1,Math.sqrt((this.maxPixels??(mobile?2000000:4000000))/(width*height)));
+  this.target.samples=Math.min(this.samples??(mobile?2:4),this.renderer.capabilities?.maxSamples??0);
   this.target.setSize(Math.max(1,Math.round(width*factor)),Math.max(1,Math.round(height*factor)));
   this.uniforms.pixel.value.set(1/this.target.width,1/this.target.height);this.maskTarget.setSize(this.target.width,this.target.height);this.blurTarget.setSize(Math.ceil(this.target.width/2),Math.ceil(this.target.height/2));
  }

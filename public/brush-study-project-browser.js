@@ -1,5 +1,5 @@
 // A small painted Finder. Portfolio content stays data, never HTML.
-import { watercolorReveal, cancelWatercolor } from './brush-study-wash.js?v=direct-pigment-20261014a';
+import { watercolorReveal, cancelWatercolor } from './brush-study-wash.js?v=objects-20261103a';
 let browserSequence = 0;
 const node = (tag, className, text) => {
   const element = document.createElement(tag);
@@ -19,7 +19,7 @@ const projectURL = value => {
 function paintedFile(id, isDocument = false) {
   const mark = node('span', `project-browser-mark${isDocument ? ' is-document' : ''}`);
   mark.setAttribute('aria-hidden', 'true');
-  if(!isDocument){const image=node('img','painted-folder-bitmap');image.src='/assets/painted/finder-folder-watercolor-v1.png';image.alt='';image.draggable=false;mark.append(image);return mark;}
+  if(!isDocument){const image=node('img','painted-folder-bitmap');image.src='/assets/painted/finder-folder-watercolor-v1.webp';image.alt='';image.draggable=false;mark.append(image);return mark;}
   mark.innerHTML = isDocument
     ? `<svg viewBox="0 0 104 100" focusable="false"><defs><filter id="${id}" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency=".068" numOctaves="2" seed="7" result="paper"/><feDisplacementMap in="SourceGraphic" in2="paper" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter></defs><g filter="url(#${id})"><path d="M24 12 62 11 81 31 80 88 24 88 20 82 21 18Z" fill="#dedccc" opacity=".8"/><path d="M25 15 61 14 77 31 76 84 26 85 23 79Z" fill="#faf7ed"/><path d="m61 14 1 18 15-1" fill="#b4c7cb" opacity=".6"/><path d="m31 46 33-1m-33 8 34-1m-34 8 25 1m-25 8 31-1" fill="none" stroke="#9aabae" opacity=".5" stroke-width="1.2" stroke-linecap="round"/></g><path d="m26 13 34-1m19 23-1 45-2 5-44 1" fill="none" stroke="#a2aa9d" stroke-width=".7" opacity=".6"/></svg>`
     : `<svg viewBox="0 0 130 100" focusable="false"><defs><filter id="${id}" x="-12%" y="-15%" width="125%" height="135%"><feTurbulence type="fractalNoise" baseFrequency=".067" numOctaves="2" seed="5" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter></defs><g filter="url(#${id})"><path d="M13 29 18 22 45 22 53 30 112 28 118 35 115 81 109 85 17 84 12 79Z" fill="#8baeba" opacity=".74"/><path d="M13 39 20 36 111 35 120 40 113 82 105 86 18 83 11 78Z" fill="#91b8c6" opacity=".71"/><path d="m17 69 96 1-2 12-8 3-84-3-5-7Z" fill="#698d9c" opacity=".19"/></g><path d="m18 24 26-1 10 8 57-1m6 11-5 38-8 5-83-2m-7-7-1-33 8-4 88-1" fill="none" stroke="#6d929f" stroke-width="1.05" opacity=".56" stroke-linecap="round"/><path d="m23 47 43-2m9 0 22 1m-70 30 28 1" fill="none" stroke="#f5f5e8" stroke-width="2" opacity=".47" stroke-linecap="round"/></svg>`;

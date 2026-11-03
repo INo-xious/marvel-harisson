@@ -1,0 +1,35 @@
+// Room objects own their controls. Only one small, non-modal preview is open.
+export function createRoomInteractions({contacts,tracks,onLamp,onOpen=()=>{},lampOn=true,reduced=false}) {
+ const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
+ const popup=make('section','room-popup');popup.hidden=true;popup.setAttribute('role','dialog');popup.setAttribute('aria-modal','false');
+ const status=make('p','room-sr-only');status.setAttribute('role','status');document.body.append(popup,status);
+ let active=null,origin=null,track=0,loading=false;
+ const audio=new Audio();audio.preload='none';audio.volume=.45;
+ const buttons=new Map();
+ function close({focus=false}={}){const previous=origin;popup.hidden=true;active=null;origin=null;buttons.forEach(button=>{if(button.hasAttribute('aria-haspopup'))button.setAttribute('aria-expanded','false');});if(focus)previous?.focus({preventScroll:true});}
+ function position(){if(popup.hidden||!origin)return;const box=origin.getBoundingClientRect(),width=popup.offsetWidth,height=popup.offsetHeight;const left=Math.max(12,Math.min(innerWidth-width-12,box.left+box.width/2-width/2));const above=box.top-height-12;popup.style.left=`${left}px`;popup.style.top=`${Math.max(12,Math.min(innerHeight-height-12,above>=12?above:box.bottom+12))}px`;popup.style.setProperty('--popup-origin',`${Math.max(20,Math.min(width-20,box.left+box.width/2-left))}px`);}
+ function show(id,button){if(active===id){close();return false;}close();onOpen();active=id;origin=button;button.setAttribute('aria-expanded','true');popup.replaceChildren();popup.hidden=false;return true;}
+ function openContact(id,label,button){if(!show(id,button))return;popup.className='room-popup room-url-preview';popup.setAttribute('aria-label',`${label} link preview`);const value=contacts[id],link=make('a','room-url-link');link.href=id==='email'?`mailto:${value}`:value;if(id!=='email'){link.target='_blank';link.rel='noopener noreferrer';}link.append(make('span','room-url-title',label+' ↗'),make('span','room-url-address',id==='email'?value:value.replace(/^https?:\/\//,'').replace(/\/$/,'')));link.addEventListener('click',()=>close());popup.append(link);position();}
+ const play=make('button','radio-play','Play'),name=make('p','radio-title'),artist=make('p','radio-artist'),seek=make('input','radio-seek'),time=make('span','radio-time','0:00 / 0:00'),message=make('p','radio-message');
+ seek.type='range';seek.min=0;seek.max=100;seek.step=.1;seek.value=0;seek.setAttribute('aria-label','Song progress');seek.disabled=true;
+ const volume=make('input','radio-volume');volume.type='range';volume.min=0;volume.max=1;volume.step=.01;volume.value=audio.volume;volume.setAttribute('aria-label','Volume');
+ const format=value=>Number.isFinite(value)?`${Math.floor(value/60)}:${String(Math.floor(value%60)).padStart(2,'0')}`:'0:00';
+ function update(){const current=tracks[track];name.textContent=current?.title||'No songs yet';artist.textContent=current?.artist||'';play.textContent=loading?'Loading…':audio.paused?'Play':'Pause';play.setAttribute('aria-label',audio.paused?'Play song':'Pause song');play.disabled=!current;const duration=audio.duration;seek.disabled=!Number.isFinite(duration)||duration<=0;if(!seek.matches(':active'))seek.value=Number.isFinite(duration)&&duration>0?audio.currentTime/duration*100:0;time.textContent=`${format(audio.currentTime)} / ${format(duration)}`;buttons.get('radio')?.setAttribute('data-playing',String(!audio.paused));}
+ function select(index,autoplay=false){if(!tracks.length)return;track=(index+tracks.length)%tracks.length;audio.src=tracks[track].src;message.textContent='';update();if(autoplay)start();}
+ async function start(){if(!audio.getAttribute('src'))select(track);loading=true;update();try{await audio.play();message.textContent='';}catch{message.textContent='Playback could not start. Try Play again.';}finally{loading=false;update();}}
+ play.onclick=()=>audio.paused?start():audio.pause();
+ const previous=make('button','','‹'),next=make('button','','›');previous.setAttribute('aria-label','Previous song');next.setAttribute('aria-label','Next song');previous.onclick=()=>select(track-1,true);next.onclick=()=>select(track+1,true);
+ seek.oninput=()=>{if(Number.isFinite(audio.duration))audio.currentTime=Number(seek.value)/100*audio.duration;update();};volume.oninput=()=>{audio.volume=Number(volume.value);};
+ for(const event of ['play','pause','loadedmetadata','timeupdate','durationchange','emptied'])audio.addEventListener(event,update);
+ audio.addEventListener('ended',()=>select(track+1,true));audio.addEventListener('error',()=>{loading=false;message.textContent='This song is unavailable. Try the next one.';update();});
+ function openRadio(button){if(!show('radio',button))return;popup.className='room-popup room-radio';popup.setAttribute('aria-label','Room radio player');const heading=make('div','radio-heading');heading.append(make('span','radio-label','ROOM RADIO'));const dismiss=make('button','radio-dismiss','×');dismiss.setAttribute('aria-label','Close radio player');dismiss.onclick=()=>close({focus:true});heading.append(dismiss);const transport=make('div','radio-transport');transport.append(previous,play,next);const timeline=make('div','radio-timeline');timeline.append(seek,time);const volumeRow=make('label','radio-volume-row');volumeRow.append(make('span','','Volume'),volume);popup.append(heading,name,artist,transport,timeline,volumeRow,message);update();position();}
+ function objectButton(id,label){const button=make('button','room-object-hit');button.type='button';button.hidden=true;button.setAttribute('aria-label',label);button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded','false');document.body.append(button);buttons.set(id,button);return button;}
+ const lamp=objectButton('lamp','Toggle desk lamp');lamp.removeAttribute('aria-haspopup');lamp.removeAttribute('aria-expanded');lamp.setAttribute('aria-pressed',String(lampOn));lamp.onclick=()=>{close();lampOn=!lampOn;lamp.setAttribute('aria-pressed',String(lampOn));onLamp(lampOn);status.textContent=lampOn?'Desk lamp on':'Desk lamp off';};
+ const radio=objectButton('radio','Open room radio');radio.onclick=()=>openRadio(radio);
+ document.addEventListener('pointerdown',event=>{if(active&&!popup.contains(event.target)&&event.target!==origin&&!origin?.contains(event.target))close();},true);
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&active){event.preventDefault();close({focus:true});}});
+ document.addEventListener('focusin',event=>{if(active&&!popup.contains(event.target)&&event.target!==origin)close();});
+ popup.addEventListener('pointermove',event=>event.stopPropagation());
+ addEventListener('resize',position);
+ return {lamp,radio,close,position,openContact,registerSocial(id,button){buttons.set(id,button);button.setAttribute('aria-expanded','false');},get isOpen(){return active!==null;},get active(){return active;},audio};
+}

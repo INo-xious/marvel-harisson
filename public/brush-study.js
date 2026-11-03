@@ -1,27 +1,28 @@
+import {createRoomInteractions} from './room-interactions.js?v=objects-20261103a';
 import * as THREE from 'three';
 import {WatercolorPost} from './watercolor-post.js';
-import {sunState,minutesInOsaka,timeLabel,startTimePreview,runningRoomDate} from './time.js';
+import {sunState,minutesInOsaka,startTimePreview,runningRoomDate} from './time.js';
 import {createDaylightPalette} from './daylight-palette.js';
-import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=portfolio-20261103a';
-import {createStudyDesk} from './brush-study-desk.js?v=portfolio-20261103a';
-import {createStudyExterior} from './brush-study-exterior.js?v=portfolio-20261103a';
-import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=portfolio-20261103a';
-import {studyWindowGLSL} from './brush-study-window.js?v=portfolio-20261103a';
-import {portfolio} from './content.js?v=portfolio-20261103a';
-import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=portfolio-20261103a';
-import {createPaintedDesktop} from './brush-study-desktop.js?v=portfolio-20261103a';
-import {watercolorReveal,cancelWatercolor} from './brush-study-wash.js?v=portfolio-20261103a';
-import {createPaintedPortal} from './brush-study-portal.js?v=portfolio-20261103a';
-import {createLaptopProjection} from './brush-study-laptop-view.js?v=portfolio-20261103a';
-import {createLaptopLandscapeSurface,portalLaptopScreenView} from './brush-study-laptop-landscape.js?v=portfolio-20261103a';
+import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=objects-20261103a';
+import {createStudyDesk} from './brush-study-desk.js?v=objects-20261103a';
+import {createStudyExterior} from './brush-study-exterior.js?v=objects-20261103a';
+import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=objects-20261103a';
+import {studyWindowGLSL} from './brush-study-window.js?v=objects-20261103a';
+import {portfolio,tracks} from './content.js?v=portfolio-20261103a';
+import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=objects-20261103a';
+import {createPaintedDesktop} from './brush-study-desktop.js?v=objects-20261103a';
+import {watercolorReveal} from './brush-study-wash.js?v=objects-20261103a';
+import {createPaintedPortal} from './brush-study-portal.js?v=objects-20261103a';
+import {createLaptopProjection} from './brush-study-laptop-view.js?v=objects-20261103a';
+import {createLaptopLandscapeSurface,portalLaptopScreenView} from './brush-study-laptop-landscape.js?v=objects-20261103a';
 import {sampleShoreline,SHORELINE_TIMING} from './brush-study-shoreline-timing.js';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const canvas=document.querySelector('#painting'),renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+const canvas=document.querySelector('#painting'),renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power'});
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,1,10000);
 let cameraDistance=1700;
 const viewTilt=new THREE.Vector2(),raycaster=new THREE.Raycaster();
-const post=new WatercolorPost(renderer,{reduced});
+const post=new WatercolorPost(renderer,{reduced,maxPixels:1400000,samples:0});
 // Keep the footprint and drying simulation; clean water gently dilutes pigment.
 let waterShader=post.material.fragmentShader
  .replace('grain*mix(.065,.05,daylight)','grain*mix(0.,0.,daylight)')
@@ -50,7 +51,8 @@ waterShader=waterShader.replace('vec2 art=artOrigin+vec2(vUv.x,1.-vUv.y)*artSpan
 post.material.uniforms.waterInverseView={value:new THREE.Matrix4()};
 post.material.fragmentShader=waterShader;
 post.material.needsUpdate=true;
-let preview=null,lamp=true,ready=false,last=0,elapsed=0,drag=null,span=new THREE.Vector2(1672,941);
+const reviewTime=new URLSearchParams(location.search).get('previewTime');
+let preview=reviewTime===null?null:startTimePreview(Math.max(0,Math.min(1439,Number(reviewTime)||0))),lamp=true,ready=false,last=0,elapsed=0,drag=null,span=new THREE.Vector2(1672,941);
 const parallaxTarget=new THREE.Vector2();
 const uniforms={viewPosition:{value:new THREE.Vector3()},wallDepth:{value:0},wallRegistration:{value:1},windowFaceDepth:{value:0},windowFaceRegistration:{value:1},clockPaint:{value:null},day:{value:1},gold:{value:0},night:{value:0},skyTop:{value:new THREE.Color()},skyHorizon:{value:new THREE.Color()},roomTint:{value:new THREE.Color()},sunColor:{value:new THREE.Color()},sunPixel:{value:new THREE.Vector2(-100,-100)},sunVisible:{value:0},moonPixel:{value:new THREE.Vector2(-100,-100)},moonVisible:{value:0},moonPhase:{value:0},strength:{value:0},lamp:{value:1},time:{value:0}};
 const iconMotion=createSillIconMotion({THREE,reduced});Object.assign(uniforms,iconMotion.uniforms);
@@ -64,15 +66,15 @@ const layerMeshes=[];
 let deskScene=null,exteriorScene=null;
 let latestSun=null;
 const layerSpecs=[
- {id:0,name:'Wall and floor',file:'layer-room-backdrop.png',z:0,scale:[1,1],offset:[0,0],order:1},
- {id:8,name:'Recessed window frame and returns',file:'layer-room-backdrop.png',z:0,scale:[1,1],offset:[0,0],order:.8},
- {id:9,name:'Projecting window sill',file:'layer-room-backdrop.png',z:0,scale:[1,1],offset:[0,0],order:1.2},
- {id:10,name:'Sill icons, radio and plant',file:'layer-room-backdrop.png',z:0,scale:[1,1],offset:[0,0],order:1.4},
+ {id:0,name:'Wall and floor',file:'layer-room-backdrop.webp',z:0,scale:[1,1],offset:[0,0],order:1},
+ {id:8,name:'Recessed window frame and returns',file:'layer-room-backdrop.webp',z:0,scale:[1,1],offset:[0,0],order:.8},
+ {id:9,name:'Projecting window sill',file:'layer-room-backdrop.webp',z:0,scale:[1,1],offset:[0,0],order:1.2},
+ {id:10,name:'Sill icons, radio and plant',file:'layer-room-backdrop.webp',z:0,scale:[1,1],offset:[0,0],order:1.4},
  // Floor objects are behind the top/apron, but in front of the rear supports.
- {id:5,name:'Belongings',file:'layer-belongings.png',z:50,scale:[.75,.62],offset:[80,275],order:2.2},
- {id:2,name:'Bed and cat',file:'layer-grounded-bed.png',z:125,scale:[.78,.78],offset:[360,213],order:4},
- {id:3,name:'Chair and coat',file:'layer-chair-coat.png',z:205,scale:[.90,.85],offset:[0,115],order:5},
- {id:7,name:'Horizontal floor',file:'layer-room-backdrop.png',z:0,scale:[1,1],offset:[0,0],order:1}
+ {id:5,name:'Belongings',file:'layer-belongings.webp',z:50,scale:[.75,.62],offset:[80,275],order:2.2},
+ {id:2,name:'Bed and cat',file:'layer-grounded-bed.webp',z:125,scale:[.78,.78],offset:[360,213],order:4},
+ {id:3,name:'Chair and coat',file:'layer-chair-coat.webp',z:205,scale:[.90,.85],offset:[0,115],order:5},
+ {id:7,name:'Horizontal floor',file:'layer-room-backdrop.webp',z:0,scale:[1,1],offset:[0,0],order:1}
 ];
 // Signed distance masks follow the painted support planes and foreground silhouettes.
 function polygonShader(name,points){return `float ${name}(vec2 p){float distanceToEdge=10000.,inside=0.;vec2 a,b,e;float t;\n`+points.map((a,i)=>{const b=points[(i+1)%points.length];return `a=vec2(${a.map(n=>n.toFixed(1))});b=vec2(${b.map(n=>n.toFixed(1))});e=b-a;t=clamp(dot(p-a,e)/dot(e,e),0.,1.);distanceToEdge=min(distanceToEdge,length(p-a-e*t));if((a.y>p.y)!=(b.y>p.y)){if(p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)inside=1.-inside;}`;}).join('\n')+`return smoothstep(-4.,6.,distanceToEdge*(inside*2.-1.));}\n`;}
@@ -315,26 +317,12 @@ function pointerInPainting(e){
 }
 function pointerOnPaper(e){raycaster.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,1-e.clientY/innerHeight*2),camera);const point=raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1),0),new THREE.Vector3());return point?new THREE.Vector2(point.x+836,470.5-point.y):null;}
 const socialItems=STUDY_SILL_ICONS.map(icon=>[icon.id,icon.label,...icon.center]);
-const contactDialog=document.createElement('dialog');contactDialog.className='contact-dialog';contactDialog.setAttribute('aria-labelledby','contact-title');
-let contactOrigin=null,contactClosing=false;
-async function liftContact(){if(contactClosing||!contactDialog.open)return;contactClosing=true;await watercolorReveal(contactDialog,{duration:520,lift:true,from:contactOrigin,reduced,seed:14}).finished;contactDialog.close();contactClosing=false;}
-const closeContact=document.createElement('button');closeContact.textContent='Back to the room';closeContact.onclick=liftContact;
-contactDialog.addEventListener('cancel',event=>{event.preventDefault();liftContact();});
-contactDialog.addEventListener('close',()=>{cancelWatercolor(contactDialog);contactClosing=false;});
-const contactTitle=document.createElement('h2');contactTitle.id='contact-title';const contactNote=document.createElement('p'),contactLink=document.createElement('a');
-contactDialog.append(contactTitle,contactNote,contactLink,closeContact);document.body.append(contactDialog);
-function openContact(id,label){post.stop();contactOrigin=socialButtons.find(item=>item.id===id)?.button.getBoundingClientRect();contactTitle.textContent=label;const value=portfolio.contacts[id];let href=null;
- if(id==='email'){if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))href='mailto:'+value;}else{try{const url=new URL(value);if(['https:','http:'].includes(url.protocol))href=url.href;}catch{}}
- contactLink.hidden=!href;if(href){contactLink.href=href;contactLink.textContent=id==='email'?'Write an email':'Visit my profile';if(id!=='email'){contactLink.target='_blank';contactLink.rel='noopener noreferrer';}else contactLink.removeAttribute('target');}
- contactNote.textContent=href?'A little way to say hello.':(id==='email'?'An email address':'A '+label+' profile')+" hasn't been added yet.";contactDialog.showModal();watercolorReveal(contactDialog,{duration:760,from:contactOrigin,reduced,seed:14});
-}
+const roomUI=createRoomInteractions({contacts:portfolio.contacts,tracks,reduced,onOpen:()=>post.stop(),onLamp:value=>{lamp=value;},lampOn:lamp});
 const socialButtons=socialItems.map(([id,label,x,y],index)=>{
  const button=document.createElement('button');button.className='social-hit';button.setAttribute('aria-label',label);button.setAttribute('aria-haspopup','dialog');button.title=label;
- const caption=document.createElement('span');caption.className='paint-hit-caption';caption.textContent=label;button.append(caption);
- button.onpointerenter=()=>{post.stop();iconMotion.hover(index,true);watercolorReveal(caption,{duration:440,kind:'ink',reduced,seed:8+index});};button.onpointerleave=()=>iconMotion.hover(index,false);
- button.onfocus=()=>{post.stop();const visible=button.matches(':focus-visible');iconMotion.focus(index,visible);if(visible)watercolorReveal(caption,{duration:440,kind:'ink',reduced,seed:8+index});};button.onblur=()=>iconMotion.focus(index,false);
- button.onpointerdown=()=>iconMotion.focus(index,false);
- button.onclick=()=>{iconMotion.press(index);if(button.dataset.pending)return;button.dataset.pending='true';setTimeout(()=>{delete button.dataset.pending;if(!contactDialog.open&&!paintedDesktop.isOpen)openContact(id,label);},reduced?0:240);};
+ button.onpointerenter=()=>post.stop();
+ button.onclick=()=>{if(!paintedDesktop.isOpen)roomUI.openContact(id,label,button);};
+ roomUI.registerSocial(id,button);
  document.body.append(button);return {button,x,y,index,id};
 });
 const laptopButton=document.createElement('button');laptopButton.className='laptop-hit';laptopButton.setAttribute('aria-label','Open laptop desktop');laptopButton.setAttribute('aria-haspopup','dialog');laptopButton.hidden=true;
@@ -344,7 +332,7 @@ const laptopPortalPointer=new THREE.Vector2();
 let laptopKeyboardPortal=false;
 const laptopPortal=createPaintedPortal({reduced});
 function setPaintingResolution(film){
- const ratio=Math.min(devicePixelRatio,film?1.25:2);if(renderer.getPixelRatio()===ratio)return;
+ const ratio=Math.min(devicePixelRatio,innerWidth<700?1:1.25);if(renderer.getPixelRatio()===ratio)return;
  renderer.setPixelRatio(ratio);const size=renderer.getDrawingBufferSize(new THREE.Vector2());post.resize(size.x,size.y,innerWidth<700);
 }
 function setRoomViewOffset(amount=1){
@@ -355,7 +343,7 @@ function finishLaptopFlight(cancelled=false){
  if(cancelled)laptopPortal.cancel();
 }
 function approachLaptop({start=performance.now()}={}){
- post.stop();drag=null;if(reduced||!laptopView)return Promise.resolve({cancelled:false});
+ roomUI.close();post.stop();drag=null;if(reduced||!laptopView)return Promise.resolve({cancelled:false});
  laptopRoomPose={position:camera.position.clone(),up:camera.up.clone(),tilt:viewTilt.clone()};
  finishLaptopFlight(true);
  laptopFilm=true;setPaintingResolution(true);document.body.classList.add('laptop-approaching');
@@ -392,7 +380,7 @@ laptopButton.addEventListener('keydown',event=>{
 });
 if(!reduced)laptopButton.setAttribute('aria-description','A layered painted landscape lives inside the screen. Arrow keys look around; Enter opens the desktop.');
 laptopButton.onclick=()=>paintedDesktop.open({from:laptopButton.getBoundingClientRect()});
-function projectSocials(){const zoom=innerWidth/span.x*camera.zoom;for(const {button,index} of socialButtons){const {x,y}=iconMotion.getPose(index).center,z=objectDepth(10,{x,y}),k=(cameraDistance-z)/cameraDistance;const p=new THREE.Vector3((x-836)*k,(470.5-y)*k,z).project(camera);button.hidden=Math.abs(p.x)>1||Math.abs(p.y)>1;button.style.left=((p.x+1)*innerWidth/2)+'px';button.style.top=((1-p.y)*innerHeight/2)+'px';button.style.width=Math.max(40,56*zoom)+'px';button.style.height=Math.max(44,64*zoom)+'px';}}
+function projectSocials(){const zoom=innerWidth/span.x*camera.zoom;for(const {button,index} of socialButtons){const {x,y}=iconMotion.getPose(index).center,z=objectDepth(10,{x,y}),k=(cameraDistance-z)/cameraDistance;const p=new THREE.Vector3((x-836)*k,(470.5-y)*k,z).project(camera);button.hidden=paintedDesktop.isOpen||Math.abs(p.x)>1||Math.abs(p.y)>1;button.style.left=((p.x+1)*innerWidth/2)+'px';button.style.top=((1-p.y)*innerHeight/2)+'px';button.style.width=Math.max(12,Math.min(40,56*zoom))+'px';button.style.height=Math.max(44,64*zoom)+'px';}}
 function projectLaptop(){
  const lid=deskScene?.meshes.find(piece=>piece.name==='Laptop painted lid'),base=deskScene?.meshes.find(piece=>piece.name==='Laptop painted base');if(!lid||!base)return;
  if(!laptopProjection)laptopProjection=createLaptopProjection({THREE,lid,base});
@@ -407,8 +395,22 @@ function projectLaptop(){
  const w=Math.max(...sample.contour.map(point=>point[0]))-x,h=Math.max(...sample.contour.map(point=>point[1]))-y;
  laptopButton.hidden=w<12||h<12||x>innerWidth||y>innerHeight;laptopButton.style.left=x+'px';laptopButton.style.top=y+'px';laptopButton.style.width=w+'px';laptopButton.style.height=h+'px';
 }
+function projectHit(button,points,clip){
+ if(!points.length)return;
+ const xs=points.map(p=>(p.x+1)*innerWidth/2),ys=points.map(p=>(1-p.y)*innerHeight/2);
+ const x=Math.min(...xs),y=Math.min(...ys),w=Math.max(...xs)-x,h=Math.max(...ys)-y;
+ button.hidden=paintedDesktop.isOpen||w<4||x>innerWidth||y>innerHeight||x+w<0||y+h<0;
+ button.style.left=x+'px';button.style.top=y+'px';button.style.width=Math.max(24,w)+'px';button.style.height=Math.max(28,h)+'px';
+ if(clip)button.style.clipPath=clip;
+}
+function projectRoomObjects(){
+ const lampMesh=deskScene?.meshes.find(mesh=>mesh.name==='Task lamp');
+ if(lampMesh){lampMesh.updateWorldMatrix(true,false);const points=Array.from({length:4},(_,i)=>new THREE.Vector3().fromBufferAttribute(lampMesh.geometry.attributes.position,i).applyMatrix4(lampMesh.matrixWorld).project(camera));
+ projectHit(roomUI.lamp,points,'polygon(58% 2%,72% 2%,100% 28%,100% 38%,60% 48%,54% 40%,56% 20%,48% 20%,14% 42%,27% 83%,45% 88%,47% 100%,0% 100%,0% 92%,18% 84%,2% 38%,45% 12%,55% 12%)');}
+ projectHit(roomUI.radio,[[1028,374],[1166,374],[1166,445],[1028,445]].map(([x,y])=>{const z=objectDepth(10,{x,y}),k=(cameraDistance-z)/cameraDistance;return new THREE.Vector3((x-836)*k,(470.5-y)*k,z).project(camera);}));
+}
 let viewportWidth=0,viewportHeight=0;
-function resize(){const w=innerWidth,h=innerHeight,a=w/h;if(viewportWidth===w&&viewportHeight===h)return;viewportWidth=w;viewportHeight=h;span.set(Math.max(1672,941*a)*1.22,Math.max(941,1672/a)*1.22);camera.aspect=a;cameraDistance=span.y/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))+100;if(laptopRoomPose)laptopRoomPose.position.set(laptopRoomPose.tilt.x*85,-laptopRoomPose.tilt.y*48,cameraDistance);if(!paintedDesktop.isOpen)camera.position.z=cameraDistance;camera.setViewOffset(w,h,0,paintedDesktop.isOpen?0:(w<600?18:35),w,h);camera.updateProjectionMatrix();alignLayers();deskScene?.resize();exteriorScene?.resize();laptopView=null;projectLaptop();if(paintedDesktop.isOpen&&!laptopFlight&&laptopView){camera.position.copy(laptopView.position);camera.up.copy(laptopView.up);camera.lookAt(laptopView.center);}paintedDesktop.resize();if(latestSun)updateStudyLight({THREE,uniforms,distance:cameraDistance,wallDepth:windowPaneDepth(cameraDistance),sillDepth:windowPaintDepth(10,{x:1274,y:442},cameraDistance),sunAltitude:latestSun.altitude,sunAzimuth:latestSun.azimuth});renderer.setPixelRatio(Math.min(devicePixelRatio,laptopFilm?1.25:2));renderer.setSize(w,h,false);const size=renderer.getDrawingBufferSize(new THREE.Vector2());post.resize(size.x,size.y,w<700);}
+function resize(){const w=innerWidth,h=innerHeight,a=w/h;if(viewportWidth===w&&viewportHeight===h)return;viewportWidth=w;viewportHeight=h;span.set(Math.max(1672,941*a)*1.22,Math.max(941,1672/a)*1.22);camera.aspect=a;cameraDistance=span.y/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))+100;if(laptopRoomPose)laptopRoomPose.position.set(laptopRoomPose.tilt.x*85,-laptopRoomPose.tilt.y*48,cameraDistance);if(!paintedDesktop.isOpen)camera.position.z=cameraDistance;camera.setViewOffset(w,h,0,paintedDesktop.isOpen?0:(w<600?18:35),w,h);camera.updateProjectionMatrix();alignLayers();deskScene?.resize();exteriorScene?.resize();laptopView=null;projectLaptop();if(paintedDesktop.isOpen&&!laptopFlight&&laptopView){camera.position.copy(laptopView.position);camera.up.copy(laptopView.up);camera.lookAt(laptopView.center);}paintedDesktop.resize();if(latestSun)updateStudyLight({THREE,uniforms,distance:cameraDistance,wallDepth:windowPaneDepth(cameraDistance),sillDepth:windowPaintDepth(10,{x:1274,y:442},cameraDistance),sunAltitude:latestSun.altitude,sunAzimuth:latestSun.azimuth});renderer.setPixelRatio(Math.min(devicePixelRatio,w<700?1:1.25));renderer.setSize(w,h,false);const size=renderer.getDrawingBufferSize(new THREE.Vector2());post.resize(size.x,size.y,w<700);}
 addEventListener('resize',resize);resize();
 function syncTime(){const date=runningRoomDate(preview),s=sunState(date),palette=createDaylightPalette(THREE,s.altitude);latestSun=s;
  clockMinute=minutesInOsaka(date)+date.getUTCSeconds()/60+date.getUTCMilliseconds()/60000;clockAt=performance.now();uniforms.clockMinutes.value=clockMinute;
@@ -421,43 +423,25 @@ function syncTime(){const date=runningRoomDate(preview),s=sunState(date),palette
  uniforms.strength.value=THREE.MathUtils.smoothstep(s.altitude,0,8)*(.32+.68*Math.max(0,Math.sin(solarAltitude)))*Math.max(0,Math.cos(solarFacing));
  updateStudyLight({THREE,uniforms,distance:cameraDistance,wallDepth:windowPaneDepth(cameraDistance),sillDepth:windowPaintDepth(10,{x:1274,y:442},cameraDistance),sunAltitude:s.altitude,sunAzimuth:s.azimuth});
  uniforms.sunElevation.value=s.altitude;uniforms.moonElevation.value=s.moon.altitude;
- uniforms.lamp.value=lamp?1:0;scene.background=new THREE.Color('#ffffff');
- document.querySelector('#time').textContent=timeLabel(minutesInOsaka(date))+' JST';document.querySelector('#phase').textContent=s.label;
- if(document.activeElement!==document.querySelector('#hour'))document.querySelector('#hour').value=minutesInOsaka(date);
- document.querySelector('#live').disabled=preview===null;
+ scene.background=new THREE.Color('#ffffff');
 }
-document.querySelector('#hour').oninput=e=>{preview=startTimePreview(Number(e.target.value));syncTime();};
-document.querySelector('#live').onclick=()=>{preview=null;syncTime();};
-document.querySelector('#lamp').onclick=e=>{lamp=!lamp;e.target.textContent=lamp?'Lamp on':'Lamp off';e.target.setAttribute('aria-pressed',lamp);syncTime();};
-for(const button of document.querySelectorAll('[data-phase]'))button.onclick=()=>{const s=sunState(new Date());preview=startTimePreview({dawn:s.sunrise+12,day:720,sunset:s.sunset-24,night:1260}[button.dataset.phase]);syncTime();};
-for(const button of document.querySelectorAll('[data-view]'))button.onclick=()=>{post.stop();parallaxTarget.set(...{left:[-.95,-.45],center:[0,0],right:[.95,.45]}[button.dataset.view]);};
 const keyboardBrush=new THREE.Vector2(836,540);
 canvas.addEventListener('keydown',e=>{
  const step={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
- if(!step||contactDialog.open||paintedDesktop.isOpen)return;e.preventDefault();
+ if(!step||roomUI.isOpen||paintedDesktop.isOpen)return;e.preventDefault();
  if(e.shiftKey&&!reduced){const now=performance.now();post.move(keyboardBrush.x,keyboardBrush.y,now);keyboardBrush.x=THREE.MathUtils.clamp(keyboardBrush.x+step[0]*24,200,1450);keyboardBrush.y=THREE.MathUtils.clamp(keyboardBrush.y+step[1]*24,140,800);post.move(keyboardBrush.x,keyboardBrush.y,now+16);}
  else{post.stop();parallaxTarget.x=THREE.MathUtils.clamp(parallaxTarget.x+step[0]*.24,-1,1);parallaxTarget.y=THREE.MathUtils.clamp(parallaxTarget.y+step[1]*.24,-1,1);}
 });
-canvas.addEventListener('pointermove',e=>{if(drag){if(!reduced)parallaxTarget.set(THREE.MathUtils.clamp(drag.viewX+(e.clientX-drag.startX)/innerWidth*2,-1,1),THREE.MathUtils.clamp(drag.viewY+(e.clientY-drag.startY)/innerHeight*2,-1,1));post.stop();return;}if(contactDialog.open||paintedDesktop.isOpen){post.stop();return;}if(!reduced)parallaxTarget.set(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1);if(reduced){post.stop();return;}const p=pointerOnPaper(e);if(p)post.move(p.x,p.y,performance.now());else post.stop();});
+canvas.addEventListener('pointermove',e=>{if(drag){if(!reduced)parallaxTarget.set(THREE.MathUtils.clamp(drag.viewX+(e.clientX-drag.startX)/innerWidth*2,-1,1),THREE.MathUtils.clamp(drag.viewY+(e.clientY-drag.startY)/innerHeight*2,-1,1));post.stop();return;}if(roomUI.isOpen||paintedDesktop.isOpen){post.stop();return;}if(!reduced)parallaxTarget.set(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1);if(reduced){post.stop();return;}const p=pointerOnPaper(e);if(p)post.move(p.x,p.y,performance.now());else post.stop();});
 canvas.addEventListener('pointerleave',()=>{if(!laptopButton.matches(':hover')&&!socialButtons.some(item=>item.button.matches(':hover')))parallaxTarget.set(0,0);post.stop();});canvas.addEventListener('pointerdown',e=>{drag={startX:e.clientX,startY:e.clientY,viewX:parallaxTarget.x,viewY:parallaxTarget.y};canvas.setPointerCapture(e.pointerId);post.stop();});
 canvas.addEventListener('pointerup',e=>{if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(drag&&Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)<8&&!reduced){const point=pointerInPainting(e);if(point&&Math.hypot((point.x-1515)/119,(point.y-594)/65)<1)catReactionAt=elapsed;}drag=null;});canvas.addEventListener('pointercancel',()=>{drag=null;post.stop();});
 setInterval(syncTime,1000);syncTime();
-function recordStudy(cycle=false){
- const button=document.querySelector(cycle==='horizon'?'#record-horizon':cycle?'#record-cycle':'#record'),originalLabel=button.textContent;const recordButtons=[...document.querySelectorAll('.exports button')];if(!ready||!canvas.captureStream||typeof MediaRecorder==='undefined'){button.textContent='Recording unavailable';return;}
- const stream=canvas.captureStream(24),chunks=[];const originalPreview=preview,cycleStart=performance.now(),originalTarget=parallaxTarget.clone();let cycleTimer;post.clearFlow();
- const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/mp4'].find(type=>MediaRecorder.isTypeSupported(type));
- const recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});
- recordButtons.forEach(b=>b.disabled=true);button.textContent='Recording…';
- recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
- recorder.onstop=()=>{clearInterval(cycleTimer);parallaxTarget.copy(originalTarget);if(cycle){preview=originalPreview;syncTime();}const url=URL.createObjectURL(new Blob(chunks,{type:recorder.mimeType})),link=document.createElement('a');link.href=url;link.download=(cycle==='horizon'?'watercolor-horizon-cycle.':cycle?'watercolor-day-cycle.':'watercolor-motion.')+(recorder.mimeType.includes('mp4')?'mp4':'webm');link.click();stream.getTracks().forEach(track=>track.stop());recordButtons.forEach(b=>b.disabled=false);button.textContent=originalLabel;setTimeout(()=>URL.revokeObjectURL(url),60000);};
- recorder.start();if(!cycle&&!reduced)cycleTimer=setInterval(()=>{const t=(performance.now()-cycleStart)/11500*Math.PI*2;parallaxTarget.set(Math.sin(t)*.88,Math.sin(t*2)*.55);},30);if(cycle)cycleTimer=setInterval(()=>{const progress=Math.min(1,(performance.now()-cycleStart)/12000);preview=startTimePreview((cycle==='horizon'?960:330)+progress*(cycle==='horizon'?160:1020));syncTime();},100);setTimeout(()=>recorder.stop(),cycle?12000:11500);
-}
-document.querySelector('#record').onclick=()=>recordStudy(false);
-document.querySelector('#record-cycle').onclick=()=>recordStudy(true);
-document.querySelector('#record-horizon').onclick=()=>recordStudy('horizon');
 function draw(now){
  requestAnimationFrame(draw);if(!ready||document.hidden)return;
+ if(paintedDesktop.isSettled&&!laptopFlight){last=now;return;}
+ if(last&&now-last<(laptopFlight?1000/60:1000/30)-1)return;
  const dt=Math.min(.05,last?(now-last)/1000:.016);last=now;
+ uniforms.lamp.value+=(Number(lamp)-uniforms.lamp.value)*(1-Math.exp(-dt*10));
  if(reduced)viewTilt.copy(parallaxTarget);else viewTilt.lerp(parallaxTarget,1.-Math.exp(-dt*4.));
  if(laptopFlight){
   const phase=THREE.MathUtils.clamp((now-laptopFlight.start)/laptopFlight.duration,0,1);
@@ -479,7 +463,7 @@ function draw(now){
   camera.position.set(viewTilt.x*85,-viewTilt.y*48,cameraDistance);camera.up.set(0,1,0);camera.lookAt(0,0,0);
  }
  if(restorePaintingResolution){restorePaintingResolution=false;setPaintingResolution(false);}
- camera.updateMatrixWorld();uniforms.viewPosition.value.copy(camera.position);uniforms.wallDepth.value=windowPaneDepth(cameraDistance);uniforms.wallRegistration.value=(cameraDistance-uniforms.wallDepth.value)/cameraDistance;uniforms.windowFaceDepth.value=windowFaceDepth(cameraDistance);uniforms.windowFaceRegistration.value=(cameraDistance-uniforms.windowFaceDepth.value)/cameraDistance;updateContacts();post.material.uniforms.waterInverseView.value.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse).invert();if(!reduced)elapsed+=dt;uniforms.time.value=elapsed;iconMotion.update(dt);uniforms.clockMinutes.value=clockMinute+(now-clockAt)/60000;uniforms.catReaction.value=catReactionAt<0?-100:elapsed-catReactionAt;laptopLandscape?.setOccluded(paintedDesktop.isOpen);laptopLandscape?.update(now,{pointer:laptopPortalPointer.toArray(),hover:laptopAttention});projectSocials();projectLaptop();if(laptopFlight){
+ camera.updateMatrixWorld();uniforms.viewPosition.value.copy(camera.position);uniforms.wallDepth.value=windowPaneDepth(cameraDistance);uniforms.wallRegistration.value=(cameraDistance-uniforms.wallDepth.value)/cameraDistance;uniforms.windowFaceDepth.value=windowFaceDepth(cameraDistance);uniforms.windowFaceRegistration.value=(cameraDistance-uniforms.windowFaceDepth.value)/cameraDistance;updateContacts();post.material.uniforms.waterInverseView.value.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse).invert();if(!reduced)elapsed+=dt;uniforms.time.value=elapsed;iconMotion.update(dt);uniforms.clockMinutes.value=clockMinute+(now-clockAt)/60000;uniforms.catReaction.value=catReactionAt<0?-100:elapsed-catReactionAt;laptopLandscape?.setOccluded(paintedDesktop.isOpen);laptopLandscape?.update(now,{pointer:laptopPortalPointer.toArray(),hover:laptopAttention});projectSocials();projectLaptop();projectRoomObjects();roomUI.position();if(laptopFlight){
  const phase=THREE.MathUtils.clamp((now-laptopFlight.start)/laptopFlight.duration,0,1);
  laptopPortal.finish();
  if(phase>=1)finishLaptopFlight();
@@ -491,9 +475,9 @@ try{
  const loadLayer=file=>{if(!textureLoads.has(file))textureLoads.set(file,loader.loadAsync('/assets/painted/'+file));return textureLoads.get(file);};
  const [textures,pigment,cloud,dial,deskTexture,outsideTexture]=await Promise.all([
   Promise.all(layerSpecs.map(spec=>loadLayer(spec.file))),
-  loader.loadAsync('/assets/painted/pigment-wash.png'),loader.loadAsync('/assets/painted/gestural-cloud-bank.png'),loader.loadAsync('/assets/painted/roman-brush-dial.png'),loader.loadAsync('/assets/painted/desk-level-four-legs-v7.png'),loader.loadAsync('/assets/painted/layer-outside.png')
+  loader.loadAsync('/assets/painted/pigment-wash.webp'),loader.loadAsync('/assets/painted/gestural-cloud-bank.webp'),loader.loadAsync('/assets/painted/roman-brush-dial.webp'),loader.loadAsync('/assets/painted/desk-level-four-legs-v7.webp'),loader.loadAsync('/assets/painted/layer-outside.webp')
  ]);
- for(const texture of [...textures,cloud,dial,deskTexture,outsideTexture]){texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.anisotropy=renderer.capabilities.getMaxAnisotropy();}
+ for(const texture of [...textures,cloud,dial,deskTexture,outsideTexture]){texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());}
  uniforms.clockPaint.value=dial;
  pigment.wrapS=pigment.wrapT=THREE.MirroredRepeatWrapping;post.setPigment(pigment);
  textures.forEach((texture,i)=>createPaintedLayer(texture,layerSpecs[i]));
@@ -510,5 +494,5 @@ try{
    mesh.visible=auditLayer==='desk'?deskScene.meshes.includes(mesh):auditLayer==='exterior'?Boolean(mesh.userData.exteriorKind):exteriorPiece?mesh.userData.exteriorKind===auditLayer:auditGroups[auditLayer].includes(mesh.userData.spec?.id);
   }
  }
- alignLayers();syncTime();ready=true;document.querySelector('#status').hidden=true;
+ alignLayers();syncTime();ready=true;performance.mark('room-ready');document.querySelector('#status').hidden=true;
 }catch(error){document.querySelector('#status').textContent='The painting could not load. Please reload.';console.error(error);}

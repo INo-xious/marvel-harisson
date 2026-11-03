@@ -1,6 +1,6 @@
 // Independent, registered pieces of the original lake painting. No stock
 // gradients or tinted copies stand in for the geography of the source.
-const SOURCE='/assets/painted/desktop-lake-wallpaper-v1.png';
+const SOURCE='/assets/painted/desktop-lake-wallpaper-v1.webp';
 const WIDTH=1586,HEIGHT=992;
 const MOUNTAIN_ROOF=[[0,224],[62,216],[128,205],[176,194],[219,192],[248,188],[267,184],[288,190],[303,196],[325,198],[339,202],[359,211],[375,203],[386,198],[401,196],[417,187],[433,181],[449,178],[466,181],[477,190],[492,194],[503,199],[519,209],[539,215],[552,218],[560,223],[566,227],[574,235],[588,237],[600,241],[619,241],[637,246],[646,251],[655,248],[666,250],[679,255],[695,260],[716,263],[734,266],[750,267],[765,271],[787,281],[810,288],[827,290],[844,294],[865,293],[885,293],[904,288],[921,285],[940,283],[959,282],[978,287],[996,289],[1012,289],[1032,296],[1052,297],[1071,306],[1090,311],[1105,320],[1124,325],[1146,321],[1169,322],[1188,327],[1200,329],[1221,335],[1245,337],[1264,343],[1288,344],[1305,352],[1320,346],[1340,355],[1355,344],[1367,346],[1389,343],[1402,344],[1421,351],[1447,356],[1479,358],[1505,351],[1534,352],[1560,348],[1586,345]];
 const WATER_EDGE=[[0,425],[280,425],[520,425],[740,414],[930,402],[1050,396],[1120,399],[1180,402],[1250,403],[1300,404],[1410,405],[1510,405],[1586,403]];
@@ -147,7 +147,7 @@ export function createDesktopLandscape({reduced=false}={}){
  const element=document.createElement('div');element.className='painted-desktop-landscape';element.setAttribute('aria-hidden','true');
  element.dataset.sourceWidth=String(WIDTH);element.dataset.sourceHeight=String(HEIGHT);
  const fallback=new Image();fallback.className='painted-desktop-landscape-fallback';fallback.alt='';fallback.draggable=false;element.append(fallback);
- const source=new Image(),canvases=[],portalCanvases=[],poses=[];let settleReady=()=>{};let targetX=0,targetY=0,x=0,y=0,active=true,disposed=false,frame=0,last=0,paintTime=0,passageAspect=null,framingKey='',portalPixels=null,portalOwner=null,portalJob=null,portalDOM=false,portalWeight=0,portalPose=[],portalSourceScale=1.065,travel=0;
+ const source=new Image(),canvases=[],portalCanvases=[],poses=[];let settleReady=()=>{};let targetX=0,targetY=0,x=0,y=0,active=false,disposed=false,frame=0,last=0,paintTime=0,passageAspect=null,framingKey='',portalPixels=null,portalOwner=null,portalJob=null,portalDOM=false,portalWeight=0,portalPose=[],portalSourceScale=1.065,travel=0;
  let framingScaleX=1,framingScaleY=1;
  const isReduced=()=>typeof reduced==='function'?Boolean(reduced()):Boolean(reduced?.matches??reduced);
  const visibleCanvases=()=>portalDOM?portalCanvases:canvases;
@@ -257,6 +257,29 @@ export function createDesktopLandscape({reduced=false}={}){
   if(portalCanvases.length<LAYERS.length)portalJob=setTimeout(preparePortal,16);
   else {portalPixels=portalOwner=null;selectPortalSurfaces();framingKey='';paintPositions(paintTime);}
  }
+ // Load the same native cutouts prepared at build time, avoiding millions of
+ // segmentation/reserve operations on the visitor's main thread.
+ async function loadPrepared(){
+  const base='/assets/painted/landscape/';
+  try{
+   const response=await fetch(base+'manifest.json');if(!response.ok)return false;
+   const manifest=await response.json();
+   if(manifest.width!==WIDTH||manifest.height!==HEIGHT||manifest.layers.length!==5)return false;
+   const decoded=await Promise.all(manifest.layers.map(async layer=>{
+    const load=async file=>{const image=new Image();image.src=base+file;await image.decode();return image;};
+    return {layer,desktop:await load(layer.desktop),portal:await load(layer.portal)};
+   }));
+   if(disposed)return false;
+   for(const {layer,desktop,portal} of decoded){
+    const canvas=surface(),depth=surface();canvas.getContext('2d').drawImage(desktop,0,0);depth.getContext('2d').drawImage(portal,0,0);
+    for(const [image,count,reserve] of [[canvas,layer.nativePixels,14],[depth,layer.portalPixels,manifest.reserve]]){
+     image.className='painted-desktop-landscape-layer';image.dataset.landscapeLayer=layer.name;image.dataset.nativePixels=String(count);image.dataset.reservePixels=String(reserve);
+    }
+    canvases.push(canvas);portalCanvases.push(depth);element.append(canvas);
+   }
+   paintPositions();fallback.remove();element.classList.add('is-layered');element.dataset.prepared='true';if(active)resume();return true;
+  }catch{return false;}
+ }
  const ready=new Promise(resolve=>{
   settleReady=resolve;
   source.onload=()=>{
@@ -270,7 +293,8 @@ export function createDesktopLandscape({reduced=false}={}){
    paintPositions();fallback.remove();element.classList.add('is-layered');if(active)resume();resolve(true);
    portalPixels=pixels;portalOwner=portalOwnership(pixels,owner);portalJob=setTimeout(preparePortal,16);
   };
-  source.onerror=()=>resolve(false);source.src=SOURCE;fallback.src=SOURCE;
+  source.onerror=()=>resolve(false);fallback.src=SOURCE;
+  loadPrepared().then(loaded=>{if(loaded)resolve(true);else if(!disposed)source.src=SOURCE;});
  });
  return {element,ready,paintTo,setJourney,setTravel(progress){travel=Number.isFinite(progress)?Math.max(0,Math.min(1,progress)):0;element.dataset.landscapeTravel=String(travel);selectPortalSurfaces();paintPositions(paintTime);},getTravel(){return travel;},getDepthPose(){return sampleLandscapeDepth(portalDOM?travel:0);},getPortalLayers(){return portalCanvases.length===LAYERS.length?portalCanvases.map((canvas,index)=>({name:LAYERS[index].name,canvas})):[];},setPortalPose(pose,weight=1){portalWeight=Number.isFinite(weight)?Math.max(0,Math.min(1,weight)):0;portalSourceScale=Number.isFinite(pose?.portalScale)?Math.max(1.022,Math.min(1.065,pose.portalScale)):1.065;portalPose=LAYERS.map(({name},index)=>{const item=Array.isArray(pose)?pose.find(point=>point?.name===name)||pose[index]:null;let x=Number.isFinite(item?.x)?item.x:0,y=Number.isFinite(item?.y)?item.y:0;const total=Math.abs(x)+Math.abs(y);if(total>28){x*=28/total;y*=28/total;}return {name,x,y};});if(!Array.isArray(pose))portalWeight=0;selectPortalSurfaces();paintPositions(paintTime);},setDepth(nextX,nextY){targetX=bounded(nextX);targetY=bounded(nextY);if(isReduced()){x=y=0;paintPositions();}else if(active&&!frame&&canvases.length)resume();},setPassageDepth(nextX,nextY){targetX=x=isReduced()?0:bounded(nextX);targetY=y=isReduced()?0:bounded(nextY);paintPositions(paintTime);},setPassageAspect(aspect){const next=Number.isFinite(aspect)&&aspect>0?Math.max(.1,Math.min(10,aspect)):null;if(next===passageAspect)return;passageAspect=next;frameLayers(element.clientWidth,element.clientHeight);},pause,resume,dispose(){disposed=true;pause();if(portalJob!==null)clearTimeout(portalJob);portalPixels=portalOwner=null;settleReady(false);source.onload=source.onerror=null;[...canvases,...portalCanvases].forEach(canvas=>{canvas.width=canvas.height=1;});element.remove();}};
 }

@@ -9,14 +9,14 @@
 .is-paper-desktop .painted-desktop-heading h2 { font-weight: 400; font-size: 16px; }
 .is-paper-desktop .painted-folder-window { background: transparent; clip-path: none; filter: drop-shadow(0 8px 15px #66614e18); }
 .is-paper-desktop .painted-folder-window::before { display: none; }
-.painted-finder-surface { position: absolute; inset: -5px; z-index: -1; pointer-events: none; background: #f8f5ed url('/assets/painted/paper-wash.png') 30% 40% / 540px; mask: url('/assets/painted/finder-window-edge.svg') center / 100% 100% no-repeat; }
+.painted-finder-surface { position: absolute; inset: -5px; z-index: -1; pointer-events: none; background: #f8f5ed url('/assets/painted/paper-wash.webp') 30% 40% / 540px; mask: url('/assets/painted/finder-window-edge.svg') center / 100% 100% no-repeat; }
 .painted-finder-surface::before { content: ''; position: absolute; inset: 0; background: url('/assets/painted/pigment-wash.png') center / 790px; mix-blend-mode: multiply; opacity: .18; }
 .painted-finder-surface::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 2% at 40% 1%,#b3a78b50,transparent 90%),radial-gradient(ellipse 1.1% 45% at .7% 61%,#82958b50,transparent 90%),radial-gradient(ellipse 1.1% 45% at 99% 35%,#b4a18b55,transparent 85%),radial-gradient(ellipse 50% 2% at 57% 99%,#9f9f8350,transparent 85%); }
 .is-paper-desktop .painted-folder-bar { border: 0; position: relative; background: transparent; }
 .is-paper-desktop .painted-folder-bar::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #dfdacf60 url('/assets/painted/pigment-wash.png') 40% 30% / 570px; background-blend-mode: soft-light; opacity: .48; clip-path: polygon(1% 6%,18% 2%,37% 6%,61% 0,84% 8%,99% 3%,99.8% 80%,79% 96%,61% 89%,40% 100%,21% 91%,.2% 95%); }
 .is-paper-desktop .painted-folder-bar::after { content: ''; position: absolute; inset: auto 1% 0; height: 2px; background: #aaad9d45; clip-path: polygon(0 34%,14% 14%,29% 35%,43% 11%,61% 28%,74% 7%,91% 24%,100% 43%,97% 82%,81% 69%,62% 91%,45% 73%,26% 100%,9% 76%,0 92%); }
 .is-paper-desktop .painted-finder-sidebar { position: relative; isolation: isolate; background: transparent; border: 0; }
-.is-paper-desktop .painted-finder-sidebar::before { content: ''; position: absolute; inset: 2px 0; z-index: -1; background: #d6ddcc85 url('/assets/painted/paper-wash.png') center / 360px; background-blend-mode: multiply; opacity: .55; clip-path: polygon(2% 0,99% 1%,97% 23%,100% 44%,98% 63%,100% 81%,96% 100%,2% 99%,0 74%,2% 49%,0 23%); }
+.is-paper-desktop .painted-finder-sidebar::before { content: ''; position: absolute; inset: 2px 0; z-index: -1; background: #d6ddcc85 url('/assets/painted/paper-wash.webp') center / 360px; background-blend-mode: multiply; opacity: .55; clip-path: polygon(2% 0,99% 1%,97% 23%,100% 44%,98% 63%,100% 81%,96% 100%,2% 99%,0 74%,2% 49%,0 23%); }
 .is-paper-desktop .painted-finder-location[aria-current] { background: #a5b5b333; border-radius: 0; clip-path: polygon(3% 9%,31% 1%,67% 6%,97% 0,100% 34%,96% 63%,100% 97%,59% 94%,25% 100%,0 89%,3% 58%,0 27%); }
 .is-paper-desktop .painted-folder-foot { border: 0; background: #d9d5c41c; clip-path: polygon(0 12%,23% 0,47% 11%,75% 3%,100% 10%,99% 100%,0 98%); }
 .is-paper-desktop .painted-traffic-lights button { position: relative; overflow: hidden; }
@@ -25,7 +25,7 @@
 .project-browser-file::after { background-image: url('/assets/painted/pigment-wash.png'); background-size: 370px; opacity: 0; }
 .project-browser-description { color: #778176; }
 .project-browser-preview-kind { font-style: italic; letter-spacing: .025em !important; }
-.project-browser-view-button::after { background: #b1bbaa3a url('/assets/painted/paper-wash.png') center / 190px; }
+.project-browser-view-button::after { background: #b1bbaa3a url('/assets/painted/paper-wash.webp') center / 190px; }
 .project-browser-file-name { font-size: 12px; }
 .is-paper-desktop .painted-desktop-dock::before { opacity: .85; background-color: #f4efe0; }
 .is-paper-desktop .painted-desktop-heading::before { opacity: .78; background-image: url('/assets/painted/pigment-wash.png'); background-blend-mode: soft-light; background-size: 780px; }

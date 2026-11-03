@@ -1,5 +1,5 @@
-import {onSupport,atFoot,planeScale,DESK,DESK_HEIGHT} from './brush-study-geometry.js?v=paint-screen-20261014e';
-import {studyLightGLSL} from './brush-study-light.js?v=paint-screen-20261014e';
+import {onSupport,atFoot,planeScale,DESK,DESK_HEIGHT} from './brush-study-geometry.js?v=objects-20261103a';
+import {studyLightGLSL} from './brush-study-light.js?v=objects-20261103a';
 
 // The original pigment is retained. Its support surfaces are reconstructed,
 // while the plants, lamp and desk objects remain upright watercolor cutouts.
@@ -176,10 +176,6 @@ void main(){
   settled+=exp(-dot(tinContact/vec2(20.,6.),tinContact/vec2(20.,6.)))*.12;
   col*=1.-settled*(.88+.12*sin(q.x*.071+q.y*.117));
  }
- // A low, diffuse lamp wash follows the top instead of a screen-space oval.
- vec2 lampPool=vec2(paintWorld.x-proxyBase[0].x-105.,(paintWorld.z-proxyBase[0].z-20.)*.45)/vec2(220.,85.);
- float pool=exp(-dot(lampPool,lampPool));
- col+=vec3(.13,.074,.032)*pool*(woodPlane+laptopPlane*.25+paperPlane*.20)*lamp*(.16+.84*night);
  float bulb=oval(q,vec2(388.,350.),vec2(37.,14.));
  if(deskRole==12.)col+=vec3(.35,.22,.09)*bulb*lamp*(.28+.72*night);
  // Translucent dry pigment at the outline; never expand a rectangular crop.

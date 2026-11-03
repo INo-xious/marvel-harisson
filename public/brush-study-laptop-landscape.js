@@ -1,4 +1,4 @@
-import {LAPTOP_SCREEN,registerPaintPoint,registeredWorldPoint,fullLaptopScreenView} from './brush-study-laptop-view.js?v=shoreline-passage-20261019a';
+import {LAPTOP_SCREEN,registerPaintPoint,registeredWorldPoint,fullLaptopScreenView} from './brush-study-laptop-view.js?v=objects-20261103a';
 
 const PORTAL_LAYERS=[['sky',.12],['mountains',.4],['lake',.7],['shoreline',1.1],['foreground',1.75]];
 const clamp=(value,low,high)=>Math.max(low,Math.min(high,value));

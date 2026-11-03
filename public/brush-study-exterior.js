@@ -5,8 +5,8 @@
  * clipped by its camera ray at the wall, including the wall's upper paper edge.
  * The source bank at native y=425 is registered to art y=330 by the .776 wash.
  */
-import {solarDirection} from './brush-study-geometry.js?v=paint-screen-20261014e';
-import {studyWindowGLSL} from './brush-study-window.js?v=paint-screen-20261014e';
+import {solarDirection} from './brush-study-geometry.js?v=objects-20261103a';
+import {studyWindowGLSL} from './brush-study-window.js?v=objects-20261103a';
 export function createStudyExterior({THREE,scene,uniforms,texture,cloud,wallTexture,getDistance,getWallDepth}){
  const WIDTH=1672,HEIGHT=941,BANK=330,SCALE_Y=.776;
  // Native-image roof envelope: the irregular towers, bridge piers and tree line

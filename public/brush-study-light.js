@@ -1,9 +1,9 @@
-import {floorNormal, solarDirection, onSupport, DESK, DESK_HEIGHT} from './brush-study-geometry.js?v=paint-screen-20261014e';
+import {floorNormal, solarDirection, onSupport, DESK, DESK_HEIGHT} from './brush-study-geometry.js?v=objects-20261103a';
 
 // Light and shadows share the room's reconstructed support plane. All radii
 // below are in that world space; the aperture remains registered to the paint.
 export const studyLightGLSL = /* glsl */ `
-uniform vec3 solarDirection, floorNormal;
+uniform vec3 solarDirection, floorNormal, lampPosition, lampDirection;
 uniform float solarActive;
 uniform vec3 proxyBase[8];
 uniform vec4 proxyShape[8];
@@ -90,6 +90,38 @@ float objectSunShadow(vec3 p) {
   return clamp(visibility,0.,1.);
 }
 
+// The source sits inside the painted shade and shines down at the actual desk.
+vec3 taskLampPaint(vec3 color, vec3 p, float receiver) {
+ if(lamp<.001||receiver<.001)return color;
+ vec3 fromLamp=p-lampPosition;
+ float distanceSquared=max(dot(fromLamp,fromLamp),1.);
+ vec3 ray=fromLamp*inversesqrt(distanceSquared);
+ float cone=smoothstep(.64,.94,dot(ray,normalize(lampDirection)));
+ if(cone<.001)return color;
+ float incidence=max(0.,dot(normalize(floorNormal),-ray));
+ float falloff=18000./(18000.+distanceSquared);
+ // Use the same upright desk proxies, excluding the light's own metal body.
+ vec3 localRay=studyCasterLocal(-ray,normalize(floorNormal));
+ float visibility=1.;
+ float belowTop=deskShadowHeight-dot(p,normalize(floorNormal));
+ if(belowTop>2.&&localRay.y>.001){
+  vec3 hit=p-ray*(belowTop/localRay.y);
+  float edge=min(min(hit.x-deskShadowBounds.x,deskShadowBounds.y-hit.x),min(hit.z-deskShadowBounds.z,deskShadowBounds.w-hit.z));
+  visibility*=1.-smoothstep(-6.,6.,edge);
+ }
+ if(localRay.y>.001){
+  for(int i=1;i<7;i++){
+   vec4 shape=proxyShape[i];
+   // Leaf gaps transmit the lamp wash; solid objects retain their silhouette.
+   if(i==1)shape.w*=.28;
+   visibility*=studyCylinderShadow(studyCasterLocal(p-proxyBase[i],normalize(floorNormal)),localRay,shape);
+  }
+ }
+ float light=lamp*receiver*cone*incidence*falloff*visibility*(.20+.80*night);
+ // A warm transparent wash retains the texture instead of bleaching it white.
+ return color+vec3(.78,.43,.17)*light*(.45+.55*color);
+}
+
 vec3 lightPaint(vec3 color, vec3 p, float receiver) {
   float response = clamp(receiver,0.,1.);
   if (response <= 0.0001) return color;
@@ -103,7 +135,7 @@ vec3 lightPaint(vec3 color, vec3 p, float receiver) {
   vec3 warm = mix(vec3(1.0,0.88,0.70),sunColor,0.48);
   result += warm*color*(energy*clearLight*incidence*0.22);
   result += vec3(0.036,0.022,0.010)*color*day*response*(1.-night*0.7);
-  return max(result,vec3(0.));
+  return max(taskLampPaint(result,p,response),vec3(0.));
 }
 `;
 
@@ -148,6 +180,12 @@ export function updateStudyLight({THREE,uniforms,distance,wallDepth,sillDepth=wa
   const strength = Number.isFinite(uniforms.strength?.value) ? uniforms.strength.value : fallback;
   uniforms.solarActive.value = sunAltitude > 0 && light[2] < -.01 ? Math.min(1,Math.max(0,strength)) : 0;
   proxyUniforms(THREE,uniforms);
+  const lampBase=onSupport(277.98,536.8,DESK_HEIGHT,distance);
+  const lampScale=(distance-lampBase[2])/distance;
+  const source=[lampBase[0]+104.4*lampScale,lampBase[1]+126*lampScale,lampBase[2]];
+  const target=onSupport(350,564,DESK_HEIGHT,distance);
+  vectorUniform(THREE,uniforms,'lampPosition',source);
+  vectorUniform(THREE,uniforms,'lampDirection',target.map((v,i)=>v-source[i]));
   const rear = onSupport(...DESK.rearLeft,DESK_HEIGHT,distance);
   const front = onSupport(...DESK.frontRight,DESK_HEIGHT,distance);
   if (!uniforms.deskShadowBounds) uniforms.deskShadowBounds = {value:new THREE.Vector4()};

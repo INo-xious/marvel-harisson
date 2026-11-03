@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-room-version="objects-20261103a">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -10,20 +10,19 @@
 <meta property="og:title" content="Marvel Harisson · A little room">
 <meta property="og:description" content="Software, robotics, and open source, inside a watercolor room in Osaka.">
 <script type="importmap">{"imports":{"three":"/vendor/three.module.js"}}</script>
-<link rel="stylesheet" href="/brush-study-desktop.css?v=portfolio-20261103a">
-<link rel="stylesheet" href="/brush-study-paper-desktop.css?v=portfolio-20261103a">
-<link rel="stylesheet" href="/brush-study-project-browser.css?v=portfolio-20261103a">
-<link rel="stylesheet" href="/brush-study-painted-ui.css?v=portfolio-20261103a">
-<link rel="stylesheet" href="/brush-study-desktop-landscape.css?v=portfolio-20261103a">
-<link rel="stylesheet" href="/brush-study-shoreline.css?v=portfolio-20261103a">
+<link rel="stylesheet" href="/room-interactions.css?v=objects-20261103a">
+<link rel="stylesheet" href="/brush-study-desktop.css?v=objects-20261103a">
+<link rel="stylesheet" href="/brush-study-paper-desktop.css?v=objects-20261103a">
+<link rel="stylesheet" href="/brush-study-project-browser.css?v=objects-20261103a">
+<link rel="stylesheet" href="/brush-study-painted-ui.css?v=objects-20261103a">
+<link rel="stylesheet" href="/brush-study-desktop-landscape.css?v=objects-20261103a">
+<link rel="stylesheet" href="/brush-study-shoreline.css?v=objects-20261103a">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#fff;color:#514c46;font:14px Georgia,serif}canvas{display:block;width:100vw;height:100dvh;touch-action:none}canvas:focus-visible{outline:2px dashed #85756555;outline-offset:-8px}header{position:fixed;top:24px;left:28px;pointer-events:none}h1{margin:0;font-size:25px;font-weight:normal}header p{font-size:12px;margin-top:8px}footer{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:min(720px,calc(100% - 32px));background:#faf8f3ed;border:1px solid #e9e3d880;border-radius:14px;padding:12px 17px;backdrop-filter:blur(12px)}.row{display:flex;align-items:center;gap:12px;justify-content:space-between}.time{font-variant-numeric:tabular-nums;margin-left:auto}input{width:100%;accent-color:#857565;margin:8px 0;height:14px}button,summary{font:inherit;border:0;background:#ded9ce55;color:inherit;padding:6px 9px;border-radius:7px;cursor:pointer}button:hover,summary:hover{background:#ded9ceaa}button[aria-pressed="true"]{background:#ddd6c8}button:disabled{opacity:.5}button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #697f7b;outline-offset:3px}.presets,.view{display:flex;gap:5px}.view{margin-left:auto}small{opacity:.7;font-size:11px;display:block;margin-top:8px}.view button{min-width:31px}#status{position:fixed;inset:45% 0 auto;text-align:center}details{position:relative}summary{list-style:none;font-size:12px}summary::-webkit-details-marker{display:none}.exports{position:absolute;bottom:36px;right:0;width:185px;padding:10px;background:#faf8f3;border:1px solid #e7dfd0;border-radius:10px;box-shadow:0 6px 30px #514c4615;display:grid;gap:6px}.exports button{text-align:left;font-size:12px}.social-hit{position:fixed;z-index:3;transform:translate(-50%,-50%);padding:0;background:transparent;border:0}.social-hit:hover{background:transparent}.social-hit:focus-visible{outline:2px solid #857565;outline-offset:3px}.contact-dialog{max-width:min(380px,calc(100vw - 32px));padding:28px;border:1px solid #ede6d9;border-radius:14px;background:#f5f0e6;color:#514c46;box-shadow:0 20px 70px #18182044}.contact-dialog::backdrop{background:#22293855}.contact-dialog h2{font-size:27px;font-weight:normal;margin:0 0 12px}.contact-dialog p{line-height:1.5;margin:0 0 16px}.contact-dialog a{display:block;color:inherit;margin-bottom:16px}.contact-dialog button{display:block;margin-top:20px}
-@media(max-width:600px){header{top:18px;left:20px}footer{bottom:12px;padding:11px 12px}.row{gap:6px}h1{font-size:22px}button{font-size:12px;padding:6px}.view{gap:3px}.view button{min-width:25px}.presets{gap:3px}small{font-size:10px}}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#514c46;font:14px Georgia,serif}canvas{display:block;width:100vw;height:100dvh;touch-action:none}canvas:focus-visible{outline:2px dashed #85756555;outline-offset:-8px}header{position:fixed;top:24px;left:28px;pointer-events:none}h1{margin:0;font-size:25px;font-weight:normal}header p{font-size:12px;margin-top:8px}button{font:inherit;color:inherit;cursor:pointer}#status{position:fixed;inset:45% 0 auto;text-align:center}.social-hit{position:fixed;z-index:3;transform:translate(-50%,-50%);padding:0;background:transparent;border:0}.social-hit:hover{background:transparent}.social-hit:focus-visible{outline:2px dashed #857565;outline-offset:3px}@media(max-width:600px){header{top:18px;left:20px}h1{font-size:22px}}
 </style>
 <style>
 .social-hit,.laptop-hit{cursor:pointer}.paint-hit-caption{position:absolute;left:50%;top:calc(100% + 7px);transform:translate(-50%,4px);white-space:nowrap;font:11px Georgia,serif;letter-spacing:.025em;background:#faf7edee;color:#5d625a;padding:5px 9px;box-shadow:0 3px 12px #514c4612;border-radius:3px 7px 4px 6px;opacity:0;pointer-events:none;transition:opacity .24s,transform .24s}.social-hit:hover .paint-hit-caption,.social-hit:focus-visible .paint-hit-caption,.laptop-hit:hover .paint-hit-caption,.laptop-hit:focus-visible .paint-hit-caption{opacity:1;transform:translate(-50%,0)}.laptop-hit{position:fixed;z-index:3;background:transparent;border:0;border-radius:5px;padding:0}.laptop-hit:hover{background:transparent;box-shadow:none}.laptop-hit:focus-visible{outline:none}@media(prefers-reduced-motion:reduce){.paint-hit-caption{transition:none}}
-.paint-hit-caption{transform:translateX(-50%);background:#faf7edee url('/assets/painted/paper-wash.png') center/240px 135px;box-shadow:none;border-radius:0;clip-path:polygon(2% 5%,28% 0,73% 4%,99% 0,100% 93%,62% 100%,27% 94%,0 100%);transition:opacity .28s,color .28s}.social-hit:hover .paint-hit-caption,.social-hit:focus-visible .paint-hit-caption,.laptop-hit:hover .paint-hit-caption,.laptop-hit:focus-visible .paint-hit-caption{transform:translateX(-50%)}
-.contact-dialog{border:0;border-radius:0;background:#f5f0e6 url('/assets/painted/paper-wash.png') center/560px 315px;clip-path:polygon(1% 2%,33% 0,69% 1%,99% 0,100% 34%,99% 68%,100% 99%,72% 98%,40% 100%,0 99%,1% 64%,0 32%);box-shadow:none}.contact-dialog::backdrop{background:#e9e4d75a}.contact-dialog a,.contact-dialog button{background:transparent;text-decoration:underline;text-decoration-color:#73857770;text-underline-offset:5px;text-decoration-style:wavy}.contact-dialog a:hover,.contact-dialog button:hover{background:#aab5a21c;color:#4d6557}
+.paint-hit-caption{transform:translateX(-50%);background:#faf7edee url('/assets/painted/paper-wash.webp') center/240px 135px;box-shadow:none;border-radius:0;clip-path:polygon(2% 5%,28% 0,73% 4%,99% 0,100% 93%,62% 100%,27% 94%,0 100%);transition:opacity .28s,color .28s}.social-hit:hover .paint-hit-caption,.social-hit:focus-visible .paint-hit-caption,.laptop-hit:hover .paint-hit-caption,.laptop-hit:focus-visible .paint-hit-caption{transform:translateX(-50%)}
 </style>
 </head>
 <body>
@@ -31,16 +30,7 @@
 <canvas id="painting" tabindex="0" aria-label="Watercolor room with live Osaka sunlight. Move your pointer across the painting to gently stir its colors. Arrow keys change the view. Shift and arrow keys brush the paint."></canvas>
 <header><h1>a little room.</h1><p>Osaka · a changing light</p></header>
 <div id="status" role="status">Preparing the painting…</div>
-<footer aria-label="Room light and view controls">
- <div class="row"><span id="phase">Daylight</span><span class="time" id="time"></span><button id="lamp" aria-pressed="true">Lamp on</button><button id="live">Live time</button></div>
- <label for="hour" hidden>Preview time of day</label><input id="hour" aria-label="Preview time of day" type="range" min="0" max="1439" step="1">
- <div class="row">
-  <div class="presets"><button data-phase="dawn">Dawn</button><button data-phase="day">Day</button><button data-phase="sunset">Sunset</button><button data-phase="night">Night</button></div>
-  <div class="view" aria-label="Viewing angle"><button data-view="left" aria-label="View room from left">←</button><button data-view="center" aria-label="Center room view">View</button><button data-view="right" aria-label="View room from right">→</button></div>
-  <details><summary>Save</summary><div class="exports"><button id="record">Save motion preview</button><button id="record-cycle">Save day cycle</button><button id="record-horizon">Save sunset &amp; moon</button></div></details>
- </div>
- <small>Move through the room · brush across the paint · let the washes settle</small>
-</footer>
+
 <script type="module" src="/brush-study.js?v=portfolio-20261103a"></script>
 </body>
 </html>

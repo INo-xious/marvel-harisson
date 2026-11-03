@@ -1,9 +1,9 @@
 // A second painted room, reached through the laptop screen.
 // Content is supplied by content.js; empty folders never invent portfolio history.
-import {watercolorReveal,cancelWatercolor} from './brush-study-wash.js?v=portfolio-20261103a';
-import {createPaintedProjectBrowser} from './brush-study-project-browser.js?v=portfolio-20261103a';
-import {createDesktopLandscape} from './brush-study-desktop-landscape.js?v=portfolio-20261103a';
-import {createShorelinePassage} from './brush-study-shoreline.js?v=portfolio-20261103a';
+import {watercolorReveal,cancelWatercolor} from './brush-study-wash.js?v=objects-20261103a';
+import {createPaintedProjectBrowser} from './brush-study-project-browser.js?v=objects-20261103a';
+import {createDesktopLandscape} from './brush-study-desktop-landscape.js?v=objects-20261103a';
+import {createShorelinePassage} from './brush-study-shoreline.js?v=objects-20261103a';
 import {SHORELINE_TIMING} from './brush-study-shoreline-timing.js';
 import {preparePaintedEdge} from './brush-study-painted-edge.js';
 const folderCatalog = [
@@ -33,7 +33,7 @@ const safeURL = (value) => {
 function folderArt(ink) {
   const wrapper = make('span', 'painted-folder-art');
   const image = make('img', 'painted-folder-bitmap');
-  image.src = '/assets/painted/finder-folder-watercolor-v1.png';
+  image.src = '/assets/painted/finder-folder-watercolor-v1.webp';
   image.alt = ''; image.draggable = false;
   wrapper.setAttribute('aria-hidden', 'true');
   const tones = {'#a99579':'ochre','#8faaa0':'sage','#929fb0':'blue','#b89c91':'rose'};

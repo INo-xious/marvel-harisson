@@ -4,6 +4,8 @@ An interactive watercolor portfolio with live Osaka daylight, painted room objec
 
 ## Content
 
+The room objects are the controls: click the lamp to toggle its warm desk light, click the radio to open a music player, and click a social icon for a small URL preview. Outside clicks or Escape dismiss previews. The radio plays the three bundled tracks with play/pause, previous/next, seeking and volume; closing the popup leaves music playing. There is no bottom control bar. The clock and daylight follow live Osaka time.
+
 The laptop contains Timeline, Résumé, Projects and Notes folders. Projects has two collections:
 
 - **Projects:** nine entries, including Stockbit MCP, Marvelous Engine, the IDX ownership pipeline, deterministic agent regression testing, robotics, Pacman AI, coursework, this portfolio and the GitHub profile.
@@ -48,3 +50,11 @@ For visual review, test laptop entry/return, Projects → Contributions, project
 ## Deployment
 
 The repository retains its Next.js build contract (`pnpm build`, `pnpm start`) for the existing host. The painting is included in `public`; no separate asset download or build step is required. The main URL remains [marvelharisson.com](https://marvelharisson.com/).
+
+## Rendering and delivery
+
+The active painting uses WebP delivery assets (about 3.5 MB including the prepared landscape layers, down from about 16 MB of source textures). Original PNG artwork remains in the repository. Prepared desktop/portal cutouts in `public/assets/painted/landscape` avoid segmentation and reserve reconstruction on the visitor’s main thread; runtime generation remains a fallback if those files cannot load.
+
+The room limits its render target to 1.4 million pixels, disables offscreen multisampling, caps device pixel ratio at 1 on phones and 1.25 on desktop, and renders the resting room at 30 fps. Laptop camera transitions retain a 60 fps budget. Rendering pauses in hidden tabs and behind a settled laptop desktop. The landscape animation also pauses while that desktop is closed. Audio is loaded only on playback.
+
+For a local night-light review, open `/brush-study.html?previewTime=1260`; the normal homepage always uses live time.

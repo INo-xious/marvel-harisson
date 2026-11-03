@@ -1,0 +1,42 @@
+{
+  "width": 1586,
+  "height": 992,
+  "reserve": 192,
+  "layers": [
+    {
+      "name": "sky",
+      "desktop": "sky.webp",
+      "portal": "sky-portal.webp",
+      "nativePixels": 414637,
+      "portalPixels": 414637
+    },
+    {
+      "name": "mountains",
+      "desktop": "mountains.webp",
+      "portal": "mountains-portal.webp",
+      "nativePixels": 148847,
+      "portalPixels": 188801
+    },
+    {
+      "name": "lake",
+      "desktop": "lake.webp",
+      "portal": "lake-portal.webp",
+      "nativePixels": 557064,
+      "portalPixels": 557064
+    },
+    {
+      "name": "shoreline",
+      "desktop": "shoreline.webp",
+      "portal": "shoreline-portal.webp",
+      "nativePixels": 126957,
+      "portalPixels": 87003
+    },
+    {
+      "name": "foreground",
+      "desktop": "foreground.webp",
+      "portal": "foreground-portal.webp",
+      "nativePixels": 325807,
+      "portalPixels": 325807
+    }
+  ]
+}
