@@ -26,4 +26,36 @@ describe('Mac portfolio desktop',()=>{
   button('Open Résumé from dock').click();expect(document.querySelector('.mac-window-body').textContent).toContain('Ritsumeikan University');
   expect([...document.querySelectorAll('.mac-window-body a')].some(link=>link.href.includes('Marvel-Harisson-resume.pdf'))).toBe(true);
  });
+ it('keeps the real desktop mounted on the screen throughout entry and retreat',async()=>{
+  let finishEntry,finishLeave;
+  const enter=vi.fn(()=>new Promise(resolve=>{finishEntry=resolve;}));
+  const leave=vi.fn(()=>new Promise(resolve=>{finishLeave=resolve;}));
+  desktop=createMacDesktop({portfolio,onEnter:enter,onLeave:leave});
+  const opening=desktop.open();await vi.waitFor(()=>expect(enter).toHaveBeenCalledOnce());
+  const corners=[[120,90],[370,75],[390,255],[135,270]];
+  desktop.project({corners},enter.mock.calls[0][0].start+600);
+  const surface=document.querySelector('.mac-surface'),dialog=document.querySelector('.mac-desktop');
+  expect(dialog.open).toBe(true);expect(desktop.isSettled).toBe(false);expect(surface.style.transform).toMatch(/^matrix3d/);expect(surface.dataset.registration).toBe('0.000');
+  finishEntry();await opening;expect(desktop.isSettled).toBe(true);expect(surface.style.transform).toBe('none');
+  const closing=desktop.close();expect(dialog.open).toBe(true);
+  desktop.project({corners},leave.mock.calls[0][0].start+700);expect(surface.style.transform).toMatch(/^matrix3d/);expect(desktop.isSettled).toBe(false);
+  finishLeave();await closing;expect(dialog.open).toBe(false);
+ });
+
+ it('can reverse an opening flight without leaving a modal or a stale open state',async()=>{
+  let finishEntry;
+  const enter=vi.fn(()=>new Promise(resolve=>{finishEntry=resolve;}));
+  const exit=vi.fn();
+  desktop=createMacDesktop({portfolio,onEnter:enter,onLeave:()=>finishEntry(),onExit:exit});
+  const opening=desktop.open();await vi.waitFor(()=>expect(enter).toHaveBeenCalledOnce());
+  await desktop.close();await opening;
+  expect(desktop.isOpen).toBe(false);expect(document.querySelector('.mac-desktop').open).toBe(false);expect(exit).toHaveBeenCalledOnce();
+ });
+ it('keeps reduced-motion entry and exit immediate and untransformed',async()=>{
+  desktop=createMacDesktop({portfolio,reduced:true});await desktop.open();
+  desktop.project({corners:[[10,10],[200,0],[210,130],[5,140]]});
+  expect(document.querySelector('.mac-surface').style.transform).toBe('none');
+  await desktop.close();expect(desktop.isOpen).toBe(false);
+ });
+
 });

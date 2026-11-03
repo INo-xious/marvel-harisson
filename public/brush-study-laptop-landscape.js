@@ -85,7 +85,7 @@ const recessFragment=`
 
 // Independent native pigment surfaces live behind one measured aperture.
 // Their virtual depth follows the viewer without duplicating painted actors.
-export function createLaptopLandscapeSurface({THREE,lid,landscape,uniforms={},camera,getHomeEye,reduced=false}={}){
+export function createLaptopLandscapeSurface({THREE,lid,landscape,uniforms={},camera,getHomeEye,reduced=false,initialPower=1}={}){
  if(!THREE||!lid||typeof landscape?.paintTo!=='function')throw new Error('A painted lid and registered landscape are required');
  const center=LAPTOP_SCREEN.reduce((sum,[x,y])=>[sum[0]+x/4,sum[1]+y/4],[0,0]);
  const spanX=Math.max(...LAPTOP_SCREEN.map(point=>point[0]))-Math.min(...LAPTOP_SCREEN.map(point=>point[0]));
@@ -101,7 +101,7 @@ export function createLaptopLandscapeSurface({THREE,lid,landscape,uniforms={},ca
  const fallbackMaterial=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,side:THREE.DoubleSide,transparent:true,opacity:1,depthWrite:false,depthTest:true,toneMapped:false});
  const group=new THREE.Group();group.name='Laptop layered watercolor portal';lid.add(group);
  const fallback=new THREE.Mesh(geometry,fallbackMaterial);fallback.name='Laptop live painted landscape';fallback.renderOrder=lid.renderOrder+.01;fallback.frustumCulled=false;fallback.visible=false;group.add(fallback);
- const layers=[],materials=[fallbackMaterial];let recess=null;
+ const layers=[],materials=[fallbackMaterial];let recess=null,power=clamp(initialPower,0,1);
  const cover=Math.max(640/1586,400/992),crop=new THREE.Vector2(640/(1586*cover*1.022),400/(992*cover*1.022));
  const inverse=new THREE.Matrix4(),normal=new THREE.Vector3(),right=new THREE.Vector3(),up=new THREE.Vector3(),origin=new THREE.Vector3(),liveEye=new THREE.Vector3();
  const homeAtCreation=camera?.getWorldPosition(new THREE.Vector3())||new THREE.Vector3(0,0,1700);
@@ -130,8 +130,11 @@ export function createLaptopLandscapeSurface({THREE,lid,landscape,uniforms={},ca
   inverse.copy(lid.matrixWorld).invert();const positions=geometry.attributes.position;
   world.forEach((point,index)=>{point.addScaledVector(normal,.12).applyMatrix4(inverse);positions.setXYZ(index,point.x,point.y,point.z);});positions.needsUpdate=true;
   const day=clamp(Number.isFinite(uniforms.day?.value)?uniforms.day.value:1,0,1),room=uniforms.roomTint?.value,light=.66+.34*day;
-  fallbackMaterial.color.setRGB(light*(.94+.06*(room?.r??1)),light*(.95+.05*(room?.g??1)),light*(.96+.04*(room?.b??1)));
+  fallbackMaterial.color.setRGB(power*light*(.94+.06*(room?.r??1)),power*light*(.95+.05*(room?.g??1)),power*light*(.96+.04*(room?.b??1)));
   const presence=lid.material?.uniforms?.laptopPresence?.value,alpha=Number.isFinite(presence)?clamp(presence,0,1):1;fallbackMaterial.opacity=alpha;
+  // Sleeping leaves the original painted glass visible, including its
+  // diagonal blue-grey washes and reflected paper. Never cover it with black.
+  if(power<=.001){fallback.visible=false;return false;}
   const layered=prepare();
   if(layered){
    if(readyAt===null)readyAt=now;
@@ -148,5 +151,5 @@ export function createLaptopLandscapeSurface({THREE,lid,landscape,uniforms={},ca
   if(now-lastTexture>=1000/30&&landscape.paintTo(context,canvas.width,canvas.height)){lastTexture=now;texture.needsUpdate=true;fallback.visible=true;}
   return fallback.visible;
  }
- return {update,setOccluded(occluded){group.visible=!occluded;},getPose(){const result=pose.map(point=>({...point}));Object.defineProperty(result,'portalScale',{value:portalScale});return result;},dispose(){if(disposed)return;disposed=true;group.removeFromParent();geometry.dispose();materials.forEach(material=>material.dispose());textures.forEach(texture=>texture.dispose());canvas.width=canvas.height=1;}};
+ return {update,setPower(value){power=clamp(finite(value),0,1);},setOccluded(occluded){group.visible=!occluded;},getPose(){const result=pose.map(point=>({...point}));Object.defineProperty(result,'portalScale',{value:portalScale});return result;},dispose(){if(disposed)return;disposed=true;group.removeFromParent();geometry.dispose();materials.forEach(material=>material.dispose());textures.forEach(texture=>texture.dispose());canvas.width=canvas.height=1;}};
 }

@@ -152,6 +152,12 @@ check(group.visible===true,'Returning from the desktop restores the same physica
 assert.deepEqual(surface.getPose(),poseWhileOccluded);checks++;
 check(group.children.filter(mesh=>mesh.userData.landscapeLayer).every((mesh,i)=>mesh===nativeMeshes[i]),'Occlusion reuses the native painted meshes without rebuilding or resetting their layers');
 surface.dispose();check(!group.parent,'Disposing the physical portal releases its laptop-mounted geometry group');
+// Sleep must expose the original watercolor glass, rather than a flat GPU fill.
+const sleeping=createLaptopLandscapeSurface({THREE,lid,camera:portalCamera,initialPower:0,landscape:{paintTo:()=>false,getPortalLayers:()=>[]}});
+sleeping.update(now+2000);
+const sleepingGroup=lid.children.find(child=>child.name==='Laptop layered watercolor portal');
+check(sleepingGroup.children.every(mesh=>!mesh.visible),'Powered-off display preserves the original native painted screen');
+sleeping.dispose();
 if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;
 
 console.log(`Painted screen portal: ${checks} native-layer, bounded-depth, camera/pointer, reduced-motion, physical-aperture and contained-view checks pass.`);

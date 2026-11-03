@@ -1,3 +1,5 @@
+import {mapPaintedScreen} from './brush-study-passage.js';
+import {sampleLaptopTransition} from './laptop-transition.js?v=laptop-flight-20261103d';
 import {createPaintedProjectBrowser} from './brush-study-project-browser.js?v=mac-desktop-20261103c';
 const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
 const folders=[{id:'projects',label:'Projects',icon:'folder'},{id:'timeline',label:'Timeline',icon:'calendar'},{id:'resume',label:'Résumé',icon:'folder'},{id:'notes',label:'Notes',icon:'notes'}];
@@ -31,9 +33,11 @@ function createMacScreen(){
  }};
 }
 export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEntered=()=>{},onLeave=()=>{},onExit=()=>{}}={}){
- const uid='mac-portfolio';let state='closed',session=0,opener=null,activeFolder=null,lastFolder='projects',menu=null,drag=null;
+ const uid='mac-portfolio';let state='closed',session=0,opener=null,activeFolder=null,lastFolder='projects',menu=null,drag=null,motion=null,screenCorners=null;
  const landscape=createMacScreen();
  const dialog=make('dialog','mac-desktop');dialog.setAttribute('aria-label','Mac desktop');
+ const displayBacking=make('div','mac-display-backing');displayBacking.setAttribute('aria-hidden','true');
+ const surface=make('div','mac-surface');
  const menubar=make('div','mac-menubar');const left=make('div','mac-menu-left');const apple=make('button','mac-apple','');apple.setAttribute('aria-label','Apple menu');const finder=make('strong','','Finder');left.append(apple,finder);
  const menuButton=(label,items)=>{const button=make('button','mac-menu-button',label);button.type='button';button.setAttribute('aria-haspopup','menu');button.onclick=()=>showMenu(button,items);left.append(button);return button;};
  const back=make('button','mac-return','← Room');back.setAttribute('aria-label','Back to the room');back.onclick=()=>close();
@@ -50,7 +54,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  for(const folder of folders){const button=make('button','mac-sidebar-item');button.setAttribute('aria-label',`Open ${folder.label} in Finder`);button.append(icon(folder.icon),make('span','',folder.label));button.onclick=()=>openFolder(folder.id);sidebar.append(button);sidebarButtons.set(folder.id,button);}
  sidebar.append(make('p','mac-owner',portfolio.name||'Portfolio'));const windowBody=make('div','mac-window-body');windowBody.tabIndex=0;const windowFoot=make('div','mac-window-foot');layout.append(sidebar,windowBody);windowPanel.append(toolbar,layout,windowFoot);
  const announcement=make('span','mac-sr-only');announcement.setAttribute('role','status');
- dialog.append(menubar,desktop,windowPanel,dock,announcement);document.body.append(dialog);
+ surface.append(menubar,desktop,windowPanel,dock);dialog.append(displayBacking,surface,announcement);document.body.append(dialog);
   const empty = (heading, copy) => {
     const illustration = folderArt('#b4a894', `${uid}-empty-grain`);
     illustration.classList.add('painted-empty-art');
@@ -191,7 +195,43 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  dialog.addEventListener('cancel',event=>{event.preventDefault();if(menu)dismissMenu();else if(!windowPanel.hidden)hideWindow();else close();});
  function updateDate(){date.textContent=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tokyo',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());}
  const dateTimer=setInterval(()=>{if(state!=='closed')updateDate();},30000);
- async function open({from}={}){if(state!=='closed')return;const visit=++session;state='opening';opener=document.activeElement;await landscape.ready;await onEnter({from,start:performance.now()});if(visit!==session)return;updateDate();dialog.showModal();document.body.classList.add('mac-desktop-open');onEntered();state='open';finderDock.focus({preventScroll:true});}
- async function close(){if(state!=='open')return;state='closing';++session;dismissMenu();dialog.close();document.body.classList.remove('mac-desktop-open');await onLeave({start:performance.now()});state='closed';windowPanel.hidden=true;activeFolder=null;onExit();opener?.focus({preventScroll:true});}
- return {open,close,landscape,project(){},resize(){drag=null;windowPanel.style.left='';windowPanel.style.top='';windowPanel.style.transform='';},get isOpen(){return state!=='closed';},get isSettled(){return state==='open';},dispose(){clearInterval(dateTimer);dialog.remove();}};
+ function project({corners}={},now=performance.now()){
+  if(Array.isArray(corners)&&corners.length===4)screenCorners=corners;
+  if(state==='closed')return;
+  if(!motion||reduced){surface.style.transform='none';surface.style.opacity='1';displayBacking.style.transform='none';displayBacking.style.opacity='1';dialog.style.clipPath='none';return;}
+  const pose=sampleLaptopTransition(motion.mode,now-motion.start);
+  const rectify=motion.mode==='leave'?pose.rectify*motion.fromRectify:pose.rectify;
+  const power=motion.mode==='leave'?pose.power*motion.fromPower:pose.power;
+  const target=[[0,0],[innerWidth,0],[innerWidth,innerHeight],[0,innerHeight]];
+  if(screenCorners){
+   const quad=screenCorners.map(([x,y],i)=>[x+(target[i][0]-x)*rectify,y+(target[i][1]-y)*rectify]);
+   const matrix=mapPaintedScreen({source:{left:0,top:0,width:innerWidth,height:innerHeight},corners:quad});
+   if(matrix)displayBacking.style.transform=matrix;
+   // Keep the responsive desktop inside the visible display area. This
+   // prevents a brief magnification before the camera starts pulling back.
+   const visible=screenCorners.map(([x,y])=>[Math.max(0,Math.min(innerWidth,x)),Math.max(0,Math.min(innerHeight,y))]);
+   const desktopMatrix=mapPaintedScreen({source:{left:0,top:0,width:innerWidth,height:innerHeight},corners:visible});
+   if(desktopMatrix)surface.style.transform=desktopMatrix;
+   dialog.style.clipPath=`polygon(${screenCorners.map(([x,y])=>`${x}px ${y}px`).join(',')})`;
+  }
+  surface.style.opacity=String(power);displayBacking.style.opacity=String(power);surface.dataset.screenPower=power.toFixed(3);surface.dataset.registration=rectify.toFixed(3);
+ }
+ async function open({from}={}){
+  if(state!=='closed')return;const visit=++session;state='opening';opener=document.activeElement;
+  await landscape.ready;if(visit!==session)return;
+  updateDate();surface.inert=true;motion={mode:'enter',start:performance.now()};project();
+  dialog.showModal();dialog.tabIndex=-1;dialog.focus({preventScroll:true});document.body.classList.add('mac-desktop-open');
+  await onEnter({from,start:motion.start});if(visit!==session)return;
+  motion=null;state='open';surface.inert=false;project();onEntered();finderDock.focus({preventScroll:true});
+ }
+ async function close(){
+  if(state!=='open'&&state!=='opening')return;
+  const current=motion?sampleLaptopTransition(motion.mode,performance.now()-motion.start):{rectify:1,power:1};
+  state='closing';++session;dismissMenu();surface.inert=true;
+  motion={mode:'leave',start:performance.now(),fromRectify:current.rectify,fromPower:current.power};project();
+  await onLeave({start:motion.start});
+  dialog.close();document.body.classList.remove('mac-desktop-open');motion=null;state='closed';windowPanel.hidden=true;activeFolder=null;surface.inert=false;onExit();opener?.focus({preventScroll:true});
+ }
+
+ return {open,close,landscape,project,resize(){drag=null;windowPanel.style.left='';windowPanel.style.top='';windowPanel.style.transform='';},get isOpen(){return state!=='closed';},get isSettled(){return state==='open';},dispose(){clearInterval(dateTimer);dialog.remove();}};
 }

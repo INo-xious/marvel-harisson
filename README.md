@@ -53,10 +53,12 @@ The repository retains its Next.js build contract (`pnpm build`, `pnpm start`) f
 
 ## Rendering and delivery
 
-The active room uses compressed WebP paintings (about 2.5 MB of delivery textures, down from about 16 MB of PNG sources). Original artwork remains in the repository. The Mac wallpaper and native icons add about 96 KB. The laptop uses one cached screen texture and updates it only when needed; the retired landscape segmentation and layered animation are no longer loaded by the active desktop.
+The active room uses compressed WebP paintings (about 2.5 MB of delivery textures, down from about 16 MB of PNG sources). Original artwork remains in the repository. The Mac wallpaper and native icons add about 96 KB. The laptop uses the real desktop UI projected onto its screen during travel; the retired landscape segmentation and layered animation are no longer loaded by the active desktop.
 
 The room limits its render target to 1.4 million pixels, disables offscreen multisampling, caps device pixel ratio at 1 on phones and 1.25 on desktop, and renders the resting room at 30 fps. Laptop camera transitions retain a 60 fps budget. Rendering pauses in hidden tabs and behind a settled laptop desktop. The retired watercolor desktop modules and artwork remain available as source history, with their validators. Audio is loaded only on playback.
 
 For a local night-light review, open `/brush-study.html?previewTime=1260`; the normal homepage always uses live time.
 
 Website preview images in `public/assets/previews` were captured from the actual public destinations on 3 November 2026 and load only when opened. LinkedIn currently returns a sign-in wall for logged-out visitors, so its captured preview includes that state. Gmail uses its public product page as the visual preview; clicking opens an email to Marvel. These are clickable snapshots, not live embedded pages. The room uses tighter default framing (about 20% larger) while retaining its rendering budget.
+
+The laptop begins asleep with the original painted glass, blue-grey pigment and diagonal reflection visible. Clicking wakes the display and carries the actual desktop along the projected screen aperture. Entry takes about 2 seconds and return about 1.9 seconds; the desktop stays mounted throughout the pullback and fades back into the original painted glass. Reduced motion opens and closes immediately. Escape can reverse entry safely. `public/laptop-transition.js` owns the shared camera, registration and power timing.

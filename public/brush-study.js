@@ -1,22 +1,22 @@
-import {createRoomInteractions} from './room-interactions.js?v=mac-desktop-20261103c';
+import {LAPTOP_TIMING,sampleLaptopTransition} from './laptop-transition.js?v=laptop-flight-20261103d';
+import {createRoomInteractions} from './room-interactions.js?v=laptop-flight-20261103d';
 import * as THREE from 'three';
 import {WatercolorPost} from './watercolor-post.js';
 import {sunState,minutesInOsaka,startTimePreview,runningRoomDate} from './time.js';
 import {createDaylightPalette} from './daylight-palette.js';
-import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=mac-desktop-20261103c';
-import {createStudyDesk} from './brush-study-desk.js?v=mac-desktop-20261103c';
-import {createStudyExterior} from './brush-study-exterior.js?v=mac-desktop-20261103c';
-import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=mac-desktop-20261103c';
-import {studyWindowGLSL} from './brush-study-window.js?v=mac-desktop-20261103c';
+import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=laptop-flight-20261103d';
+import {createStudyDesk} from './brush-study-desk.js?v=laptop-flight-20261103d';
+import {createStudyExterior} from './brush-study-exterior.js?v=laptop-flight-20261103d';
+import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=laptop-flight-20261103d';
+import {studyWindowGLSL} from './brush-study-window.js?v=laptop-flight-20261103d';
 import {portfolio,tracks} from './content.js?v=portfolio-20261103a';
-import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=mac-desktop-20261103c';
-import {createMacDesktop as createPaintedDesktop} from './mac-desktop.js?v=mac-desktop-20261103c';
-import {watercolorReveal} from './brush-study-wash.js?v=mac-desktop-20261103c';
-import {createPaintedPortal} from './brush-study-portal.js?v=mac-desktop-20261103c';
-import {fullLaptopScreenView} from './brush-study-laptop-view.js?v=mac-desktop-20261103c';
-import {createLaptopProjection} from './brush-study-laptop-view.js?v=mac-desktop-20261103c';
-import {createLaptopLandscapeSurface} from './brush-study-laptop-landscape.js?v=mac-desktop-20261103c';
-import {sampleShoreline,SHORELINE_TIMING} from './brush-study-shoreline-timing.js';
+import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=laptop-flight-20261103d';
+import {createMacDesktop as createPaintedDesktop} from './mac-desktop.js?v=laptop-flight-20261103d';
+import {watercolorReveal} from './brush-study-wash.js?v=laptop-flight-20261103d';
+import {createPaintedPortal} from './brush-study-portal.js?v=laptop-flight-20261103d';
+import {fullLaptopScreenView} from './brush-study-laptop-view.js?v=laptop-flight-20261103d';
+import {createLaptopProjection} from './brush-study-laptop-view.js?v=laptop-flight-20261103d';
+import {createLaptopLandscapeSurface} from './brush-study-laptop-landscape.js?v=laptop-flight-20261103d';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canvas=document.querySelector('#painting'),renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power'});
 renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -326,11 +326,12 @@ const socialButtons=socialItems.map(([id,label,x,y],index)=>{
  roomUI.registerSocial(id,button);
  document.body.append(button);return {button,x,y,index,id};
 });
-const laptopButton=document.createElement('button');laptopButton.className='laptop-hit';laptopButton.setAttribute('aria-label','Open laptop desktop');laptopButton.setAttribute('aria-haspopup','dialog');laptopButton.hidden=true;
-const laptopCaption=document.createElement('span');laptopCaption.className='paint-hit-caption';laptopCaption.textContent='Open desktop';laptopButton.append(laptopCaption);document.body.append(laptopButton);
+const laptopButton=document.createElement('button');laptopButton.className='laptop-hit';laptopButton.setAttribute('aria-label','Wake laptop and open desktop');laptopButton.setAttribute('aria-haspopup','dialog');laptopButton.hidden=true;
+const laptopCaption=document.createElement('span');laptopCaption.className='paint-hit-caption';laptopCaption.textContent='Click to wake';laptopButton.append(laptopCaption);document.body.append(laptopButton);
 let laptopFlight=null,laptopView=null,laptopProjection=null,laptopLandscape=null,laptopRoomPose=null,projectedLaptopContour=[],projectedLaptopScreen=[],projectedLaptopCenter=null,laptopAttention=false,laptopFilm=false,restorePaintingResolution=false;
 const laptopPortalPointer=new THREE.Vector2();
 let laptopKeyboardPortal=false;
+const laptopLookTarget=new THREE.Vector3();
 const laptopPortal=createPaintedPortal({reduced});
 function setPaintingResolution(film){
  const ratio=Math.min(devicePixelRatio,innerWidth<700?1:1.25);if(renderer.getPixelRatio()===ratio)return;
@@ -344,16 +345,16 @@ function finishLaptopFlight(cancelled=false){
  if(cancelled)laptopPortal.cancel();
 }
 function approachLaptop({start=performance.now()}={}){
- roomUI.close();post.stop();drag=null;if(reduced||!laptopView)return Promise.resolve({cancelled:false});
+ roomUI.close();post.stop();post.clearFlow();drag=null;if(reduced||!laptopView)return Promise.resolve({cancelled:false});
  laptopRoomPose={position:camera.position.clone(),up:camera.up.clone(),tilt:viewTilt.clone()};
  finishLaptopFlight(true);
  laptopFilm=true;setPaintingResolution(true);document.body.classList.add('laptop-approaching');
- return new Promise(resolve=>{laptopFlight={mode:'enter',start,duration:SHORELINE_TIMING.enter.camera,from:camera.position.clone(),fromUp:camera.up.clone(),destination:laptopView,resolve};});
+ return new Promise(resolve=>{laptopFlight={mode:'enter',start,duration:LAPTOP_TIMING.enter,fromTarget:laptopLookTarget.clone(),from:camera.position.clone(),fromUp:camera.up.clone(),destination:laptopView,resolve};});
 }
 function retreatFromLaptop({start=performance.now()}={}){
  laptopPortal.finish();if(reduced||!laptopView)return Promise.resolve({cancelled:false});
  finishLaptopFlight(true);
- return new Promise(resolve=>{laptopFlight={mode:'leave',start,duration:SHORELINE_TIMING.leave.camera,from:camera.position.clone(),fromUp:camera.up.clone(),destination:laptopView,resolve};});
+ return new Promise(resolve=>{laptopFlight={mode:'leave',start,duration:LAPTOP_TIMING.leave,fromTarget:laptopLookTarget.clone(),from:camera.position.clone(),fromUp:camera.up.clone(),destination:laptopView,resolve};});
 }
 const paintedDesktop=createPaintedDesktop({portfolio,reduced,onEnter:approachLaptop,onEntered:()=>laptopPortal.finish(),onLeave:retreatFromLaptop,onExit:()=>{
  finishLaptopFlight(true);laptopFilm=false;restorePaintingResolution=true;laptopView=null;laptopPortal.cancel();
@@ -379,7 +380,7 @@ laptopButton.addEventListener('keydown',event=>{
  if(event.key==='ArrowUp')laptopPortalPointer.y=Math.max(-1,laptopPortalPointer.y-.35);
  if(event.key==='ArrowDown')laptopPortalPointer.y=Math.min(1,laptopPortalPointer.y+.35);
 });
-if(!reduced)laptopButton.setAttribute('aria-description','A layered painted landscape lives inside the screen. Arrow keys look around; Enter opens the desktop.');
+if(!reduced)laptopButton.setAttribute('aria-description','Wake the display and zoom into the Mac desktop. Press Enter to open.');
 laptopButton.onclick=()=>paintedDesktop.open({from:laptopButton.getBoundingClientRect()});
 function projectSocials(){const zoom=innerWidth/span.x*camera.zoom;for(const {button,index} of socialButtons){const {x,y}=iconMotion.getPose(index).center,z=objectDepth(10,{x,y}),k=(cameraDistance-z)/cameraDistance;const p=new THREE.Vector3((x-836)*k,(470.5-y)*k,z).project(camera);button.hidden=paintedDesktop.isOpen||Math.abs(p.x)>1||Math.abs(p.y)>1;button.style.left=((p.x+1)*innerWidth/2)+'px';button.style.top=((1-p.y)*innerHeight/2)+'px';button.style.width=Math.max(12,Math.min(40,56*zoom))+'px';button.style.height=Math.max(44,64*zoom)+'px';}}
 function projectLaptop(){
@@ -447,7 +448,7 @@ function draw(now){
  if(reduced)viewTilt.copy(parallaxTarget);else viewTilt.lerp(parallaxTarget,1.-Math.exp(-dt*4.));
  if(laptopFlight){
   const phase=THREE.MathUtils.clamp((now-laptopFlight.start)/laptopFlight.duration,0,1);
-  const entering=laptopFlight.mode==='enter',zoom=sampleShoreline(laptopFlight.mode,now-laptopFlight.start).camera,view=laptopFlight.destination;
+  const entering=laptopFlight.mode==='enter',zoom=sampleLaptopTransition(laptopFlight.mode,now-laptopFlight.start).camera,view=laptopFlight.destination;
   const end=entering?view.position:(laptopRoomPose?.position||new THREE.Vector3(viewTilt.x*85,-viewTilt.y*48,cameraDistance));
   {
    const a=laptopFlight.from.clone().sub(view.center),b=end.clone().sub(view.center),radius=Math.exp(THREE.MathUtils.lerp(Math.log(a.length()),Math.log(b.length()),zoom));
@@ -460,9 +461,9 @@ function draw(now){
   const roomEye=laptopRoomPose?.position||laptopFlight.from;
   const roomRadius=roomEye.distanceTo(view.center),radius=camera.position.distanceTo(view.center);
   const roomFraction=Math.min(1,radius/roomRadius)*(entering?1-zoom:zoom);
-  camera.lookAt(view.center.clone().multiplyScalar(1-roomFraction));
+  laptopLookTarget.copy(entering?view.center:laptopFlight.fromTarget).multiplyScalar(1-roomFraction);camera.lookAt(laptopLookTarget);
  }else if(!paintedDesktop.isOpen){
-  camera.position.set(viewTilt.x*85,-viewTilt.y*48,cameraDistance);camera.up.set(0,1,0);camera.lookAt(0,0,0);
+  camera.position.set(viewTilt.x*85,-viewTilt.y*48,cameraDistance);camera.up.set(0,1,0);laptopLookTarget.set(0,0,0);camera.lookAt(laptopLookTarget);
  }
  if(restorePaintingResolution){restorePaintingResolution=false;setPaintingResolution(false);}
  camera.updateMatrixWorld();uniforms.viewPosition.value.copy(camera.position);uniforms.wallDepth.value=windowPaneDepth(cameraDistance);uniforms.wallRegistration.value=(cameraDistance-uniforms.wallDepth.value)/cameraDistance;uniforms.windowFaceDepth.value=windowFaceDepth(cameraDistance);uniforms.windowFaceRegistration.value=(cameraDistance-uniforms.windowFaceDepth.value)/cameraDistance;updateContacts();post.material.uniforms.waterInverseView.value.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse).invert();if(!reduced)elapsed+=dt;uniforms.time.value=elapsed;iconMotion.update(dt);uniforms.clockMinutes.value=clockMinute+(now-clockAt)/60000;uniforms.catReaction.value=catReactionAt<0?-100:elapsed-catReactionAt;laptopLandscape?.setOccluded(paintedDesktop.isSettled);laptopLandscape?.update(now,{pointer:laptopPortalPointer.toArray(),hover:laptopAttention});projectSocials();projectLaptop();projectRoomObjects();roomUI.position();if(laptopFlight){
@@ -484,7 +485,7 @@ try{
  pigment.wrapS=pigment.wrapT=THREE.MirroredRepeatWrapping;post.setPigment(pigment);
  textures.forEach((texture,i)=>createPaintedLayer(texture,layerSpecs[i]));
  deskScene=createStudyDesk({THREE,scene,uniforms,texture:deskTexture,getDistance:()=>cameraDistance});
- laptopLandscape=createLaptopLandscapeSurface({THREE,lid:deskScene.meshes.find(piece=>piece.name==='Laptop painted lid'),landscape:paintedDesktop.landscape,uniforms,camera,getHomeEye:()=>new THREE.Vector3(0,0,cameraDistance),reduced});
+ laptopLandscape=createLaptopLandscapeSurface({THREE,lid:deskScene.meshes.find(piece=>piece.name==='Laptop painted lid'),landscape:paintedDesktop.landscape,uniforms,camera,initialPower:0,getHomeEye:()=>new THREE.Vector3(0,0,cameraDistance),reduced});
  exteriorScene=createStudyExterior({THREE,scene,uniforms,texture:outsideTexture,cloud,wallTexture:textures[0],getDistance:()=>cameraDistance,getWallDepth:()=>windowPaneDepth(cameraDistance)});
  // Optional local visual review: isolate a paint family without changing
  // its registration, lighting, wind, or camera controls.
