@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest';
-import {LAPTOP_TIMING,sampleLaptopTransition} from '../public/laptop-transition.js';
+import {LAPTOP_TIMING,sampleLaptopTransition,screenReveal} from '../public/laptop-transition.js';
 describe('screen-registered laptop motion',()=>{
  it('wakes before travel and reaches the exact desktop and sleeping endpoints',()=>{
   expect(sampleLaptopTransition('enter',0)).toMatchObject({camera:0,power:0,rectify:0});
@@ -31,18 +31,24 @@ describe('screen-registered laptop motion',()=>{
    }
   }
  });
- it('keeps the geometric wallpaper out of the room during both directions',()=>{
-  for(let time=0;time<=LAPTOP_TIMING.enter;time+=10){
-   const pose=sampleLaptopTransition('enter',time);
-   if(pose.wallpaper>0){expect(pose.camera).toBe(1);expect(pose.rectify).toBe(1);}
-  }
-  for(let time=0;time<=LAPTOP_TIMING.leave;time+=10){
-   const pose=sampleLaptopTransition('leave',time);
-   if(pose.camera>0)expect(pose.wallpaper).toBe(0);
-  }
+ it('overlaps the desktop reveal with ongoing camera travel',()=>{
+  const pose=sampleLaptopTransition('enter',2100);
+  expect(pose.wallpaper).toBeGreaterThan(.1);expect(pose.chrome).toBeGreaterThan(.1);
+  expect(pose.camera).toBeLessThan(1);
+  expect(sampleLaptopTransition('enter',100).camera).toBeGreaterThan(0);
+  expect(sampleLaptopTransition('leave',100).camera).toBeGreaterThan(0);
+ });
+ it('hides native graphics until the aperture covers the viewport, then feathers them in',()=>{
+  expect(screenReveal([[10,10],[990,10],[990,710],[10,710]],1000,720)).toBe(0);
+  expect(screenReveal([[0,0],[1000,0],[1000,720],[0,720]],1000,720)).toBe(0);
+  const partly=screenReveal([[-20,-20],[1020,-20],[1020,740],[-20,740]],1000,720);
+  expect(partly).toBeGreaterThan(0);expect(partly).toBeLessThan(1);
+  expect(screenReveal([[-100,-100],[1100,-100],[1100,820],[-100,820]],1000,720)).toBe(1);
+  expect(screenReveal([[-100,-100],[1100,-100],[1100,820],[20,820]],1000,720)).toBe(0);
+  expect(screenReveal(null,1000,720)).toBe(0);
  });
  it('eases camera velocity to zero at both endpoints',()=>{
-  for(const [mode,start,end] of [['enter',250,2400],['leave',900,2900]]){
+  for(const [mode,start,end] of [['enter',0,2600],['leave',0,2600]]){
    expect(sampleLaptopTransition(mode,start+16).camera).toBeLessThan(.00002);
    expect(1-sampleLaptopTransition(mode,end-16).camera).toBeLessThan(.00002);
   }

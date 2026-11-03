@@ -1,5 +1,5 @@
 import {mapPaintedScreen} from './brush-study-passage.js';
-import {sampleLaptopTransition} from './laptop-transition.js?v=painted-wake-20261103a';
+import {sampleLaptopTransition,screenReveal} from './laptop-transition.js?v=continuous-zoom-20261103a';
 import {createPaintedProjectBrowser} from './brush-study-project-browser.js?v=mac-desktop-20261103c';
 const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
 const folders=[{id:'projects',label:'Projects',icon:'folder'},{id:'contributions',label:'Contributions',icon:'folder'},{id:'timeline',label:'Timeline',icon:'calendar'},{id:'resume',label:'Résumé',icon:'folder'},{id:'notes',label:'Notes',icon:'notes'}];
@@ -210,6 +210,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
   const pose=sampleLaptopTransition(motion.mode,now-motion.start);
   const rectify=motion.mode==='leave'?pose.rectify*motion.fromRectify:pose.rectify;
   const power=motion.mode==='leave'?pose.power*motion.fromPower:pose.power;
+  const reveal=screenReveal(screenCorners,innerWidth,innerHeight);
   const target=[[0,0],[innerWidth,0],[innerWidth,innerHeight],[0,innerHeight]];
   if(screenCorners){
    const quad=screenCorners.map(([x,y],i)=>[x+(target[i][0]-x)*rectify,y+(target[i][1]-y)*rectify]);
@@ -220,8 +221,8 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
    surface.style.transform='none';
    dialog.style.clipPath=`polygon(${screenCorners.map(([x,y])=>`${x}px ${y}px`).join(',')})`;
   }
-  wallpaper.style.opacity=String(pose.wallpaper*(motion.mode==='leave'?motion.fromWallpaper:1));
-  surface.style.opacity=String(pose.chrome*(motion.mode==='leave'?motion.fromChrome:1));displayBacking.style.opacity=String(power);surface.dataset.screenPower=power.toFixed(3);surface.dataset.registration=rectify.toFixed(3);
+  wallpaper.style.opacity=String(reveal*pose.wallpaper*(motion.mode==='leave'?motion.fromWallpaper:1));
+  surface.style.opacity=String(reveal*pose.chrome*(motion.mode==='leave'?motion.fromChrome:1));displayBacking.style.opacity=String(power);surface.dataset.screenPower=power.toFixed(3);surface.dataset.registration=rectify.toFixed(3);
  }
  async function open({from}={}){
   if(state!=='closed')return;const visit=++session;state='opening';opener=document.activeElement;

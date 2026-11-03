@@ -35,12 +35,14 @@ export function fullLaptopScreenView(THREE,corners,fov,aspect){
   const turns=quad.map((point,i)=>{const next=quad[(i+1)%4];return (next.x-point.x)*(y-point.y)-(next.y-point.y)*(x-point.x);});
   return turns.every(turn=>turn>=-1e-7)||turns.every(turn=>turn<=1e-7);
  };
+ // Extra travel beyond the viewport fit leaves room for the desktop to
+ // dissolve in while the camera is still moving.
  // The painted display is a trapezoid, so a rectangle width/height fit alone
  // can leave one corner on the bezel. Solve against its projected edges.
  for(let pass=0;pass<28;pass++){
   probe.position.copy(center).addScaledVector(normal,distance);probe.lookAt(center);probe.updateMatrixWorld();
   const quad=corners.map(point=>point.clone().project(probe));
-  if([[-1,-1],[1,-1],[1,1],[-1,1]].every(([x,y])=>inside(quad,x,y))){distance*=.96;break;}
+  if([[-1,-1],[1,-1],[1,1],[-1,1]].every(([x,y])=>inside(quad,x,y))){distance*=.65;break;}
   distance*=.88;
  }
  return {center,normal,up:screenUp,position:center.clone().addScaledVector(normal,distance),distance};
