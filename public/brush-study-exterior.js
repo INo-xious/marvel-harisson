@@ -75,7 +75,7 @@ ${studyWindowGLSL}
   vec3 onFace=viewPosition+ray*((windowFaceDepth-viewPosition.z)/ray.z);
   vec2 faceArt=vec2(onFace.x/windowFaceRegistration+836.,470.5-onFace.y/windowFaceRegistration);
   // Clip the recessed glass through the front opening as well as its own edge.
-  float frontOpening=windowRegion(faceArt)*(1.-smoothstep(439.,458.,faceArt.y));
+  float frontOpening=windowBackingRegion(faceArt)*(1.-smoothstep(439.,458.,faceArt.y));
   // The upper brush silhouette comes from the independent cloud painting,
   // whose white reserves contain no room frame or foreground-object pixels.
   vec3 cloudEdge=painted(p).rgb;

@@ -1,22 +1,22 @@
-import {LAPTOP_TIMING,sampleLaptopTransition} from './laptop-transition.js?v=laptop-flight-20261103d';
-import {createRoomInteractions} from './room-interactions.js?v=laptop-flight-20261103d';
+import {LAPTOP_TIMING,sampleLaptopTransition} from './laptop-transition.js?v=room-layers-20261103a';
+import {createRoomInteractions} from './room-interactions.js?v=room-layers-20261103a';
 import * as THREE from 'three';
 import {WatercolorPost} from './watercolor-post.js';
 import {sunState,minutesInOsaka,startTimePreview,runningRoomDate} from './time.js';
 import {createDaylightPalette} from './daylight-palette.js';
-import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=laptop-flight-20261103d';
-import {createStudyDesk} from './brush-study-desk.js?v=laptop-flight-20261103d';
-import {createStudyExterior} from './brush-study-exterior.js?v=laptop-flight-20261103d';
-import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=laptop-flight-20261103d';
-import {studyWindowGLSL} from './brush-study-window.js?v=laptop-flight-20261103d';
+import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=room-layers-20261103a';
+import {createStudyDesk} from './brush-study-desk.js?v=room-layers-20261103a';
+import {createStudyExterior} from './brush-study-exterior.js?v=room-layers-20261103a';
+import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=room-layers-20261103a';
+import {studyWindowGLSL} from './brush-study-window.js?v=room-layers-20261103a';
 import {portfolio,tracks} from './content.js?v=portfolio-20261103a';
-import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=laptop-flight-20261103d';
-import {createMacDesktop as createPaintedDesktop} from './mac-desktop.js?v=laptop-flight-20261103d';
-import {watercolorReveal} from './brush-study-wash.js?v=laptop-flight-20261103d';
-import {createPaintedPortal} from './brush-study-portal.js?v=laptop-flight-20261103d';
-import {fullLaptopScreenView} from './brush-study-laptop-view.js?v=laptop-flight-20261103d';
-import {createLaptopProjection} from './brush-study-laptop-view.js?v=laptop-flight-20261103d';
-import {createLaptopLandscapeSurface} from './brush-study-laptop-landscape.js?v=laptop-flight-20261103d';
+import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=room-layers-20261103a';
+import {createMacDesktop as createPaintedDesktop} from './mac-desktop.js?v=room-layers-20261103a';
+import {watercolorReveal} from './brush-study-wash.js?v=room-layers-20261103a';
+import {createPaintedPortal} from './brush-study-portal.js?v=room-layers-20261103a';
+import {fullLaptopScreenView} from './brush-study-laptop-view.js?v=room-layers-20261103a';
+import {createLaptopProjection} from './brush-study-laptop-view.js?v=room-layers-20261103a';
+import {createLaptopLandscapeSurface} from './brush-study-laptop-landscape.js?v=room-layers-20261103a';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canvas=document.querySelector('#painting'),renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power'});
 renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -318,10 +318,14 @@ function pointerInPainting(e){
 }
 function pointerOnPaper(e){raycaster.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,1-e.clientY/innerHeight*2),camera);const point=raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,0,1),0),new THREE.Vector3());return point?new THREE.Vector2(point.x+836,470.5-point.y):null;}
 const socialItems=STUDY_SILL_ICONS.map(icon=>[icon.id,icon.label,...icon.center]);
-const roomUI=createRoomInteractions({contacts:portfolio.contacts,tracks,reduced,onOpen:()=>{post.stop();parallaxTarget.copy(viewTilt);},onLamp:value=>{lamp=value;},lampOn:lamp,getTime:()=>({minutes:minutesInOsaka(runningRoomDate(preview)),live:preview===null}),onTime:minutes=>{preview=minutes===null?null:startTimePreview(minutes);syncTime();}});
+const roomUI=createRoomInteractions({contacts:portfolio.contacts,tracks,reduced,onOpen:()=>{parallaxTarget.copy(viewTilt);},onLamp:value=>{lamp=value;},lampOn:lamp,getTime:()=>({minutes:minutesInOsaka(runningRoomDate(preview)),live:preview===null}),onTime:minutes=>{preview=minutes===null?null:startTimePreview(minutes);syncTime();}});
 const socialButtons=socialItems.map(([id,label,x,y],index)=>{
  const button=document.createElement('button');button.className='social-hit';button.setAttribute('aria-label',label);button.setAttribute('aria-haspopup','dialog');button.title=label;
- button.onpointerenter=()=>post.stop();
+ button.onpointerenter=()=>iconMotion.hover(index,true);
+ button.onpointerleave=()=>iconMotion.hover(index,false);
+ button.onfocus=()=>iconMotion.focus(index,button.matches(':focus-visible'));
+ button.onblur=()=>iconMotion.focus(index,false);
+ button.onpointerdown=()=>iconMotion.press(index);
  button.onclick=()=>{if(!paintedDesktop.isOpen)roomUI.openContact(id,label,button);};
  roomUI.registerSocial(id,button);
  document.body.append(button);return {button,x,y,index,id};
@@ -431,12 +435,12 @@ function syncTime(){const date=runningRoomDate(preview),s=sunState(date),palette
 const keyboardBrush=new THREE.Vector2(836,540);
 canvas.addEventListener('keydown',e=>{
  const step={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
- if(!step||roomUI.isOpen||paintedDesktop.isOpen)return;e.preventDefault();
+ if(!step||paintedDesktop.isOpen)return;e.preventDefault();
  if(e.shiftKey&&!reduced){const now=performance.now();post.move(keyboardBrush.x,keyboardBrush.y,now);keyboardBrush.x=THREE.MathUtils.clamp(keyboardBrush.x+step[0]*24,200,1450);keyboardBrush.y=THREE.MathUtils.clamp(keyboardBrush.y+step[1]*24,140,800);post.move(keyboardBrush.x,keyboardBrush.y,now+16);}
  else{post.stop();parallaxTarget.x=THREE.MathUtils.clamp(parallaxTarget.x+step[0]*.24,-1,1);parallaxTarget.y=THREE.MathUtils.clamp(parallaxTarget.y+step[1]*.24,-1,1);}
 });
-canvas.addEventListener('pointermove',e=>{if(drag){if(!reduced)parallaxTarget.set(THREE.MathUtils.clamp(drag.viewX+(e.clientX-drag.startX)/innerWidth*2,-1,1),THREE.MathUtils.clamp(drag.viewY+(e.clientY-drag.startY)/innerHeight*2,-1,1));post.stop();return;}if(roomUI.isOpen||paintedDesktop.isOpen){post.stop();return;}if(!reduced)parallaxTarget.set(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1);if(reduced){post.stop();return;}const p=pointerOnPaper(e);if(p)post.move(p.x,p.y,performance.now());else post.stop();});
-canvas.addEventListener('pointerleave',()=>{if(!laptopButton.matches(':hover')&&!socialButtons.some(item=>item.button.matches(':hover')))parallaxTarget.set(0,0);post.stop();});canvas.addEventListener('pointerdown',e=>{drag={startX:e.clientX,startY:e.clientY,viewX:parallaxTarget.x,viewY:parallaxTarget.y};canvas.setPointerCapture(e.pointerId);post.stop();});
+document.addEventListener('pointermove',e=>{if(drag){if(!reduced)parallaxTarget.set(THREE.MathUtils.clamp(drag.viewX+(e.clientX-drag.startX)/innerWidth*2,-1,1),THREE.MathUtils.clamp(drag.viewY+(e.clientY-drag.startY)/innerHeight*2,-1,1));post.stop();return;}if(paintedDesktop.isOpen||e.target.closest?.('.room-popup,.room-clock-hit')){post.stop();return;}if(!reduced)parallaxTarget.set(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1);if(reduced){post.stop();return;}const p=pointerOnPaper(e);if(p)post.move(p.x,p.y,performance.now());else post.stop();},true);
+canvas.addEventListener('pointerleave',()=>{if(!document.querySelector('.social-hit:hover,.room-object-hit:hover,.room-popup:hover,.laptop-hit:hover')){parallaxTarget.set(0,0);post.stop();}});canvas.addEventListener('pointerdown',e=>{drag={startX:e.clientX,startY:e.clientY,viewX:parallaxTarget.x,viewY:parallaxTarget.y};canvas.setPointerCapture(e.pointerId);post.stop();});
 canvas.addEventListener('pointerup',e=>{if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(drag&&Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)<8&&!reduced){const point=pointerInPainting(e);if(point&&Math.hypot((point.x-1515)/119,(point.y-594)/65)<1)catReactionAt=elapsed;}drag=null;});canvas.addEventListener('pointercancel',()=>{drag=null;post.stop();});
 setInterval(syncTime,1000);syncTime();
 function draw(now){

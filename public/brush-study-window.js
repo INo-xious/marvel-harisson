@@ -73,6 +73,11 @@ float windowRegion(vec2 p){
  // and the sill. The caller then puts its separated frame and objects back.
  return smoothstep(373.,378.,p.x)*(1.-smoothstep(1392.,1399.,p.x))*(1.-smoothstep(464.,470.,p.y));
 }
+// Exterior underpaint extends behind the translucent wall edge. Matching
+// half-covered mattes would otherwise blend twice over white and leave a seam.
+float windowBackingRegion(vec2 p){
+ return smoothstep(365.,370.,p.x)*(1.-smoothstep(1400.,1407.,p.x))*(1.-smoothstep(472.,478.,p.y));
+}
 float upperPaperEdge(vec2 p){
  // Broad bristle groups and a soft wash provide a dry edge over art y0–96.
  // The field remains fixed to the painting during camera movement.
@@ -152,7 +157,7 @@ float retainedWindowPaint(vec2 p,vec3 ink){
 float studyWindowOpening(vec2 p,vec3 ink){
  // Foreground items are separate meshes, so the glass must remain behind
  // them rather than carrying stationary holes in their old silhouettes.
- float pane=windowRegion(p)*(1.-smoothstep(425.,439.,p.y));
+ float pane=windowBackingRegion(p)*(1.-smoothstep(425.,439.,p.y));
  // The independent exterior must not inherit old frame/cloud silhouettes
  // from the backdrop. A shared art-space brush edge supplies its perimeter.
  return clamp(pane*upperPaperEdge(p),0.,1.);
