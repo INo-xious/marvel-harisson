@@ -1,12 +1,12 @@
 # Marvel Harisson · A little room
 
-An interactive watercolor portfolio with live Osaka daylight, painted room objects, and a laptop that opens into a layered landscape desktop. The current design is served at `/` and `/brush-study.html`.
+An interactive watercolor portfolio with live Osaka daylight, painted room objects, and a laptop that opens into a macOS-style desktop. The current design is served at `/` and `/brush-study.html`.
 
 ## Content
 
 The room objects are the controls: click the lamp to toggle its warm desk light, click the radio to open a Spotify-style music player, drag the painted clock hands to choose the time of day, and click a social icon for a captured website preview. Outside clicks or Escape dismiss previews. The radio plays the three bundled tracks with play/pause, previous/next, seeking and volume; closing the popup leaves music playing. There is no bottom control bar. The clock and daylight follow live Osaka time until a preview time is selected. Drag either hand directly on the painted face. Double-click the clock (or press Home while it has focus) to return to live time; arrow keys provide keyboard adjustment.
 
-The laptop contains Timeline, Résumé, Projects and Notes folders. Projects has two collections:
+The laptop opens a full-screen Mac desktop with a Sonoma wallpaper, menu bar, Dock and draggable Finder windows. The red/yellow/green window controls close, minimize and expand windows. Double-click desktop folders, or click Dock and sidebar icons, to open Projects, Timeline, Résumé and Notes. Finder search filters the current collection. Projects has two collections:
 
 - **Projects:** nine entries, including Stockbit MCP, Marvelous Engine, the IDX ownership pipeline, deterministic agent regression testing, robotics, Pacman AI, coursework, this portfolio and the GitHub profile.
 - **Contributions:** 31 authored pull requests across 15 external repositories, each linked directly and labeled Merged, Open or Closed. Status is a snapshot verified on **3 November 2026**; follow the pull request for the current state.
@@ -53,9 +53,9 @@ The repository retains its Next.js build contract (`pnpm build`, `pnpm start`) f
 
 ## Rendering and delivery
 
-The active painting uses WebP delivery assets (about 3.5 MB including the prepared landscape layers, down from about 16 MB of source textures). Original PNG artwork remains in the repository. Prepared desktop/portal cutouts in `public/assets/painted/landscape` avoid segmentation and reserve reconstruction on the visitor’s main thread; runtime generation remains a fallback if those files cannot load.
+The active room uses compressed WebP paintings (about 2.5 MB of delivery textures, down from about 16 MB of PNG sources). Original artwork remains in the repository. The Mac wallpaper and native icons add about 96 KB. The laptop uses one cached screen texture and updates it only when needed; the retired landscape segmentation and layered animation are no longer loaded by the active desktop.
 
-The room limits its render target to 1.4 million pixels, disables offscreen multisampling, caps device pixel ratio at 1 on phones and 1.25 on desktop, and renders the resting room at 30 fps. Laptop camera transitions retain a 60 fps budget. Rendering pauses in hidden tabs and behind a settled laptop desktop. The landscape animation also pauses while that desktop is closed. Audio is loaded only on playback.
+The room limits its render target to 1.4 million pixels, disables offscreen multisampling, caps device pixel ratio at 1 on phones and 1.25 on desktop, and renders the resting room at 30 fps. Laptop camera transitions retain a 60 fps budget. Rendering pauses in hidden tabs and behind a settled laptop desktop. The retired watercolor desktop modules and artwork remain available as source history, with their validators. Audio is loaded only on playback.
 
 For a local night-light review, open `/brush-study.html?previewTime=1260`; the normal homepage always uses live time.
 

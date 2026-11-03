@@ -16,9 +16,10 @@ const projectURL = value => {
   } catch { return null; }
 };
 
-function paintedFile(id, isDocument = false) {
+function paintedFile(id, isDocument = false, native = false) {
   const mark = node('span', `project-browser-mark${isDocument ? ' is-document' : ''}`);
   mark.setAttribute('aria-hidden', 'true');
+  if(native){const image=node('img','mac-file-bitmap');image.src='/assets/macos/folder.webp';image.alt='';mark.append(image);return mark;}
   if(!isDocument){const image=node('img','painted-folder-bitmap');image.src='/assets/painted/finder-folder-watercolor-v1.webp';image.alt='';image.draggable=false;mark.append(image);return mark;}
   mark.innerHTML = isDocument
     ? `<svg viewBox="0 0 104 100" focusable="false"><defs><filter id="${id}" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency=".068" numOctaves="2" seed="7" result="paper"/><feDisplacementMap in="SourceGraphic" in2="paper" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter></defs><g filter="url(#${id})"><path d="M24 12 62 11 81 31 80 88 24 88 20 82 21 18Z" fill="#dedccc" opacity=".8"/><path d="M25 15 61 14 77 31 76 84 26 85 23 79Z" fill="#faf7ed"/><path d="m61 14 1 18 15-1" fill="#b4c7cb" opacity=".6"/><path d="m31 46 33-1m-33 8 34-1m-34 8 25 1m-25 8 31-1" fill="none" stroke="#9aabae" opacity=".5" stroke-width="1.2" stroke-linecap="round"/></g><path d="m26 13 34-1m19 23-1 45-2 5-44 1" fill="none" stroke="#a2aa9d" stroke-width=".7" opacity=".6"/></svg>`
@@ -35,7 +36,8 @@ function viewSymbol(list = false) {
   return symbol;
 }
 
-export function createPaintedProjectBrowser({ items = [], announce = () => {} } = {}) {
+export function createPaintedProjectBrowser({ items = [], announce = () => {},native=false,animate=true } = {}) {
+  const fileMark=(id,doc)=>paintedFile(id,doc,native);
   const uid = `painted-project-browser-${++browserSequence}`;
   const projects = (Array.isArray(items) ? items : []).filter(item => item && typeof item === 'object' && !Array.isArray(item)).map(item => ({
     title: readable(item.title || item.name) || 'Untitled project',
@@ -111,10 +113,10 @@ export function createPaintedProjectBrowser({ items = [], announce = () => {} } 
     option.setAttribute('aria-selected', index === selection ? 'true' : 'false');
     option.setAttribute('aria-controls', `${uid}-preview`);
     option.tabIndex = index === selection ? 0 : -1;
-    option.append(paintedFile(`${uid}-grain-${index}`, project.document), node('span', 'project-browser-file-name', project.title), node('span', 'project-browser-file-meta', project.tags.join(', ') || '—'));
-    option.addEventListener('click', () => {
+    option.append(fileMark(`${uid}-grain-${index}`, project.document), node('span', 'project-browser-file-name', project.title), node('span', 'project-browser-file-meta', project.tags.join(', ') || '—'));
+    option.addEventListener('click', event => {
       select(index);
-      if(window.matchMedia('(max-width: 650px)').matches)preview.scrollIntoView({block:'nearest',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+      if(event.isTrusted&&window.matchMedia('(max-width: 650px)').matches)preview.scrollIntoView({block:'nearest',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
     });
     option.addEventListener('keydown', event => {
       let next;
@@ -127,7 +129,10 @@ export function createPaintedProjectBrowser({ items = [], announce = () => {} } 
       else if (event.key === 'End') next = count - 1;
       else return;
       event.preventDefault();
-      select(Math.max(0, Math.min(count - 1, next)), true);
+      next=Math.max(0,Math.min(count-1,next));
+      const direction=event.key==='Home'?1:event.key==='End'?-1:next>=selection?1:-1;
+      while(next>=0&&next<count&&options[next].hidden)next+=direction;
+      if(next>=0&&next<count)select(next,true);
     });
     listbox.append(option);
     return option;
@@ -135,9 +140,10 @@ export function createPaintedProjectBrowser({ items = [], announce = () => {} } 
   preview.id = `${uid}-preview`;
 
   function columnCount() {
-    if (mode === 'list' || options.length < 2) return 1;
-    const top = options[0].getBoundingClientRect().top;
-    return Math.max(1, options.filter(option => Math.abs(option.getBoundingClientRect().top - top) < 2).length);
+    const visible=options.filter(option=>!option.hidden);
+    if (mode === 'list' || visible.length < 2) return 1;
+    const top = visible[0].getBoundingClientRect().top;
+    return Math.max(1, visible.filter(option => Math.abs(option.getBoundingClientRect().top - top) < 2).length);
   }
   function select(index, focus = false, speak = true) {
     if (!projects[index]) return;
@@ -161,7 +167,7 @@ export function createPaintedProjectBrowser({ items = [], announce = () => {} } 
       option.tabIndex = selected ? 0 : -1;
     });
     const project = projects[index];
-    previewArt.replaceChildren(paintedFile(`${uid}-preview-grain`, project.document));
+    previewArt.replaceChildren(fileMark(`${uid}-preview-grain`, project.document));
     previewArt.hidden = project.contribution;
     previewKind.textContent = project.contribution ? 'Pull request' : project.document ? 'Project document' : 'Project folder';
     previewLink.textContent = project.contribution ? 'View pull request ↗' : 'Visit project ↗';
@@ -174,7 +180,7 @@ export function createPaintedProjectBrowser({ items = [], announce = () => {} } 
     if (project.url) previewLink.href = project.url;
     else previewLink.removeAttribute('href');
     hasPreview = true;
-    if (changed) {
+    if (changed && animate) {
       const effect = watercolorReveal(preview, {
         kind: 'ink', duration: 430, seed: 37 + ++previewVisit,
         reduced: () => Boolean(motionPreference?.matches),
@@ -205,7 +211,7 @@ export function createPaintedProjectBrowser({ items = [], announce = () => {} } 
     listbox.hidden = true;
     preview.hidden = true;
     const empty = node('div', 'project-browser-empty');
-    empty.append(paintedFile(`${uid}-empty-grain`), node('h4', '', 'A little room for the next idea.'), node('p', '', 'Projects will appear in this folder as they’re added.'));
+    empty.append(fileMark(`${uid}-empty-grain`), node('h4', '', 'A little room for the next idea.'), node('p', '', 'Projects will appear in this folder as they’re added.'));
     collection.append(empty);
   }
   return { element, count };

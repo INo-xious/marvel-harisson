@@ -1,20 +1,21 @@
-import {createRoomInteractions} from './room-interactions.js?v=previews-clock-20261103b';
+import {createRoomInteractions} from './room-interactions.js?v=mac-desktop-20261103c';
 import * as THREE from 'three';
 import {WatercolorPost} from './watercolor-post.js';
 import {sunState,minutesInOsaka,startTimePreview,runningRoomDate} from './time.js';
 import {createDaylightPalette} from './daylight-palette.js';
-import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=previews-clock-20261103b';
-import {createStudyDesk} from './brush-study-desk.js?v=previews-clock-20261103b';
-import {createStudyExterior} from './brush-study-exterior.js?v=previews-clock-20261103b';
-import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=previews-clock-20261103b';
-import {studyWindowGLSL} from './brush-study-window.js?v=previews-clock-20261103b';
+import {planeScale,onSupport,STUDY_WINDOW_AZIMUTH,windowPaneDepth,windowFaceDepth,windowPaintDepth} from './brush-study-geometry.js?v=mac-desktop-20261103c';
+import {createStudyDesk} from './brush-study-desk.js?v=mac-desktop-20261103c';
+import {createStudyExterior} from './brush-study-exterior.js?v=mac-desktop-20261103c';
+import {studyLightGLSL,updateStudyLight} from './brush-study-light.js?v=mac-desktop-20261103c';
+import {studyWindowGLSL} from './brush-study-window.js?v=mac-desktop-20261103c';
 import {portfolio,tracks} from './content.js?v=portfolio-20261103a';
-import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=previews-clock-20261103b';
-import {createPaintedDesktop} from './brush-study-desktop.js?v=previews-clock-20261103b';
-import {watercolorReveal} from './brush-study-wash.js?v=previews-clock-20261103b';
-import {createPaintedPortal} from './brush-study-portal.js?v=previews-clock-20261103b';
-import {createLaptopProjection} from './brush-study-laptop-view.js?v=previews-clock-20261103b';
-import {createLaptopLandscapeSurface,portalLaptopScreenView} from './brush-study-laptop-landscape.js?v=previews-clock-20261103b';
+import {createSillIconMotion,studyIconMotionGLSL,STUDY_SILL_ICONS} from './brush-study-icons.js?v=mac-desktop-20261103c';
+import {createMacDesktop as createPaintedDesktop} from './mac-desktop.js?v=mac-desktop-20261103c';
+import {watercolorReveal} from './brush-study-wash.js?v=mac-desktop-20261103c';
+import {createPaintedPortal} from './brush-study-portal.js?v=mac-desktop-20261103c';
+import {fullLaptopScreenView} from './brush-study-laptop-view.js?v=mac-desktop-20261103c';
+import {createLaptopProjection} from './brush-study-laptop-view.js?v=mac-desktop-20261103c';
+import {createLaptopLandscapeSurface} from './brush-study-laptop-landscape.js?v=mac-desktop-20261103c';
 import {sampleShoreline,SHORELINE_TIMING} from './brush-study-shoreline-timing.js';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canvas=document.querySelector('#painting'),renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'low-power'});
@@ -385,7 +386,7 @@ function projectLaptop(){
  const lid=deskScene?.meshes.find(piece=>piece.name==='Laptop painted lid'),base=deskScene?.meshes.find(piece=>piece.name==='Laptop painted base');if(!lid||!base)return;
  if(!laptopProjection)laptopProjection=createLaptopProjection({THREE,lid,base});
  const sample=laptopProjection.sample(camera,innerWidth,innerHeight);projectedLaptopContour=sample.contour;projectedLaptopScreen=sample.corners;
- if(!laptopView)laptopView=portalLaptopScreenView(THREE,sample.world,camera.fov,camera.aspect);
+ if(!laptopView)laptopView=fullLaptopScreenView(THREE,sample.world,camera.fov,camera.aspect);
  const portalPose=laptopLandscape?.getPose?.();
  if(portalPose?.length)laptopButton.dataset.portalPose=JSON.stringify(portalPose);
  paintedDesktop.project({...sample,portalPose,screenLight:Math.pow(.66+.34*uniforms.day.value,1/2.2)});
@@ -464,7 +465,7 @@ function draw(now){
   camera.position.set(viewTilt.x*85,-viewTilt.y*48,cameraDistance);camera.up.set(0,1,0);camera.lookAt(0,0,0);
  }
  if(restorePaintingResolution){restorePaintingResolution=false;setPaintingResolution(false);}
- camera.updateMatrixWorld();uniforms.viewPosition.value.copy(camera.position);uniforms.wallDepth.value=windowPaneDepth(cameraDistance);uniforms.wallRegistration.value=(cameraDistance-uniforms.wallDepth.value)/cameraDistance;uniforms.windowFaceDepth.value=windowFaceDepth(cameraDistance);uniforms.windowFaceRegistration.value=(cameraDistance-uniforms.windowFaceDepth.value)/cameraDistance;updateContacts();post.material.uniforms.waterInverseView.value.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse).invert();if(!reduced)elapsed+=dt;uniforms.time.value=elapsed;iconMotion.update(dt);uniforms.clockMinutes.value=clockMinute+(now-clockAt)/60000;uniforms.catReaction.value=catReactionAt<0?-100:elapsed-catReactionAt;laptopLandscape?.setOccluded(paintedDesktop.isOpen);laptopLandscape?.update(now,{pointer:laptopPortalPointer.toArray(),hover:laptopAttention});projectSocials();projectLaptop();projectRoomObjects();roomUI.position();if(laptopFlight){
+ camera.updateMatrixWorld();uniforms.viewPosition.value.copy(camera.position);uniforms.wallDepth.value=windowPaneDepth(cameraDistance);uniforms.wallRegistration.value=(cameraDistance-uniforms.wallDepth.value)/cameraDistance;uniforms.windowFaceDepth.value=windowFaceDepth(cameraDistance);uniforms.windowFaceRegistration.value=(cameraDistance-uniforms.windowFaceDepth.value)/cameraDistance;updateContacts();post.material.uniforms.waterInverseView.value.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse).invert();if(!reduced)elapsed+=dt;uniforms.time.value=elapsed;iconMotion.update(dt);uniforms.clockMinutes.value=clockMinute+(now-clockAt)/60000;uniforms.catReaction.value=catReactionAt<0?-100:elapsed-catReactionAt;laptopLandscape?.setOccluded(paintedDesktop.isSettled);laptopLandscape?.update(now,{pointer:laptopPortalPointer.toArray(),hover:laptopAttention});projectSocials();projectLaptop();projectRoomObjects();roomUI.position();if(laptopFlight){
  const phase=THREE.MathUtils.clamp((now-laptopFlight.start)/laptopFlight.duration,0,1);
  laptopPortal.finish();
  if(phase>=1)finishLaptopFlight();
