@@ -1,4 +1,3 @@
-import {mapPaintedScreen} from './brush-study-passage.js';
 import {sampleLaptopTransition,screenReveal} from './laptop-transition.js?v=continuous-zoom-20261103a';
 import {createPaintedProjectBrowser} from './brush-study-project-browser.js?v=mac-desktop-20261103c';
 const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
@@ -17,27 +16,9 @@ const safeURL = (value) => {
 };
 
 
-// One cached Mac screen is shared by the physical laptop and its desktop.
-function createMacScreen(){
- const image=new Image();image.src='/assets/macos/sonoma.webp';let ready=false,painted='';
- const icons=new Map(folders.map(folder=>{const image=new Image();image.src=`/assets/macos/${folder.icon}.webp`;image.onload=()=>{painted='';};return[folder.id,image];}));
- const loaded=image.decode().then(()=>{ready=true;return true;}).catch(()=>false);
- return {ready:loaded,getPortalLayers:()=>[],paintTo(context,width,height){
-  if(!ready)return false;const key=`${width}/${height}/${Math.floor(Date.now()/60000)}`;if(key===painted)return false;painted=key;
-  const scale=Math.max(width/image.width,height/image.height),w=image.width*scale,h=image.height*scale;
-  context.clearRect(0,0,width,height);context.drawImage(image,(width-w)/2,(height-h)/2,w,h);
-  context.fillStyle='#ffffff9c';context.fillRect(0,0,width,19);context.fillStyle='#17251e';context.font='bold 9px -apple-system, sans-serif';context.fillText('   Finder',10,13);context.font='8px sans-serif';context.fillText('File   Edit   View   Go   Window   Help',73,13);
-  context.fillText(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date()),width-35,13);
-  folders.forEach((folder,index)=>{const x=width-49,y=35+index*65;const img=icons.get(folder.id);if(img.complete&&img.naturalWidth)context.drawImage(img,x-20,y,38,38);context.fillStyle='#fff';context.font='9px sans-serif';context.textAlign='center';context.fillText(folder.label,x,y+49);context.textAlign='left';});
-  const dockWidth=folders.length*46+16;context.fillStyle='#dbe6de88';context.beginPath();context.roundRect((width-dockWidth)/2,height-56,dockWidth,48,12);context.fill();folders.forEach((folder,index)=>{const img=icons.get(folder.id);if(img.complete&&img.naturalWidth)context.drawImage(img,(width-dockWidth)/2+13+index*46,height-50,36,36);});return true;
- }};
-}
 export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEntered=()=>{},onLeave=()=>{},onExit=()=>{}}={}){
  const uid='mac-portfolio';let state='closed',session=0,opener=null,activeFolder=null,lastFolder='projects',menu=null,drag=null,motion=null,screenCorners=null;
- const landscape=createMacScreen();
  const dialog=make('dialog','mac-desktop');dialog.setAttribute('aria-label','Mac desktop');
- const displayBacking=make('div','mac-display-backing');displayBacking.setAttribute('aria-hidden','true');
- const wallpaper=make('div','mac-wallpaper');displayBacking.append(wallpaper);
  const surface=make('div','mac-surface');
  const menubar=make('div','mac-menubar');const left=make('div','mac-menu-left');const apple=make('button','mac-apple','');apple.setAttribute('aria-label','Apple menu');const finder=make('strong','','Finder');left.append(apple,finder);
  const menuButton=(label,items)=>{const button=make('button','mac-menu-button',label);button.type='button';button.setAttribute('aria-haspopup','menu');button.onclick=()=>showMenu(button,items);left.append(button);return button;};
@@ -55,7 +36,7 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  for(const folder of folders){const button=make('button','mac-sidebar-item');button.setAttribute('aria-label',`Open ${folder.label} in Finder`);button.append(icon(folder.icon),make('span','',folder.label));button.onclick=()=>openFolder(folder.id);sidebar.append(button);sidebarButtons.set(folder.id,button);}
  sidebar.append(make('p','mac-owner',portfolio.name||'Portfolio'));const windowBody=make('div','mac-window-body');windowBody.tabIndex=0;const windowFoot=make('div','mac-window-foot');layout.append(sidebar,windowBody);windowPanel.append(toolbar,layout,windowFoot);
  const announcement=make('span','mac-sr-only');announcement.setAttribute('role','status');
- surface.append(menubar,desktop,windowPanel,dock);dialog.append(displayBacking,surface,announcement);document.body.append(dialog);
+ surface.append(menubar,desktop,windowPanel,dock);dialog.append(surface,announcement);document.body.append(dialog);
   const empty = (heading, copy) => {
     const illustration = folderArt('#b4a894', `${uid}-empty-grain`);
     illustration.classList.add('painted-empty-art');
@@ -206,27 +187,16 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  function project({corners}={},now=performance.now()){
   if(Array.isArray(corners)&&corners.length===4)screenCorners=corners;
   if(state==='closed')return;
-  if(!motion||reduced){wallpaper.style.opacity='1';surface.style.transform='none';surface.style.opacity='1';displayBacking.style.transform='none';displayBacking.style.opacity='1';dialog.style.clipPath='none';return;}
+  if(!motion||reduced){surface.style.opacity='1';dialog.style.clipPath='none';return;}
   const pose=sampleLaptopTransition(motion.mode,now-motion.start);
-  const rectify=motion.mode==='leave'?pose.rectify*motion.fromRectify:pose.rectify;
-  const power=motion.mode==='leave'?pose.power*motion.fromPower:pose.power;
   const reveal=screenReveal(screenCorners,innerWidth,innerHeight);
-  const target=[[0,0],[innerWidth,0],[innerWidth,innerHeight],[0,innerHeight]];
-  if(screenCorners){
-   const quad=screenCorners.map(([x,y],i)=>[x+(target[i][0]-x)*rectify,y+(target[i][1]-y)*rectify]);
-   const matrix=mapPaintedScreen({source:{left:0,top:0,width:innerWidth,height:innerHeight},corners:quad});
-   if(matrix)displayBacking.style.transform=matrix;
-   // Only the wallpaper belongs to the moving display plane. Desktop chrome
-   // appears at the end of entry and fades before retreat, always level.
-   surface.style.transform='none';
-   dialog.style.clipPath=`polygon(${screenCorners.map(([x,y])=>`${x}px ${y}px`).join(',')})`;
-  }
-  wallpaper.style.opacity=String(reveal*pose.wallpaper*(motion.mode==='leave'?motion.fromWallpaper:1));
-  surface.style.opacity=String(reveal*pose.chrome*(motion.mode==='leave'?motion.fromChrome:1));displayBacking.style.opacity=String(power);surface.dataset.screenPower=power.toFixed(3);surface.dataset.registration=rectify.toFixed(3);
+  // The room canvas supplies the same painted glass during travel and at rest.
+  // Only the desktop controls fade in, once the glass fills the viewport.
+  if(screenCorners)dialog.style.clipPath=`polygon(${screenCorners.map(([x,y])=>`${x}px ${y}px`).join(',')})`;
+  surface.style.opacity=String(reveal*pose.chrome*(motion.mode==='leave'?motion.fromChrome:1));
  }
  async function open({from}={}){
   if(state!=='closed')return;const visit=++session;state='opening';opener=document.activeElement;
-  await landscape.ready;if(visit!==session)return;
   updateDate();surface.inert=true;motion={mode:'enter',start:performance.now()};project();
   dialog.showModal();dialog.tabIndex=-1;dialog.focus({preventScroll:true});document.body.classList.add('mac-desktop-open');
   await onEnter({from,start:motion.start});if(visit!==session)return;
@@ -234,12 +204,12 @@ export function createMacDesktop({portfolio={},reduced=false,onEnter=()=>{},onEn
  }
  async function close(){
   if(state!=='open'&&state!=='opening')return;
-  const current=motion?sampleLaptopTransition(motion.mode,performance.now()-motion.start):{rectify:1,power:1,chrome:1,wallpaper:1};
+  const fromChrome=motion?sampleLaptopTransition(motion.mode,performance.now()-motion.start).chrome:1;
   state='closing';++session;dismissMenu();surface.inert=true;
-  motion={mode:'leave',start:performance.now(),fromRectify:current.rectify,fromPower:current.power,fromChrome:current.chrome,fromWallpaper:current.wallpaper};project();
+  motion={mode:'leave',start:performance.now(),fromChrome};project();
   await onLeave({start:motion.start});
   dialog.close();document.body.classList.remove('mac-desktop-open');motion=null;state='closed';windowPanel.hidden=true;activeFolder=null;surface.inert=false;onExit();opener?.focus({preventScroll:true});
  }
 
- return {open,close,landscape,project,resize(){drag=null;windowPanel.style.left='';windowPanel.style.top='';windowPanel.style.transform='';},get isOpen(){return state!=='closed';},get isSettled(){return state==='open';},dispose(){clearInterval(dateTimer);dialog.remove();}};
+ return {open,close,project,resize(){drag=null;windowPanel.style.left='';windowPanel.style.top='';windowPanel.style.transform='';},get isOpen(){return state!=='closed';},get isSettled(){return state==='open';},dispose(){clearInterval(dateTimer);dialog.remove();}};
 }

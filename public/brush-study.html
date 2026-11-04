@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-room-version="continuous-zoom-20261103a">
+<html lang="en" data-room-version="painted-screen-20261104a">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -24,14 +24,51 @@
 .social-hit,.laptop-hit{cursor:pointer}.paint-hit-caption{position:absolute;left:50%;top:calc(100% + 7px);transform:translate(-50%,4px);white-space:nowrap;font:11px Georgia,serif;letter-spacing:.025em;background:#faf7edee;color:#5d625a;padding:5px 9px;box-shadow:0 3px 12px #514c4612;border-radius:3px 7px 4px 6px;opacity:0;pointer-events:none;transition:opacity .24s,transform .24s}.social-hit:hover .paint-hit-caption,.social-hit:focus-visible .paint-hit-caption,.laptop-hit:hover .paint-hit-caption,.laptop-hit:focus-visible .paint-hit-caption{opacity:1;transform:translate(-50%,0)}.laptop-hit{position:fixed;z-index:3;background:transparent;border:0;border-radius:5px;padding:0}.laptop-hit:hover{background:transparent;box-shadow:none}.laptop-hit:focus-visible{outline:none}@media(prefers-reduced-motion:reduce){.paint-hit-caption{transition:none}}
 .paint-hit-caption{transform:translateX(-50%);background:#faf7edee url('/assets/painted/paper-wash.webp') center/240px 135px;box-shadow:none;border-radius:0;clip-path:polygon(2% 5%,28% 0,73% 4%,99% 0,100% 93%,62% 100%,27% 94%,0 100%);transition:opacity .28s,color .28s}.social-hit:hover .paint-hit-caption,.social-hit:focus-visible .paint-hit-caption,.laptop-hit:hover .paint-hit-caption,.laptop-hit:focus-visible .paint-hit-caption{transform:translateX(-50%)}
 </style>
-<link rel="stylesheet" href="/mac-desktop.css?v=continuous-zoom-20261103a">
+<style>
+.room-caption {
+  z-index: 4;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  max-width: calc(100% - 48px);
+  pointer-events: auto;
+}
+.room-caption p { font-size: 12px; line-height: 1.4; }
+.room-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; margin-top: 4px; }
+.room-invitation, .room-projects {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  color: #34483f;
+  font: 15px Georgia, serif;
+  touch-action: manipulation;
+}
+.room-invitation {
+  border: 1px solid #c7cdbd;
+  border-radius: 5px 9px 6px 8px;
+  background: #f5f2e9 url('/assets/painted/paper-wash.webp') center / 240px;
+}
+.room-invitation:enabled:hover { border-color: #697f7b; }
+.room-invitation:disabled { opacity: .65; cursor: default; }
+.room-projects { text-underline-offset: 4px; }
+.room-projects:hover { color: #23342c; }
+.room-actions :focus-visible { outline: 2px dashed #697f7b; outline-offset: 3px; }
+.mac-desktop-open .room-caption { visibility: hidden; }
+</style>
+<link rel="stylesheet" href="/mac-desktop.css?v=painted-screen-20261104a">
 </head>
 <body>
 <noscript>This interactive room needs JavaScript. Find my projects on <a href="https://github.com/INo-xious">GitHub</a>, experience on <a href="https://www.linkedin.com/in/marvel-harisson/">LinkedIn</a>, or <a href="/assets/documents/Marvel-Harisson-resume.pdf">open my résumé</a>.</noscript>
 <canvas id="painting" tabindex="0" aria-label="Watercolor room with live Osaka sunlight. Move your pointer across the painting to gently stir its colors. Arrow keys change the view. Shift and arrow keys brush the paint."></canvas>
-<header><h1>a little room.</h1><p>Osaka · a changing light</p></header>
+<header class="room-caption">
+  <h1>a little room.</h1>
+  <p>Marvel Harisson · Software engineering · Osaka</p>
+  <nav class="room-actions" aria-label="Explore the portfolio">
+    <button id="room-invitation" class="room-invitation" type="button" aria-haspopup="dialog" disabled>Open the laptop</button>
+    <a class="room-projects" href="/projects">View Projects</a>
+  </nav>
+</header>
 <div id="status" role="status">Preparing the painting…</div>
 
-<script type="module" src="/brush-study.js?v=continuous-zoom-20261103a"></script>
+<script type="module" src="/brush-study.js?v=painted-screen-20261104a"></script>
 </body>
 </html>
